@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { ConsoleService } from '../../../services/console.service';
-import { GenreService } from '../../../services/genre.service';
-import { GameService } from '../../../services/game.service';
-import { Game } from '../../../models/game';
-import { Genre } from '../../../models/genre';
-import { Console } from '../../../models/console';
+import { ConsoleService } from '../../../../services/console.service';
+import { GenreService } from '../../../../services/genre.service';
+import { GameService } from '../../../../services/game.service';
+import { Game } from '../../../../models/game';
+import { Genre } from '../../../../models/genre';
+import { Console } from '../../../../models/console';
 
 @Component({
   selector: 'app-register-game',
@@ -69,6 +69,7 @@ export class RegisterGameComponent implements OnInit {
       date_beating: this.dateBeating ?? '',
       time_beating: this.timeBeating ?? 0, 
       release_year: this.releaseYear ?? '',
+      status: 0,
       player_id: 0,
       created_at: new Date(), 
       updated_at: new Date() 

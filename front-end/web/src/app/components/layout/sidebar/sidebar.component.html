@@ -1,0 +1,64 @@
+<!-- Sidebar -->
+<div class="sidebar" data-background-color="dark">
+  <div class="sidebar-logo">
+    <!-- Logo Header -->
+    <div class="logo-header" data-background-color="dark">
+      <a routerLink="home" class="logo">
+        <img
+          src="assets/img/gbprojectlogo-login.svg"
+          alt="navbar brand"
+          class="navbar-brand"
+          height="48"
+        />
+      </a>
+      <div class="nav-toggle">
+        <button class="btn btn-toggle toggle-sidebar">
+          <i class="gg-menu-right"></i>
+        </button>
+        <button class="btn btn-toggle sidenav-toggler">
+          <i class="gg-menu-left"></i>
+        </button>
+      </div>
+      <button class="topbar-toggler more">
+        <i class="gg-more-vertical-alt"></i>
+      </button>
+    </div>
+    <!-- End Logo Header -->
+  </div>
+  <div class="sidebar-wrapper scrollbar scrollbar-inner">
+    <div class="sidebar-content">
+      <ul class="nav nav-secondary">
+        <ng-container *ngIf="role === 'player'">
+          <li *ngFor="let item of menuItemsPlayer" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="role === 'admin'">
+          <li *ngFor="let item of menuItemsAdmin" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- End Sidebar -->
+
+<div class="main-panel">
+  <div class="">
+    <app-header />
+  </div>
+
+  <div class="container">
+    <div class="page-inner">
+      <router-outlet />
+    </div>
+  </div>
+</div>

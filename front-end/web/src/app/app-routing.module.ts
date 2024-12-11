@@ -2,9 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/player/home/home.component';
 import { AuthGuard } from './auth/auth.guard';
-import { NavbarComponent } from './components/navbar/navbar.component';
 import { GameBeatenListComponent } from './pages/player/game-beaten-list/game-beaten-list.component';
-import { RegisterGameComponent } from './pages/player/register-game/register-game.component';
+import { RegisterGameComponent } from './pages/player/registers/register-game/register-game.component';
 import { AboutProjectComponent } from './pages/player/about-project/about-project.component';
 import { ProjectUpdatesLogComponent } from './pages/player/project-updates-log/project-updates-log.component';
 import { RegisterLogComponent } from './pages/admin/log/register-log/register-log.component';
@@ -23,6 +22,8 @@ import { ListManufacturerComponent } from './pages/admin/manufacturer/list-manuf
 import { ListUserComponent } from './pages/admin/user/list-user/list-user.component';
 import { ProfileComponent } from './pages/admin/profile/profile.component';
 import { CsvModeComponent } from './pages/admin/csv-mode/csv-mode.component';
+import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
+import { BacklogFormComponent } from './pages/player/registers/backlog-form/backlog-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -32,7 +33,7 @@ const routes: Routes = [
   // Player routes
   {
     path: '',
-    component: NavbarComponent,
+    component: SidebarComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'player' },
     children: [
@@ -41,13 +42,14 @@ const routes: Routes = [
       { path: 'register-game', component: RegisterGameComponent },
       { path: 'about-project', component: AboutProjectComponent },
       { path: 'project-updates-log', component: ProjectUpdatesLogComponent },
+      { path: 'register-backlog', component: BacklogFormComponent },
     ],
   },
 
   // Admin routes
   {
     path: 'admin',
-    component: NavbarComponent,
+    component: SidebarComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'admin' },
     children: [
@@ -55,11 +57,20 @@ const routes: Routes = [
 
       { path: 'register-log', component: RegisterLogComponent },
       { path: 'register-console', component: RegisterConsoleComponent },
-      { path: 'register-console/:id_console', component: RegisterConsoleComponent },
+      {
+        path: 'register-console/:id_console',
+        component: RegisterConsoleComponent,
+      },
       { path: 'register-genre', component: RegisterGenreComponent },
-      { path: 'register-genre/:id_genre', component: RegisterGenreComponent }, 
-      { path: 'register-manufacturer', component: RegisterManufacturerComponent},
-      { path: 'register-manufacturer/:id_manufacturer', component: RegisterManufacturerComponent},
+      { path: 'register-genre/:id_genre', component: RegisterGenreComponent },
+      {
+        path: 'register-manufacturer',
+        component: RegisterManufacturerComponent,
+      },
+      {
+        path: 'register-manufacturer/:id_manufacturer',
+        component: RegisterManufacturerComponent,
+      },
       { path: 'register-user', component: RegisterUserComponent },
       { path: 'register-user/:id_admin', component: RegisterUserComponent },
 

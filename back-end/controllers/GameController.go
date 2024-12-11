@@ -1,25 +1,14 @@
 package controllers
 
 import (
+	"github.com/RafaelMoreira96/game-beating-project/controllers/utils"
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
 	"github.com/gofiber/fiber/v2"
 )
 
 func AddGame(c *fiber.Ctx) error {
-	role := c.Locals("role").(string)
-	if role != "player" {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"message": "Access denied",
-		})
-	}
-
-	playerID, ok := c.Locals("userID").(uint)
-	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error getting player id",
-		})
-	}
+	playerID, _ := utils.GetPlayerTokenInfos(c)
 
 	db := database.GetDatabase()
 	var game models.Game
@@ -51,6 +40,7 @@ func AddGame(c *fiber.Ctx) error {
 	}
 
 	game.PlayerID = playerID
+	game.Status = 0
 	if err := db.Create(&game).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "error creating game",
@@ -61,24 +51,12 @@ func AddGame(c *fiber.Ctx) error {
 }
 
 func GetBeatenList(c *fiber.Ctx) error {
-	role := c.Locals("role").(string)
-	if role != "player" {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"message": "Access denied",
-		})
-	}
-
-	playerID, ok := c.Locals("userID").(uint)
-	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error getting player id",
-		})
-	}
+	playerID, _ := utils.GetPlayerTokenInfos(c)
 
 	db := database.GetDatabase()
 
 	var games []models.Game
-	if err := db.Preload("Genre").Preload("Console").Where("player_id = ?", playerID).Find(&games).Error; err != nil {
+	if err := db.Preload("Genre").Preload("Console").Where("player_id = ? AND status = 0", playerID).Find(&games).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "error into find games",
 		})
@@ -88,24 +66,12 @@ func GetBeatenList(c *fiber.Ctx) error {
 }
 
 func DeleteGame(c *fiber.Ctx) error {
-	role := c.Locals("role").(string)
-	if role != "player" {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"message": "Access denied",
-		})
-	}
-
-	playerID, ok := c.Locals("userID").(uint)
-	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error getting player id",
-		})
-	}
+	playerID, _ := utils.GetPlayerTokenInfos(c)
 
 	db := database.GetDatabase()
 	var game models.Game
 
-	if err := db.Where("id_game = ? AND player_id = ?", c.Params("id_game"), playerID).First(&game).Error; err != nil {
+	if err := db.Where("id_game = ? AND player_id = ? AND status = 0", c.Params("id_game"), playerID).First(&game).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "error deleting game: " + err.Error(),
 		})
@@ -121,21 +87,3 @@ func DeleteGame(c *fiber.Ctx) error {
 		"message": "game deleted",
 	})
 }
-
-/* func GetTokenClaims(c *fiber.Ctx, role string, playerID uint) error {
-	role = c.Locals("role").(string)
-	if role != "player" {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"message": "Access denied",
-		})
-	}
-
-	playerID, ok := c.Locals("userID").(uint)
-	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error getting player id",
-		})
-	}
-
-	return nil
-} */

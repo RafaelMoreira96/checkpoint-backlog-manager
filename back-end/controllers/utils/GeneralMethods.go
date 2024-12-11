@@ -16,7 +16,6 @@ func GetAdminTokenInfos(c *fiber.Ctx) (uint, error) {
 	return userID, nil
 }
 
-/*
 func GetPlayerTokenInfos(c *fiber.Ctx) (uint, error) {
 	userID, ok := c.Locals("userID").(uint)
 	if !ok {
@@ -29,4 +28,4 @@ func GetPlayerTokenInfos(c *fiber.Ctx) (uint, error) {
 	}
 
 	return userID, nil
-} */
+}

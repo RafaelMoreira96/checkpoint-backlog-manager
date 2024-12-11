@@ -73,4 +73,13 @@ func ProtectedMethods(app *fiber.App) {
 	app.Post("/api/v1/log", controllers.AddLog)
 	app.Delete("/api/v1/log/:id", controllers.DeleteLog)
 	app.Get("/api/v1/log/list", controllers.GetLogs)
+
+	/* Aditional routes from home page for player account */
+	app.Get("/api/v1/player/last_games", controllers.LastGamesBeatingAdded)
+	app.Get("/api/v1/player/last_backlog", controllers.LastGamesBacklogAdded)
+	app.Get("/api/v1/player/prefered_genre", controllers.CardsInfo)
+
+	/* Backlog routes methods */
+	app.Post("/api/v1/backlog", controllers.AddBacklogGame)
+	app.Get("/api/v1/backlog/list", controllers.ListBacklogGames)
 }

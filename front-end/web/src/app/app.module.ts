@@ -8,9 +8,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
-import { NavbarComponent } from './components/navbar/navbar.component';
 import { GameBeatenListComponent } from './pages/player/game-beaten-list/game-beaten-list.component';
-import { RegisterGameComponent } from './pages/player/register-game/register-game.component';
+import { RegisterGameComponent } from './pages/player/registers/register-game/register-game.component';
 import { AboutProjectComponent } from './pages/player/about-project/about-project.component';
 import { ProjectUpdatesLogComponent } from './pages/player/project-updates-log/project-updates-log.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -30,14 +29,20 @@ import { CommonModule } from '@angular/common';
 import { ListLogComponent } from './pages/admin/log/list-log/list-log.component';
 import { ProfileComponent } from './pages/admin/profile/profile.component';
 import { CsvModeComponent } from './pages/admin/csv-mode/csv-mode.component';
+import { HeaderComponent } from './components/layout/header/header.component';
+import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
+import { SidebarItemComponent } from './components/layout/sidebar/sidebar-item/sidebar-item.component';
+import { BacklogFormComponent } from './pages/player/registers/backlog-form/backlog-form.component';
 
 
 @NgModule({
   declarations: [
+    HeaderComponent,
+    SidebarComponent,
+    SidebarItemComponent,
     AppComponent,
     PlayerLoginComponent,
     HomeComponent,
-    NavbarComponent,
     GameBeatenListComponent,
     RegisterGameComponent,
     AboutProjectComponent,
@@ -55,7 +60,8 @@ import { CsvModeComponent } from './pages/admin/csv-mode/csv-mode.component';
     ListUserComponent,
     ListLogComponent,
     ProfileComponent,
-    CsvModeComponent
+    CsvModeComponent,
+    BacklogFormComponent
   ],
   imports: [
     CommonModule,

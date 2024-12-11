@@ -1,0 +1,123 @@
+
+<div
+  class="container-fluid d-flex justify-content-center align-items-center min-vh-100"
+>
+  <div class="card p-4 shadow-lg" style="width: 600px">
+    <!-- Título do Formulário -->
+    <div class="text-center mb-4">
+      <h3>Registar jogo em seu backlog</h3>
+    </div>
+
+    <!-- Formulário -->
+    <form (ngSubmit)="registerGame()" #gameForm="ngForm">
+      <!-- Nome do Jogo -->
+      <div class="form-group mb-3">
+        <label for="nameGame">Nome do Jogo</label>
+        <input
+          type="text"
+          class="form-control"
+          id="nameGame"
+          [(ngModel)]="nameGame"
+          name="nameGame"
+          placeholder="Digite o nome do jogo"
+          required
+        />
+        <div
+          *ngIf="gameForm.submitted && gameForm.controls['nameGame']?.errors?.['required']"
+          class="text-danger"
+        >
+          Nome do jogo é obrigatório.
+        </div>
+      </div>
+
+      <!-- Desenvolvedor -->
+      <div class="form-group mb-3">
+        <label for="developer">Desenvolvedor</label>
+        <input
+          type="text"
+          class="form-control"
+          id="developer"
+          [(ngModel)]="developer"
+          name="developer"
+          placeholder="Digite o nome do desenvolvedor"
+          required
+        />
+        <div
+          *ngIf="gameForm.submitted && gameForm.controls['developer']?.errors?.['required']"
+          class="text-danger"
+        >
+          Desenvolvedor é obrigatório.
+        </div>
+      </div>
+
+      <!-- Select para Console -->
+      <div class="form-group mb-3">
+        <label for="console">Console</label>
+        <select
+          class="form-control"
+          id="console"
+          [(ngModel)]="selectedConsole"
+          name="console"
+          required
+        >
+          <option value="" disabled selected>Selecione o console</option>
+          <option *ngFor="let console of consoles" [value]="console.id_console">
+            {{ console.name_console }}
+          </option>
+        </select>
+        <div *ngIf="gameForm.submitted && !selectedConsole" class="text-danger">
+          Console é obrigatório.
+        </div>
+      </div>
+
+      <!-- Select para Genre -->
+      <div class="form-group mb-3">
+        <label for="genre">Gênero</label>
+        <select
+          class="form-control"
+          id="genre"
+          [(ngModel)]="selectedGenre"
+          name="genre"
+          required
+        >
+          <option value="" disabled selected>Selecione o gênero</option>
+          <option *ngFor="let genre of genres" [value]="genre.id_genre">
+            {{ genre.name_genre }}
+          </option>
+        </select>
+        <div *ngIf="gameForm.submitted && !selectedGenre" class="text-danger">
+          Gênero é obrigatório.
+        </div>
+      </div>
+
+      <!-- Ano de Lançamento -->
+      <div class="form-group mb-3">
+        <label for="releaseYear">Ano de Lançamento</label>
+        <input
+          type="text"
+          class="form-control"
+          id="releaseYear"
+          [(ngModel)]="releaseYear"
+          name="releaseYear"
+          placeholder="Digite o ano de lançamento"
+          required
+        />
+        <div
+          *ngIf="gameForm.submitted && gameForm.controls['releaseYear']?.errors?.['required']"
+          class="text-danger"
+        >
+          Ano de lançamento é obrigatório.
+        </div>
+      </div>
+
+      <!-- Botão de Submissão -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="gameForm.invalid"
+      >
+        Cadastrar Jogo
+      </button>
+    </form>
+  </div>
+</div>

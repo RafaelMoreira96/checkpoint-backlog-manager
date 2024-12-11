@@ -1,0 +1,8 @@
+@media (max-width: 768px) {
+    .adjust-header {
+      top: 45px !important; /* Aplica o estilo quando a tela for menor que 768px */
+    }
+
+  }
+  
+  

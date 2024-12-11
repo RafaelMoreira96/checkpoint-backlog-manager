@@ -1,10 +1,170 @@
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
-<p>home works!</p>
+<div class="row">
+  <!-- Coluna da lista de jogos -->
+  <div class="col">
+    <!-- Item 1 da Coluna -->
+    <div class="card card-round">
+      <div class="card-header">
+        <div class="card-head-row card-tools-still-right">
+          <div class="card-title">Últimos jogos zerados</div>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table align-items-center mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome do jogo</th>
+                <th scope="col" class="text-end">Gênero</th>
+                <th scope="col" class="text-end">Console</th>
+                <th scope="col" class="text-end">Tempo de jogo</th>
+                <th scope="col" class="text-end">Data do zeramento</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of beating_list">
+              <tr>
+                <th scope="row">{{ item.name_game }}</th>
+                <td class="text-end">{{ item.genre }}</td>
+                <td class="text-end">{{ item.console }}</td>
+                <td class="text-end">{{ item.time_beating }} horas</td>
+                <td class="text-end">{{ item.date_beating }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Item 1 da Coluna -->
+    <div class="card card-round">
+      <div class="card-header">
+        <div class="card-head-row card-tools-still-right">
+          <div class="card-title">Últimos jogos cadastrados da backlog</div>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table align-items-center mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome do jogo</th>
+                <th scope="col" class="text-end">Gênero</th>
+                <th scope="col" class="text-end">Console</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of backlog_list">
+              <tr>
+                <th scope="row">{{ item.name_game }}</th>
+                <td class="text-end">{{ item.genre }}</td>
+                <td class="text-end">{{ item.console }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coluna dos cards -->
+  <div class="col-md-4">
+    <div class="col-md-12 mb-3">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div
+                class="icon-big text-center icon-primary bubble-shadow-small"
+              >
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">Jogos zerados este mês</p>
+                <h4 class="card-title">{{ cardsInfo.games_finished_this_month}} jogos</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 mb-3">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div class="icon-big text-center icon-info bubble-shadow-small">
+                <i class="fas fa-user-check"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">Gênero mais jogado</p>
+                <h4 class="card-title">{{ cardsInfo.most_played_genre }}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 mb-3">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div
+                class="icon-big text-center icon-success bubble-shadow-small"
+              >
+                <i class="fas fa-luggage-cart"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">2° gênero mais jogado</p>
+                <h4 class="card-title"> {{ cardsInfo.second_played_genre_used }}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 mb-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-info bubble-shadow-small">
+                  <i class="fas fa-user-check"></i>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class="card-category">Gênero nenos jogado</p>
+                  <h4 class="card-title">{{ cardsInfo.least_played_genre }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="col-md-12">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div
+                class="icon-big text-center icon-secondary bubble-shadow-small"
+              >
+                <i class="far fa-check-circle"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">Tempo somado dos jogos zerados</p>
+                <h4 class="card-title">{{ cardsInfo.total_hours_played }} horas</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
