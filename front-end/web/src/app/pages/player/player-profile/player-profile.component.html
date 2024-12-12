@@ -2,14 +2,10 @@
   <div class="card" style="width: 100%">
     <!-- <img src="..." class="card-img-top" alt="..."> -->
     <div class="card-body">
-      <h5 class="card-title">{{ profile.name }}</h5>
+      <h5 class="card-title">{{ profile.name_player }}</h5>
       <p class="card-text">Nickname: {{ profile.nickname }}</p>
       <p class="card-text">E-mail: {{ profile.email }}</p>
       <p class="card-text">Perfil criado em: {{ profile.created_at }}</p>
-      <p class="card-text">
-        Tipo de acesso:
-        {{ profile.access_type == 0 ? "Administrador" : "Gerenciador" }}
-      </p>
     </div>
   </div>
 </div>

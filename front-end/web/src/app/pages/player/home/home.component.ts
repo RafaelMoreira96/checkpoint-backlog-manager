@@ -74,8 +74,6 @@ export class HomeComponent {
         } else {
           console.error('cardsInfo is not initialized');
         }
-        console.log('cardsInfo:', this.cardsInfo);
-        console.log(result);
       },
       (error) => {
         console.error('Failed to load genre information', error);

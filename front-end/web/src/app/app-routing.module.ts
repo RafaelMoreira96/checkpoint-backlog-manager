@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/player/home/home.component';
 import { AuthGuard } from './auth/auth.guard';
-import { GameBeatenListComponent } from './pages/player/game-beaten-list/game-beaten-list.component';
+import { GameBeatenListComponent } from './pages/player/lists/game-beaten-list/game-beaten-list.component';
 import { RegisterGameComponent } from './pages/player/registers/register-game/register-game.component';
 import { AboutProjectComponent } from './pages/player/about-project/about-project.component';
 import { ProjectUpdatesLogComponent } from './pages/player/project-updates-log/project-updates-log.component';
@@ -24,6 +24,8 @@ import { ProfileComponent } from './pages/admin/profile/profile.component';
 import { CsvModeComponent } from './pages/admin/csv-mode/csv-mode.component';
 import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
 import { BacklogFormComponent } from './pages/player/registers/backlog-form/backlog-form.component';
+import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-list.component';
+import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -39,10 +41,14 @@ const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'game-beaten-list', component: GameBeatenListComponent },
+      { path: 'backlog-list', component: BacklogListComponent },
       { path: 'register-game', component: RegisterGameComponent },
+      { path: 'register-game/:id_game', component: RegisterGameComponent },
+      { path: 'register-backlog', component: BacklogFormComponent },
+      { path: 'register-backlog/:id_game', component: BacklogFormComponent },
       { path: 'about-project', component: AboutProjectComponent },
       { path: 'project-updates-log', component: ProjectUpdatesLogComponent },
-      { path: 'register-backlog', component: BacklogFormComponent },
+      { path: 'player-profile', component: PlayerProfileComponent },
     ],
   },
 

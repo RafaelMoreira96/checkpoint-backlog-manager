@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>16</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>912</x><y>672</y><w>304</w><h>416</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
+<diagram program="umletino" version="15.1"><zoom_level>18</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>1476</x><y>846</y><w>342</w><h>468</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
 Game
 --
 - idGame: Long
@@ -15,7 +15,7 @@ Game
 # RegisterNewGame()
 # RemoveGame()
 # EditGame()
-# ViewGame()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>912</x><y>240</y><w>304</w><h>336</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
+# ViewGame()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1476</x><y>360</y><w>342</w><h>378</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
 Console
 --
 - idConsole: Long
@@ -29,7 +29,7 @@ Console
 # RemoveConsole()
 # EditConsole()
 # ViewConsole()
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1408</x><y>256</y><w>288</w><h>288</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2034</x><y>378</y><w>324</w><h>324</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
 Manufacturer
 --
 - idManufacturer: Long
@@ -40,7 +40,7 @@ Manufacturer
 # RegisterManufacturer()
 # RemoveManufacturer()
 # UpdateManufacturer()
-# ViewManufacturer()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1040</x><y>560</y><w>48</w><h>144</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1200</x><y>384</y><w>240</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1408</x><y>672</y><w>288</w><h>352</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
+# ViewManufacturer()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1620</x><y>720</y><w>54</w><h>162</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1800</x><y>522</y><w>270</w><h>54</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>2034</x><y>846</y><w>324</w><h>396</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
 Player
 --
 - idPlayer: Long
@@ -54,7 +54,7 @@ Player
 # RegisterPlayer()
 # RemovePlayer()
 # UpdatePlayer()
-# ViewPlayer()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1200</x><y>816</y><w>240</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>432</x><y>720</y><w>336</w><h>256</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
+# ViewPlayer()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1800</x><y>1008</y><w>270</w><h>54</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>972</x><y>900</y><w>378</w><h>288</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
 Genre
 --
 - idGenre: int
@@ -64,7 +64,7 @@ Genre
 # RegisterGenre()
 # RemoveGenre()
 # UpdateGenre()
-# ViewGenre()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>752</x><y>832</y><w>192</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>496</x><y>256</y><w>336</w><h>304</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
+# ViewGenre()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1332</x><y>1026</y><w>180</w><h>54</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>80;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1008</x><y>378</y><w>378</w><h>342</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
 ProjectUpdateLog
 --
 - idProjectUpdateLog: int
@@ -75,7 +75,7 @@ ProjectUpdateLog
 # CreateALog()
 # RemoveLog()
 # ViewLog()
-# GetAllLogs()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>16</x><y>256</y><w>336</w><h>336</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
+# GetAllLogs()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>468</x><y>378</y><w>378</w><h>378</h></coordinates><panel_attributes>&lt;&lt;class&gt;&gt;
 Administrator
 --
 - idAdministrator: int
@@ -88,14 +88,14 @@ Administrator
 --
 # RegisterAdministrator()
 # RemoveAdministrator()
-# ViewAdministrator()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>336</x><y>400</y><w>192</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>16</x><y>0</y><w>336</w><h>144</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
+# ViewAdministrator()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>828</x><y>540</y><w>216</w><h>54</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>468</x><y>90</y><w>378</w><h>162</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
 AccessType
 --
 ADMIN
 MANAGER
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>160</x><y>128</y><w>48</w><h>160</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;80;10;11</additional_attributes></element><element><id>Relation</id><coordinates><x>0</x><y>448</y><w>304</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;170;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>896</x><y>1184</y><w>336</w><h>160</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>630</x><y>234</y><w>54</w><h>180</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;80;10;11</additional_attributes></element><element><id>Relation</id><coordinates><x>450</x><y>594</y><w>342</w><h>54</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;170;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1458</x><y>1422</y><w>378</w><h>180</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
 StatusGame
 --
 BACKLOG
-BEATED</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1040</x><y>1072</y><w>48</w><h>144</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;70</additional_attributes></element></diagram>
+BEATED</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1620</x><y>1296</y><w>54</w><h>162</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;70</additional_attributes></element></diagram>

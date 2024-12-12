@@ -66,7 +66,9 @@ func ProtectedMethods(app *fiber.App) {
 
 	/* Game routes methods */
 	app.Post("/api/v1/game", controllers.AddGame)
+	app.Put("/api/v1/game/:id_game", controllers.UpdateGame)
 	app.Get("/api/v1/game/list_beaten", controllers.GetBeatenList)
+	app.Get("/api/v1/game/:id_game", controllers.GetGame)
 	app.Delete("/api/v1/game/delete_beaten/:id_game", controllers.DeleteGame)
 
 	/* Project Update Log routes method */

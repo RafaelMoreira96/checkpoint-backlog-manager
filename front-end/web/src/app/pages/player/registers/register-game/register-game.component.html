@@ -150,7 +150,7 @@
         class="btn btn-primary btn-block"
         [disabled]="gameForm.invalid"
       >
-        Cadastrar Jogo
+        {{ isEditing ? "Atualizar Jogo" : "Cadastrar Jogo" }}
       </button>
     </form>
   </div>

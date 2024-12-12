@@ -71,7 +71,7 @@ func DeleteGame(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var game models.Game
 
-	if err := db.Where("id_game = ? AND player_id = ? AND status = 0", c.Params("id_game"), playerID).First(&game).Error; err != nil {
+	if err := db.Where("id_game = ? AND player_id = ?", c.Params("id_game"), playerID).First(&game).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "error deleting game: " + err.Error(),
 		})
@@ -86,4 +86,75 @@ func DeleteGame(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
 		"message": "game deleted",
 	})
+}
+
+func UpdateGame(c *fiber.Ctx) error {
+	playerID, _ := utils.GetPlayerTokenInfos(c)
+
+	db := database.GetDatabase()
+	var game models.Game
+
+	if err := db.Where("id_game = ? AND player_id = ?", c.Params("id_game"), playerID).First(&game).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error updating game: " + err.Error(),
+		})
+	}
+
+	var newGame models.Game
+	if err := c.BodyParser(&newGame); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error parsing game",
+		})
+	}
+
+	if newGame.NameGame == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "insert a game name",
+		})
+	}
+
+	var genre models.Genre
+	if err := db.Where("id_genre = ?", newGame.GenreID).First(&genre).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "genre not found",
+		})
+	}
+
+	var console models.Console
+	if err := db.Where("id_console = ?", newGame.ConsoleID).First(&console).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "console not found",
+		})
+	}
+
+	game.NameGame = newGame.NameGame
+	game.GenreID = newGame.GenreID
+	game.ConsoleID = newGame.ConsoleID
+	game.Status = newGame.Status
+	game.DateBeating = newGame.DateBeating
+	game.TimeBeating = newGame.TimeBeating
+	game.Developer = newGame.Developer
+	game.ReleaseYear = newGame.ReleaseYear
+	if err := db.Save(&game).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error updating game",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(game)
+}
+
+func GetGame(c *fiber.Ctx) error {
+	playerID, _ := utils.GetPlayerTokenInfos(c)
+
+	db := database.GetDatabase()
+	var game models.Game
+
+	if err := db.Preload("Genre").Preload("Console").Where("id_game = ? AND player_id = ?", c.Params("id_game"), playerID).First(&game).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error finding game",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(game)
 }

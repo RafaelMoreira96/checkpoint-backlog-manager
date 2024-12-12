@@ -12,11 +12,13 @@ export class SidebarComponent {
 
   menuItemsPlayer = [
     { link: 'home', name: 'Home', icon: "fa-thin fa-list" },
-    { link: 'game-beaten-list', name: 'Lista de jogos zerados', icon: "fa-thin fa-list" },
+    { link: 'register-game', name: 'Registrar jogo', icon: "fa-thin fa-list" },
     { link: 'register-backlog', name: 'Registrar backlog', icon: "fa-thin fa-list" },
-    { link: 'register-game', name: 'Cadastrar jogo', icon: "fa-thin fa-list" },
+    { link: 'game-beaten-list', name: 'Jogos zerados', icon: "fa-thin fa-list" },
+    { link: 'backlog-list', name: 'Backlog', icon: "fa-thin fa-list" },
     { link: 'about-project', name: 'Sobre o projeto', icon: "fa-thin fa-list" },
     { link: 'project-updates-log', name: 'Log de atualizações', icon: "fa-thin fa-list" },
+    { link: 'player-profile', name: 'Perfil', icon: "fa-thin fa-list" },
   ];
 
   menuItemsAdmin = [

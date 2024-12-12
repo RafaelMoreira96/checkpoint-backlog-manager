@@ -37,7 +37,7 @@ func LastGamesBacklogAdded(c *fiber.Ctx) error {
 
 	if err := db.Preload("Console").Preload("Genre").
 		Where("player_id = ? AND status = 1", playerID).
-		Order("date_beating DESC").
+		Order("created_at DESC").
 		Limit(5).
 		Find(&games).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

@@ -8,7 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
-import { GameBeatenListComponent } from './pages/player/game-beaten-list/game-beaten-list.component';
 import { RegisterGameComponent } from './pages/player/registers/register-game/register-game.component';
 import { AboutProjectComponent } from './pages/player/about-project/about-project.component';
 import { ProjectUpdatesLogComponent } from './pages/player/project-updates-log/project-updates-log.component';
@@ -33,17 +32,20 @@ import { HeaderComponent } from './components/layout/header/header.component';
 import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
 import { SidebarItemComponent } from './components/layout/sidebar/sidebar-item/sidebar-item.component';
 import { BacklogFormComponent } from './pages/player/registers/backlog-form/backlog-form.component';
+import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-list.component';
+import { GameBeatenListComponent } from './pages/player/lists/game-beaten-list/game-beaten-list.component';
+import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
 
 
 @NgModule({
   declarations: [
+    GameBeatenListComponent,
     HeaderComponent,
     SidebarComponent,
     SidebarItemComponent,
     AppComponent,
     PlayerLoginComponent,
     HomeComponent,
-    GameBeatenListComponent,
     RegisterGameComponent,
     AboutProjectComponent,
     ProjectUpdatesLogComponent,
@@ -61,7 +63,9 @@ import { BacklogFormComponent } from './pages/player/registers/backlog-form/back
     ListLogComponent,
     ProfileComponent,
     CsvModeComponent,
-    BacklogFormComponent
+    BacklogFormComponent,
+    BacklogListComponent,
+    PlayerProfileComponent
   ],
   imports: [
     CommonModule,

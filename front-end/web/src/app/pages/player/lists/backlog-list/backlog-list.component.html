@@ -1,0 +1,83 @@
+<div class="container-fluid">
+  <h2 class="mb-4">Backlog</h2>
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>#</th>
+        <th>Nome do Jogo</th>
+        <th>Gênero</th>
+        <th>Desenvolvedor</th>
+        <th>Ano de Lançamento</th>
+        <th>Plataforma</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let game of games; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ game.name_game }}</td>
+        <td>{{ game.genre?.name_genre }}</td>
+        <td>{{ game.developer }}</td>
+        <td>{{ game.release_year }}</td>
+        <td>{{ game.console?.name_console }}</td>
+        <td>
+          <div class="d-flex gap-2">
+            <button
+              class="btn btn-warning btn-sm mr-2"
+              (click)="editGame(game)"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmDeleteModal"
+              (click)="openModal(game.id_game)"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal de confirmação -->
+<div
+  class="modal fade"
+  id="confirmDeleteModal"
+  tabindex="-1"
+  aria-labelledby="confirmDeleteModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">
+          Confirmar Remoção
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">Tem certeza de que deseja remover este jogo?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDelete()"
+          data-bs-dismiss="modal"
+        >
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

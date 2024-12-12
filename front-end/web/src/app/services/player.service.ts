@@ -6,7 +6,7 @@ import { API_CONFIG } from '../config/api.config';
   providedIn: 'root',
 })
 export class PlayerService {
-  BASE_URL = API_CONFIG.BASE_URL + '/api/v1/genre';
+  BASE_URL = API_CONFIG.BASE_URL + '/api/v1/player';
   token = localStorage.getItem('token');
   headers = new HttpHeaders().set('Authorization', `Bearer ${this.token}`);
 

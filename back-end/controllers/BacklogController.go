@@ -56,7 +56,7 @@ func ListBacklogGames(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var games []models.Game
 
-	if err := db.Where("player_id = ? AND status = 1", playerID).Find(&games).Error; err != nil {
+	if err := db.Preload("Genre").Preload("Console").Where("player_id = ? AND status = 1", playerID).Find(&games).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "error listing games",
 		})

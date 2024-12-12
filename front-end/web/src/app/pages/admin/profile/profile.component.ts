@@ -7,11 +7,15 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  styleUrl: './profile.component.css',
 })
 export class ProfileComponent implements OnInit {
   profile: Administrator = new Administrator();
-  constructor(private service: AdministratorService, private toast: ToastrService, private router: Router) {}
+  constructor(
+    private service: AdministratorService,
+    private toast: ToastrService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.getProfile();

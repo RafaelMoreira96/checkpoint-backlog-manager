@@ -17,14 +17,26 @@ export class GameService {
     return this.http.post(`${this.BASE_URL}`, data, { headers: this.headers });
   }
 
+  updateGame(id_game: number, data: Game) {
+    return this.http.put(`${this.BASE_URL}/${data.id_game}`, data, {
+      headers: this.headers,
+    });
+  }
+
   getGames() {
     return this.http.get(`${this.BASE_URL}/list_beaten`, {
       headers: this.headers,
     });
   }
 
+  getGame(id: number) {
+    return this.http.get(`${this.BASE_URL}/${id}`, {
+      headers: this.headers,
+    });
+  }
+
   deleteGame(id: number) {
-    return this.http.get(`${this.BASE_URL}/delete_beaten/${id}`, {
+    return this.http.delete(`${this.BASE_URL}/delete_beaten/${id}`, {
       headers: this.headers,
     });
   }
