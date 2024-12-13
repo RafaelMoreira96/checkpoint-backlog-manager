@@ -57,4 +57,8 @@ export class BacklogListComponent implements OnInit {
   editGame(game: Game): void {
     this.router.navigate(['register-backlog', game.id_game]);
   }
+
+  beatedGame(game: Game): void {
+    this.router.navigate(['register-game', game.id_game]);
+  }
 }

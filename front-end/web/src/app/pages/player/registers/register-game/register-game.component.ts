@@ -57,6 +57,7 @@ export class RegisterGameComponent implements OnInit {
         this.dateBeating = this.game.date_beating;
         this.timeBeating = this.game.time_beating;
         this.releaseYear = this.game.release_year;
+        this.game.status = 0;
       },
       (error) => {
         this.toastr.error('Erro ao carregar os dados do jogo.', 'Erro');

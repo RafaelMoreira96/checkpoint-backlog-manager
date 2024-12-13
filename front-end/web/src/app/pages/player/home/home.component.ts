@@ -10,11 +10,10 @@ interface InfoGame {
 }
 
 interface CardInfo {
-  second_played_genre_used: string;
-  most_played_genre: number;
-  least_played_genre: number;
-  games_finished_this_month: number;
-  total_hours_played: number;
+  icon: string;
+  colorIcon: string;
+  title: string;
+  data: string;
 }
 
 @Component({
@@ -23,13 +22,7 @@ interface CardInfo {
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
-  cardsInfo: CardInfo = {
-    second_played_genre_used: 'N/A',
-    most_played_genre: 0,
-    least_played_genre: 0,
-    games_finished_this_month: 0,
-    total_hours_played: 0,
-  };
+  cardsInfo: CardInfo[] = [];
   beating_list: InfoGame[] = [];
   backlog_list: InfoGame[] = [];
 
@@ -60,23 +53,60 @@ export class HomeComponent {
     );
   }
 
-  loadCardsInfo() {
+  loadCardsInfo(): void {
     this.service.getPreferedAndUnpreferedGenre().subscribe(
       (result: any) => {
-        if (this.cardsInfo) {
-          this.cardsInfo.most_played_genre = result.most_used || 'N/A';
-          this.cardsInfo.second_played_genre_used =
-            result.second_most_used || 'N/A';
-          this.cardsInfo.least_played_genre = result.least_used || 'N/A';
-          this.cardsInfo.games_finished_this_month =
-            result.games_finished_this_month || 0;
-          this.cardsInfo.total_hours_played = result.total_hours_played || 0;
-        } else {
-          console.error('cardsInfo is not initialized');
-        }
+        this.cardsInfo = [
+          {
+            colorIcon: 'success',
+            icon: 'fas fa-gamepad',
+            title: 'Total de jogos zerados',
+            data:
+              result.total_games_finished?.toString() + ' jogos' || 'N/A',
+          },
+          {
+            colorIcon: 'success',
+            icon: 'icon-game-controller',
+            title: 'Jogos zerados neste mês',
+            data:
+              result.games_finished_this_month?.toString() + ' jogos' || 'N/A',
+          },
+          {
+            colorIcon: 'danger',
+            icon: 'far fa-clock',
+            title: 'Tempo total (no mês)',
+            data:
+              result.total_hours_played_this_month.toString() + ' horas' ||
+              'N/A',
+          },
+          {
+            colorIcon: 'info',
+            icon: 'fas fa-clock',
+            title: 'Tempo total',
+            data: result.total_hours_played?.toString() + ' horas' || 'N/A',
+          },
+          {
+            colorIcon: 'warning',
+            icon: 'fas fa-star',
+            title: 'Gênero preferido',
+            data: result.most_used || 'N/A',
+          },
+          {
+            colorIcon: 'secondary',
+            icon: 'fas fa-star-half-alt',
+            title: '2º Gênero preferido',
+            data: result.second_most_used || 'N/A',
+          },
+          {
+            colorIcon: 'primary',
+            icon: 'far fa-star',
+            title: 'Gênero preterido',
+            data: result.least_used || 'N/A',
+          },
+        ];
       },
       (error) => {
-        console.error('Failed to load genre information', error);
+        console.error('Failed to load genre information:', error);
       }
     );
   }

@@ -61,7 +61,9 @@ func CardsInfo(c *fiber.Ctx) error {
 
 	genreCount := make(map[uint]int)
 	var totalHoursPlayed int
+	var totalHoursPlayedThisMonth int
 	var gamesFinishedThisMonth int
+	totalGamesFinished := len(games)
 
 	currentYear, currentMonth, _ := time.Now().Date()
 	for _, game := range games {
@@ -70,6 +72,7 @@ func CardsInfo(c *fiber.Ctx) error {
 
 		if game.DateBeating.Year() == currentYear && game.DateBeating.Month() == currentMonth {
 			gamesFinishedThisMonth++
+			totalHoursPlayedThisMonth += int(game.TimeBeating)
 		}
 	}
 
@@ -97,8 +100,10 @@ func CardsInfo(c *fiber.Ctx) error {
 	})
 
 	result := fiber.Map{
-		"total_hours_played":        totalHoursPlayed,
-		"games_finished_this_month": gamesFinishedThisMonth,
+		"total_hours_played":            totalHoursPlayed,
+		"games_finished_this_month":     gamesFinishedThisMonth,
+		"total_hours_played_this_month": totalHoursPlayedThisMonth,
+		"total_games_finished":          totalGamesFinished,
 	}
 
 	if len(stats) > 0 {
