@@ -11,14 +11,14 @@ export class SidebarComponent {
   role: string = '';
 
   menuItemsPlayer = [
-    { link: 'home', name: 'Home', icon: "fa-thin fa-list" },
-    { link: 'register-game', name: 'Registrar jogo', icon: "fa-thin fa-list" },
-    { link: 'register-backlog', name: 'Registrar backlog', icon: "fa-thin fa-list" },
-    { link: 'game-beaten-list', name: 'Jogos zerados', icon: "fa-thin fa-list" },
-    { link: 'backlog-list', name: 'Backlog', icon: "fa-thin fa-list" },
-    { link: 'about-project', name: 'Sobre o projeto', icon: "fa-thin fa-list" },
-    { link: 'project-updates-log', name: 'Log de atualizações', icon: "fa-thin fa-list" },
-    { link: 'player-profile', name: 'Perfil', icon: "fa-thin fa-list" },
+    { link: 'home', name: 'Home', icon: "fas fa-home" },
+    { link: 'register-game', name: 'Registrar jogo', icon: "fas fa-save" },
+    { link: 'register-backlog', name: 'Registrar backlog', icon: "far fa-save" },
+    { link: 'game-beaten-list', name: 'Jogos zerados', icon: "fas fa-table" },
+    { link: 'backlog-list', name: 'Backlog', icon: "fas fa-tasks" },
+    { link: 'about-project', name: 'Sobre o projeto', icon: "fab fa-stack-exchange" },
+    { link: 'project-updates-log', name: 'Log de atualizações', icon: "fas fa-book-open" },
+    { link: 'player-profile', name: 'Perfil', icon: "fas fa-user" },
   ];
 
   menuItemsAdmin = [
