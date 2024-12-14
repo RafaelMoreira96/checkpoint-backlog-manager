@@ -22,14 +22,24 @@
         <td>{{ game.console?.name_console }}</td>
         <td>
           <div class="d-flex gap-2">
-            <button class="btn btn-primary btn-sm mr-2" (click)="beatedGame(game)">
+            <button
+              class="btn btn-primary btn-sm mr-2"
+              (click)="beatedGame(game)"
+            >
               <i class="fas fa-check"></i>
             </button>
-            <button class="btn btn-warning btn-sm mr-2" (click)="editGame(game)">
+            <button
+              class="btn btn-warning btn-sm mr-2"
+              (click)="editGame(game)"
+            >
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
-              (click)="openModal(game.id_game)">
+            <button
+              class="btn btn-danger btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmDeleteModal"
+              (click)="openModal(game.id_game)"
+            >
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -40,22 +50,37 @@
 </div>
 
 <!-- Modal de confirmação -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
-  aria-hidden="true">
+<div
+  class="modal fade"
+  id="confirmDeleteModal"
+  tabindex="-1"
+  aria-labelledby="confirmDeleteModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="confirmDeleteModalLabel">
           Confirmar Remoção
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">Tem certeza de que deseja remover este jogo?</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Cancelar
         </button>
-        <button type="button" class="btn btn-danger" (click)="confirmDelete()" data-bs-dismiss="modal">
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDelete()"
+          data-bs-dismiss="modal"
+        >
           Confirmar
         </button>
       </div>

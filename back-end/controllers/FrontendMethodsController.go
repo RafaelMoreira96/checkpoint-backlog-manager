@@ -10,6 +10,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+/* ------------------------------------------------------------------------------
+ * ------------------------------ Player methods --------------------------------
+ * ------------------------------------------------------------------------------ */
 func LastGamesBeatingAdded(c *fiber.Ctx) error {
 	playerID, _ := utils.GetPlayerTokenInfos(c)
 
@@ -114,6 +117,128 @@ func CardsInfo(c *fiber.Ctx) error {
 	}
 	if len(stats) > 0 {
 		result["least_used"] = stats[len(stats)-1].Name
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
+
+/* ------------------------------------------------------------------------------
+ * ------------------------------ Player methods --------------------------------
+ * ------------------------------------------------------------------------------ */
+/* func AdminCardsInfo(c *fiber.Ctx) error {
+	db := database.GetDatabase()
+} */
+
+func LastPlayersRegistered(c *fiber.Ctx) error {
+	utils.GetAdminTokenInfos(c)
+	db := database.GetDatabase()
+	var players []models.Player
+
+	if err := db.Order("created_at DESC").Limit(5).Find(&players).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching players",
+		})
+	}
+
+	var result []map[string]interface{}
+	for _, player := range players {
+		result = append(result, map[string]interface{}{
+			"name_player": player.NamePlayer,
+			"nickname":    player.Nickname,
+			"created_at":  player.CreatedAt,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
+
+func LastAdminsRegistered(c *fiber.Ctx) error {
+	utils.GetAdminTokenInfos(c)
+	db := database.GetDatabase()
+	var administrators []models.Administrator
+
+	if err := db.Order("created_at DESC").Limit(5).Find(&administrators).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching administrators",
+		})
+	}
+
+	var result []map[string]interface{}
+	for _, admin := range administrators {
+		result = append(result, map[string]interface{}{
+			"name_administrator": admin.Name,
+			"nickname":           admin.Nickname,
+			"created_at":         admin.CreatedAt,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
+
+func AdminCardsInfo(c *fiber.Ctx) error {
+	utils.GetAdminTokenInfos(c)
+	db := database.GetDatabase()
+
+	// Função auxiliar para contagem genérica
+	countEntities := func(model interface{}, condition string) (int, error) {
+		var count int64
+		if err := db.Model(model).Where(condition).Count(&count).Error; err != nil {
+			return 0, err
+		}
+		return int(count), nil
+	}
+
+	var games []models.Game
+	if err := db.Find(&games).Where("status = 0").Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching games",
+		})
+	}
+	gamesCount := len(games)
+
+	genreCount, err := countEntities(&models.Genre{}, "is_active = 1")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching genres",
+		})
+	}
+
+	consoleCount, err := countEntities(&models.Console{}, "is_active = 1")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching consoles",
+		})
+	}
+
+	manufacturerCount, err := countEntities(&models.Manufacturer{}, "is_active = 1")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching manufacturers",
+		})
+	}
+
+	playerCount, err := countEntities(&models.Player{}, "is_active = 1")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching players",
+		})
+	}
+
+	administratorCount, err := countEntities(&models.Administrator{}, "is_active = 1")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching administrators",
+		})
+	}
+
+	// Construção da resposta
+	result := fiber.Map{
+		"total_games":          gamesCount,
+		"total_genres":         genreCount,
+		"total_consoles":       consoleCount,
+		"total_manufacturers":  manufacturerCount,
+		"total_players":        playerCount,
+		"total_administrators": administratorCount,
 	}
 
 	return c.Status(fiber.StatusOK).JSON(result)

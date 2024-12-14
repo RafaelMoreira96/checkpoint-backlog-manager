@@ -22,19 +22,21 @@ export class SidebarComponent {
   ];
 
   menuItemsAdmin = [
-    { link: 'dashboard', name: 'Dashboard', icon: "fa-thin fa-list" },
-    { link: 'register-user', name: 'Registrar usuário', icon: "fa-thin fa-list" },
-    { link: 'register-log', name: 'Registrar log', icon: "fa-thin fa-list" },
-    { link: 'register-genre', name: 'Registrar gênero', icon: "fa-thin fa-list" },
-    { link: 'register-console', name: 'Registrar console', icon: "fa-thin fa-list" },
-    { link: 'register-manufacturer', name: 'Registrar fabricante', icon: "fa-thin fa-list" },
-    { link: 'list-logs', name: 'Listar logs', icon: "fa-thin fa-list" },
-    { link: 'list-genre', name: 'Listar gêneros', icon: "fa-thin fa-list" },
-    { link: 'list-console', name: 'Listar consoles', icon: "fa-thin fa-list" },
-    { link: 'list-manufacturer', name: 'Listar fabricantes', icon: "fa-thin fa-list" },
-    { link: 'list-user', name: 'Listar usuários', icon: "fa-thin fa-list" },
-    { link: 'profile', name: 'Perfil', icon: "fa-thin fa-list" },
-    { link: 'csv-mode', name: 'Modo CSV', icon: "fa-thin fa-list" },
+    { link: 'dashboard', name: 'Dashboard', icon: "fas fa-home" },
+    { link: 'register-user', name: 'Registrar usuário', icon: "fas fa-user-plus" },
+    { link: 'register-log', name: 'Registrar log', icon: "far fa-list-alt" },
+    { link: 'register-genre', name: 'Registrar gênero', icon: "icon-information" },
+    { link: 'register-console', name: 'Registrar console', icon: "icon-game-controller" },
+    { link: 'register-manufacturer', name: 'Registrar fabricante', icon: "icon-grid" },
+
+    { link: 'list-user', name: 'Listar usuários', icon: "fas fa-users" },
+    { link: 'list-logs', name: 'Listar logs', icon: "fas fa-tasks" },
+    { link: 'list-genre', name: 'Listar gêneros', icon: "fas fa-indent" },
+    { link: 'list-console', name: 'Listar consoles', icon: "fas fa-gamepad" },
+    { link: 'list-manufacturer', name: 'Listar fabricantes', icon: "fas fa-building" },
+
+    { link: 'profile', name: 'Perfil', icon: "fas fa-user" },
+    { link: 'csv-mode', name: 'Modo CSV', icon: "icon-control-play" },
   ];
 
   constructor(private auth: AuthService, private router: Router) {}

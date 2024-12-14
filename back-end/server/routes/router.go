@@ -84,4 +84,10 @@ func ProtectedMethods(app *fiber.App) {
 	/* Backlog routes methods */
 	app.Post("/api/v1/backlog", controllers.AddBacklogGame)
 	app.Get("/api/v1/backlog/list", controllers.ListBacklogGames)
+
+	/* Aditional routes from dashboard page for admin accounts */
+	app.Get("/api/v1/admin/last_players_added", controllers.LastPlayersRegistered)
+	app.Get("/api/v1/admin/last_admin_added", controllers.LastAdminsRegistered)
+	app.Get("/api/v1/admin/cards_info", controllers.AdminCardsInfo)
+
 }

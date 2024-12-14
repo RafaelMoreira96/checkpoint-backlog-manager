@@ -1,66 +1,72 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-black2">
-    <div class="card p-4 shadow-lg" style="width: 600px;">
-      <div class="text-center mb-4">
-        <h3>Cadastrar Console</h3>
-      </div>
-      <form (ngSubmit)="registerConsole()" #consoleForm="ngForm">
-        
-        <div class="form-group mb-3">
-          <label for="name_console">Nome do Console</label>
-          <input
-            class="form-control"
-            id="name_console"
-            [(ngModel)]="name_console"
-            name="name_console"
-            placeholder="Digite o nome do console"
-            required
-          />
-          <div *ngIf="consoleForm.submitted && !name_console" class="text-danger">
-            O nome do console é obrigatório.
-          </div>
-        </div>
-  
-        <div class="form-group mb-3">
-            <label for="console">Fabricante</label>
-            <select
-              class="form-control"
-              id="console"
-              [(ngModel)]="selectedManufacturer"
-              name="console"
-              required
-            >
-              <option value="" disabled selected>Selecione o console</option>
-              <option *ngFor="let manufacturer of manufacturers" [value]="manufacturer.id_manufacturer">{{ manufacturer.name_manufacturer }}</option>
-            </select>
-            <div *ngIf="consoleForm.submitted && !selectedManufacturer" class="text-danger">
-              Console é obrigatório.
-            </div>
-          </div>
-  
-        <div class="form-group mb-3">
-          <label for="release_date">Ano de Lançamento</label>
-          <input
-            class="form-control"
-            id="release_date"
-            type="number"
-            [(ngModel)]="release_date"
-            name="release_date"
-            placeholder="Digite o ano de lançamento"
-            required
-          />
-          <div *ngIf="consoleForm.submitted && !release_date" class="text-danger">
-            O ano de lançamento é obrigatório.
-          </div>
-        </div>
-  
-        <button
-          type="submit"
-          class="btn btn-primary btn-block"
-          [disabled]="consoleForm.invalid"
-        >
-          {{ isEditing ? "Atualizar Console" : "Cadastrar Console" }}
-        </button>
-      </form>
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card p-4 shadow-lg" style="width: 600px">
+    <div class="text-center mb-4">
+      <h3>Cadastrar Console</h3>
     </div>
+    <form (ngSubmit)="registerConsole()" #consoleForm="ngForm">
+      <div class="form-group mb-3">
+        <label for="name_console">Nome do Console</label>
+        <input
+          class="form-control"
+          id="name_console"
+          [(ngModel)]="name_console"
+          name="name_console"
+          placeholder="Digite o nome do console"
+          required
+        />
+        <div *ngIf="consoleForm.submitted && !name_console" class="text-danger">
+          O nome do console é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="console">Fabricante</label>
+        <select
+          class="form-control"
+          id="console"
+          [(ngModel)]="selectedManufacturer"
+          name="console"
+          required
+        >
+          <option value="" disabled selected>Selecione o console</option>
+          <option
+            *ngFor="let manufacturer of manufacturers"
+            [value]="manufacturer.id_manufacturer"
+          >
+            {{ manufacturer.name_manufacturer }}
+          </option>
+        </select>
+        <div
+          *ngIf="consoleForm.submitted && !selectedManufacturer"
+          class="text-danger"
+        >
+          Console é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="release_date">Ano de Lançamento</label>
+        <input
+          class="form-control"
+          id="release_date"
+          type="number"
+          [(ngModel)]="release_date"
+          name="release_date"
+          placeholder="Digite o ano de lançamento"
+          required
+        />
+        <div *ngIf="consoleForm.submitted && !release_date" class="text-danger">
+          O ano de lançamento é obrigatório.
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="consoleForm.invalid"
+      >
+        {{ isEditing ? "Atualizar Console" : "Cadastrar Console" }}
+      </button>
+    </form>
   </div>
-  
+</div>

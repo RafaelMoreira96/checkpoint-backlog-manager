@@ -1,1 +1,123 @@
-<p>dashboard works!</p>
+<div class="row">
+  <div class="col">
+    <!-- Coluna da lista de jogos -->
+    <div class="col">
+      <!-- Item 1 da Coluna -->
+      <div class="card card-round">
+        <div class="card-header">
+          <div class="card-head-row card-tools-still-right">
+            <div class="card-title">Os últimos jogadores registrados</div>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Jogador</th>
+                  <th scope="col" class="text-end">Nickname</th>
+                  <th scope="col" class="text-end">Registrado em:</th>
+                </tr>
+              </thead>
+
+              <tbody
+                *ngIf="
+                  lastPlayersAdded && lastPlayersAdded.length > 0;
+                  else noGames
+                "
+              >
+                <tr *ngFor="let item of lastPlayersAdded">
+                  <th scope="row">{{ item.name_player }}</th>
+                  <td class="text-end">{{ item.nickname }}</td>
+                  <td class="text-end">{{ item.created_at }}</td>
+                </tr>
+              </tbody>
+
+              <ng-template #noGames>
+                <tbody>
+                  <tr>
+                    <td colspan="5" class="text-center">
+                      Nenhum jogo zerado encontrado.
+                    </td>
+                  </tr>
+                </tbody>
+              </ng-template>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <!-- Item 2 da Coluna -->
+      <div class="card card-round">
+        <div class="card-header">
+          <div class="card-head-row card-tools-still-right">
+            <div class="card-title">Últimos administradores cadastrados</div>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Jogador</th>
+                  <th scope="col" class="text-end">Nickname</th>
+                  <th scope="col" class="text-end">Registrado em:</th>
+                </tr>
+              </thead>
+
+              <tbody
+                *ngIf="
+                  lastAdminsAdded && lastAdminsAdded.length > 0;
+                  else noGames
+                "
+              >
+                <tr *ngFor="let item of lastAdminsAdded">
+                  <th scope="row">{{ item.name_administrator }}</th>
+                  <td class="text-end">{{ item.nickname }}</td>
+                  <td class="text-end">{{ item.created_at }}</td>
+                </tr>
+              </tbody>
+
+              <ng-template #noGames>
+                <tbody>
+                  <tr>
+                    <td colspan="5" class="text-center">
+                      Nenhum jogo zerado encontrado.
+                    </td>
+                  </tr>
+                </tbody>
+              </ng-template>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coluna dos cards -->
+  <div class="col-md-4">
+      <div *ngFor="let item of cardsAdminInfo" class="col-md-12">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-{{ item.colorIcon }} bubble-shadow-small">
+                  <i class="{{ item.icon }}"></i>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class="card-category"> {{ item.title }} </p>
+                  <h4 class="card-title">
+                    {{ item.data }}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

@@ -1,55 +1,53 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-black2">
-    <div class="card p-4 shadow-lg" style="width: 600px;">
-      <!-- Título do Formulário -->
-      <div class="text-center mb-4">
-        <h3>Cadastrar Log</h3>
-      </div>
-  
-      <!-- Formulário -->
-      <form (ngSubmit)="registerLog()" #logForm="ngForm">
-        
-        <div class="form-group mb-3">
-            <label for="descricao"> Descrição </label>
-            <input
-              class="form-control"
-              id="descricao"
-              [(ngModel)]="description"
-              name="descricao"
-              rows="3"
-              placeholder="Digite a descrição do log"
-              required
-            />
-            <div *ngIf="logForm.submitted && !description" class="text-danger">
-              Descrição é obrigatória.
-            </div>
-          </div>
-
-        <!-- Descrição do Log -->
-        <div class="form-group mb-3">
-          <label for="content"> Conteudo </label>
-          <textarea
-            class="form-control"
-            id="content"
-            [(ngModel)]="content"
-            name="content"
-            rows="3"
-            placeholder="Digite o conteudo do log"
-            required
-          ></textarea>
-          <div *ngIf="logForm.submitted && !content" class="text-danger">
-            Conteudo é obrigatório.
-          </div>
-        </div>
-  
-        <!-- Botão de Submissão -->
-        <button
-          type="submit"
-          class="btn btn-primary btn-block"
-          [disabled]="logForm.invalid"
-        >
-          Cadastrar Log
-        </button>
-      </form>
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card p-4 shadow-lg" style="width: 600px">
+    <!-- Título do Formulário -->
+    <div class="text-center mb-4">
+      <h3>Cadastrar Log</h3>
     </div>
+
+    <!-- Formulário -->
+    <form (ngSubmit)="registerLog()" #logForm="ngForm">
+      <div class="form-group mb-3">
+        <label for="descricao"> Descrição </label>
+        <input
+          class="form-control"
+          id="descricao"
+          [(ngModel)]="description"
+          name="descricao"
+          rows="3"
+          placeholder="Digite a descrição do log"
+          required
+        />
+        <div *ngIf="logForm.submitted && !description" class="text-danger">
+          Descrição é obrigatória.
+        </div>
+      </div>
+
+      <!-- Descrição do Log -->
+      <div class="form-group mb-3">
+        <label for="content"> Conteudo </label>
+        <textarea
+          class="form-control"
+          id="content"
+          [(ngModel)]="content"
+          name="content"
+          rows="3"
+          placeholder="Digite o conteudo do log"
+          required
+        ></textarea>
+        <div *ngIf="logForm.submitted && !content" class="text-danger">
+          Conteudo é obrigatório.
+        </div>
+      </div>
+
+      <!-- Botão de Submissão -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="logForm.invalid"
+      >
+        Cadastrar Log
+      </button>
+    </form>
   </div>
-  
+</div>
