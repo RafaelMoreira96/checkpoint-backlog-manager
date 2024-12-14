@@ -1,17 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Genre } from '../../../../models/genre';
 import { GenreService } from '../../../../services/genre.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-list-genre',
   templateUrl: './list-genre.component.html',
   styleUrls: ['./list-genre.component.css'],
 })
-export class ListGenreComponent {
+export class ListGenreComponent implements OnInit {
   genreList: Genre[] = [];
+  selectedGenreId: number | null = null;
 
-  constructor(private service: GenreService, private router: Router) {}
+  constructor(
+    private service: GenreService,
+    private router: Router,
+    private toast: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.getGenres();
@@ -21,24 +27,30 @@ export class ListGenreComponent {
     this.service.getGenres().subscribe(
       (result: any) => {
         this.genreList = result;
-        console.log(this.genreList);
       },
       (error) => {
-        console.error(error);
+        this.toast.error('Erro ao carregar os gêneros', 'Erro');
       }
     );
   }
 
-  removeGenre(id: number) {
-    this.service.deleteGenre(id).subscribe(
-      (result: any) => {
-        console.log('Gênero removido com sucesso');
-        this.getGenres();
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+  openModal(id: number): void {
+    this.selectedGenreId = id;
+  }
+
+  removeGenre() {
+    if (this.selectedGenreId !== null) {
+      this.service.deleteGenre(this.selectedGenreId).subscribe(
+        () => {
+          this.toast.success('Gênero removido com sucesso');
+          this.getGenres();
+          this.selectedGenreId = null;
+        },
+        (error) => {
+          this.toast.error('Erro ao remover o gênero', 'Erro');
+        }
+      );
+    }
   }
 
   editGenre(genre: Genre) {

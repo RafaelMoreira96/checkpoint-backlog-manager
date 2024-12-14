@@ -6,7 +6,8 @@ import "time"
 type AccessType int
 
 const (
-	Admin AccessType = iota // 0
+	Admin   AccessType = iota // 0
+	Manager AccessType = iota // 1: Manager
 )
 
 func (a AccessType) String() string {

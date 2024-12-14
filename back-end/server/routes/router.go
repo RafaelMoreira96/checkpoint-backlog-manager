@@ -53,14 +53,14 @@ func ProtectedMethods(app *fiber.App) {
 	app.Put("/api/v1/genre/activate/:id", controllers.ReactivateGenre)
 
 	/* Player routes methods */
-	app.Get("/api/v1/player/view", controllers.ViewPlayer)
+	app.Get("/api/v1/player/view", controllers.ViewPlayerProfile)
 	app.Delete("/api/v1/player/delete", controllers.DeletePlayer)
 
 	/* Administrator routes methods */
-	app.Get("/api/v1/admin/view/:id", controllers.ViewAdministrator)
-	app.Get("/api/v1/admin/view", controllers.ViewAdministrator)
-	app.Delete("/api/v1/admin/delete", controllers.CancelAdministratorAccount)
-	app.Delete("/api/v1/admin/delete/:id", controllers.CancelAdministratorAccount)
+	app.Get("/api/v1/admin/view/:id", controllers.ViewAdministratorProfile)
+	app.Get("/api/v1/admin/view", controllers.ViewAdministratorProfile)
+	app.Delete("/api/v1/admin/delete", controllers.CancelAdministratorInProfile)
+	app.Delete("/api/v1/admin/delete/:id", controllers.CancelAdministratorInList)
 	app.Get("/api/v1/admin/list", controllers.ListAdministrators)
 	app.Put("/api/v1/admin/update/:id", controllers.UpdateAdministrator)
 

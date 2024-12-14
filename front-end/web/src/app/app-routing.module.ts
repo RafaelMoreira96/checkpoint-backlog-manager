@@ -77,7 +77,7 @@ const routes: Routes = [
         path: 'register-manufacturer/:id_manufacturer',
         component: RegisterManufacturerComponent,
       },
-      { path: 'register-user', component: RegisterUserComponent },
+      { path: 'register-user', component: RegisterUserComponent, data: { typeAccess: '1'} },
       { path: 'register-user/:id_admin', component: RegisterUserComponent },
 
       { path: 'list-logs', component: ListLogComponent },

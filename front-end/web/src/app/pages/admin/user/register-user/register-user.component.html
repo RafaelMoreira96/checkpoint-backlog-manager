@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center align-items-center min-vh-100">
   <div class="card p-4 shadow-lg" style="width: 600px">
     <div class="text-center mb-4">
-      <h3>Cadastrar Administrador</h3>
+      <h3>{{ isEditing == true ? "Atualizar" : "Cadastrar"}} Administrador</h3>
     </div>
     <form (ngSubmit)="registerUser()" #adminForm="ngForm">
       <!-- Nome -->
@@ -61,11 +61,36 @@
           id="password"
           [(ngModel)]="admin.password"
           name="password"
+          type="password"
           placeholder="Digite a Senha"
           required
         />
         <div *ngIf="adminForm.submitted && !admin.password" class="text-danger">
           A senha é obrigatória.
+        </div>
+      </div>
+
+      <!-- Tipo de usuário -->
+      <div class="form-group mb-3">
+        <label for="accessType">Tipo de usuário</label>
+        <select
+          class="form-control"
+          id="accessType"
+          [(ngModel)]="admin.access_type"
+          name="accessType"
+          required
+        >
+          <option [value]="''" disabled selected>
+            Selecione o tipo de usuário
+          </option>
+          <option value="0">Administrador</option>
+          <option value="1">Gerenciador</option>
+        </select>
+        <div
+          *ngIf="adminForm.submitted && !admin.access_type"
+          class="text-danger"
+        >
+          O tipo de usuário é obrigatório.
         </div>
       </div>
 
@@ -75,7 +100,7 @@
         class="btn btn-primary btn-block"
         [disabled]="adminForm.invalid"
       >
-        Cadastrar Administrador
+        {{ isEditing == true ? "Atualizar" : "Cadastrar"}} Administrador
       </button>
     </form>
   </div>

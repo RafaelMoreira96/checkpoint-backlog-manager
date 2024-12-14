@@ -1,6 +1,8 @@
-<div class="table-container">
-    <table class="table">
-      <thead>
+<div class="container-fluid">
+  <div class="table-container">
+    <h2 class="mb-4">Fabricantes registrados</h2>
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
         <tr>
           <th>#</th>
           <th>Nome</th>
@@ -11,9 +13,9 @@
       </thead>
       <tbody>
         <tr *ngIf="manufacturerList.length === 0">
-          <td colspan="6" class="text-center">Nenhum gênero encontrado.</td>
+          <td colspan="6" class="text-center">Nenhum fabricante encontrado.</td>
         </tr>
-  
+
         <tr *ngFor="let item of manufacturerList">
           <td>{{ item.id_manufacturer }}</td>
           <td>{{ item.name_manufacturer }}</td>
@@ -21,15 +23,63 @@
           <td>{{ item.is_active ? "Ativo" : "Inativo" }}</td>
 
           <td>
-            <button class="btn btn-danger" (click)="removeManufacturer(item.id_manufacturer)">
-              <i class="fas fa-trash"></i>
-            </button>
-            <button class="btn btn-warning" (click)="editManufacturer(item)">
-              <i class="fas fa-edit"></i>
-            </button>
+            <div class="d-flex gap-2">
+              <button class="btn btn-warning" (click)="editManufacturer(item)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#confirmDeleteModal"
+                (click)="openModal(item.id_manufacturer)"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  
+</div>
+
+<!-- Modal de confirmação -->
+<div
+  class="modal fade"
+  id="confirmDeleteModal"
+  tabindex="-1"
+  aria-labelledby="confirmDeleteModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">
+          Confirmar Remoção
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja remover este gênero?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="removeManufacturer()"
+          data-bs-dismiss="modal"
+        >
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

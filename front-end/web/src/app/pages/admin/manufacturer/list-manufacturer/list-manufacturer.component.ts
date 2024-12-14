@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Manufacturer } from '../../../../models/manufacturer';
 import { ManufacturerService } from '../../../../services/manufacturer.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-list-manufacturer',
@@ -10,8 +11,13 @@ import { Router } from '@angular/router';
 })
 export class ListManufacturerComponent {
   manufacturerList: Manufacturer[] = [];
+  selectedManufacturerId: number | null = null;
 
-  constructor(private service: ManufacturerService, private router: Router) {}
+  constructor(
+    private service: ManufacturerService,
+    private router: Router,
+    private toast: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.getManufacturers();
@@ -21,24 +27,30 @@ export class ListManufacturerComponent {
     this.service.getManufacturers().subscribe(
       (result: any) => {
         this.manufacturerList = result;
-        console.log(this.manufacturerList);
       },
       (error) => {
-        console.error(error);
+        this.toast.error('Erro ao carregar os fabricantes', 'Erro');
       }
     );
   }
 
-  removeManufacturer(id: number) {
-    this.service.deleteManufacturer(id).subscribe(
-      (result: any) => {
-        console.log('Fabricante removido com sucesso');
-        this.getManufacturers();
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+  openModal(id: number): void {
+    this.selectedManufacturerId = id;
+  }
+
+  removeManufacturer() {
+    if (this.selectedManufacturerId !== null) {
+      this.service.deleteManufacturer(this.selectedManufacturerId).subscribe(
+        (result: any) => {
+          console.log('Fabricante removido com sucesso');
+          this.getManufacturers();
+          this.selectedManufacturerId = null;
+        },
+        (error) => {
+          this.toast.error('Erro ao remover o fabricante', 'Erro');
+        }
+      );
+    }
   }
 
   editManufacturer(manufacturer: Manufacturer) {

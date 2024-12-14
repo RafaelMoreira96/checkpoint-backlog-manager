@@ -48,7 +48,6 @@ export class ListConsoleComponent {
         },
         (error) => {
           this.toast.error('Erro ao remover o console', 'Erro');
-          console.error(error);
         }
       )
     }

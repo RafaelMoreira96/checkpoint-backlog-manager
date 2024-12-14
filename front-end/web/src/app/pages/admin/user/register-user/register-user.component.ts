@@ -43,17 +43,17 @@ export class RegisterUserComponent implements OnInit {
   registerUser(): void {
     if (this.isEditing) {
       this.updateUser();
-      console.log('true');
     } else {
       this.createUser();
-      console.log('false');
     }
-    //this.router.navigate(['admin/list-user']);
+    this.router.navigate(['admin/list-user']);
   }
 
   createUser(): void {
+    this.admin.access_type = Number(this.admin.access_type)
     this.adminService.registerAdministrator(this.admin).subscribe(
       (resp) => {
+        
         this.toastr.success('Administrador cadastrado com sucesso!', 'Sucesso');
         this.admin = new Administrator();
       },
@@ -65,10 +65,7 @@ export class RegisterUserComponent implements OnInit {
 
   updateUser(): void {
     this.adminService
-      .updateAdministrator(
-        this.admin.id_administrator,
-        this.admin
-      )
+      .updateAdministrator(this.admin.id_administrator, this.admin)
       .subscribe(
         (resp) => {
           this.toastr.success(

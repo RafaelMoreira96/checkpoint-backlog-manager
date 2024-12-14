@@ -20,12 +20,18 @@ export class AdministratorService {
     return this.http.get(`${this.BASE_URL}/view`, { headers: this.headers });
   }
 
-  deleteAdministrator(id: number) {
+  deleteAdministratorInProfile(id: number) {
     return this.http.delete(`${this.BASE_URL}/delete`, {
       headers: this.headers,
     });
   }
 
+  deleteAdministratorInList(id: number) {
+    return this.http.delete(`${this.BASE_URL}/delete/${id}`, {
+      headers: this.headers,
+    });
+  }
+  
   getAdministrator(id: number) {
     return this.http.get(`${this.BASE_URL}/view/${id}`, {
       headers: this.headers,

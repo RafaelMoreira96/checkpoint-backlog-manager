@@ -123,18 +123,14 @@ func CardsInfo(c *fiber.Ctx) error {
 }
 
 /* ------------------------------------------------------------------------------
- * ------------------------------ Player methods --------------------------------
+ * ------------------------------ Admin methods --------------------------------
  * ------------------------------------------------------------------------------ */
-/* func AdminCardsInfo(c *fiber.Ctx) error {
-	db := database.GetDatabase()
-} */
-
 func LastPlayersRegistered(c *fiber.Ctx) error {
 	utils.GetAdminTokenInfos(c)
 	db := database.GetDatabase()
 	var players []models.Player
 
-	if err := db.Order("created_at DESC").Limit(5).Find(&players).Error; err != nil {
+	if err := db.Where("is_active = true").Order("created_at DESC").Limit(5).Find(&players).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching players",
 		})
@@ -157,7 +153,7 @@ func LastAdminsRegistered(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var administrators []models.Administrator
 
-	if err := db.Order("created_at DESC").Limit(5).Find(&administrators).Error; err != nil {
+	if err := db.Where("is_active = true").Order("created_at DESC").Limit(5).Find(&administrators).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching administrators",
 		})
@@ -189,7 +185,7 @@ func AdminCardsInfo(c *fiber.Ctx) error {
 	}
 
 	var games []models.Game
-	if err := db.Find(&games).Where("status = 0").Error; err != nil {
+	if err := db.Where("status = 0").Find(&games).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching games",
 		})

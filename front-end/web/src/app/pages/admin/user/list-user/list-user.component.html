@@ -1,40 +1,88 @@
-<div class="table-container">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Nome</th>
-        <th>E-mail</th>
-        <th>Nickname</th>
-        <th>Tipo Acesso</th>
-        <th>Data de cadastro</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngIf="adminList.length === 0">
-        <td colspan="6" class="text-center">Nenhum gênero encontrado.</td>
-      </tr>
+<div class="container-fluid">
+  <div class="table-container">
+    <h2 class="mb-4">Usuários registrados</h2>
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Nickname</th>
+          <th>Tipo Acesso</th>
+          <th>Data de cadastro</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="adminList.length === 0">
+          <td colspan="6" class="text-center">Nenhum usuário encontrado.</td>
+        </tr>
 
-      <tr *ngFor="let item of adminList">
-        <td>{{ item.id_administrator }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.email }}</td>
-        <td>{{ item.nickname }}</td>
-        <td>{{ item.is_active ? "Admin" : "Manager" }}</td>
-        <td>{{ item.created_at | date: "dd/MM/yyyy" }}</td>
-        <td>
-          <button
-            class="btn btn-danger"
-            (click)="removeAdmin(item.id_administrator)"
-          >
-            <i class="fas fa-trash"></i>
-          </button>
-          <button class="btn btn-warning" (click)="editAdmin(item)">
-            <i class="fas fa-edit"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        <tr *ngFor="let item of adminList">
+          <td>{{ item.id_administrator }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.nickname }}</td>
+          <td>{{ item.access_type === 1 ? 'Manager' : 'Admin' }}</td>
+          <td>{{ item.created_at | date : "dd/MM/yyyy" }}</td>
+          <td>
+            <div class="d-flex gap-2">
+              <button class="btn btn-warning" (click)="editAdmin(item)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#confirmDeleteModal"
+                (click)="openModal(item.id_administrator)"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal de confirmação -->
+<div
+  class="modal fade"
+  id="confirmDeleteModal"
+  tabindex="-1"
+  aria-labelledby="confirmDeleteModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">
+          Confirmar Remoção
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza de que deseja remover este usuário?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="removeAdmin()"
+          data-bs-dismiss="modal"
+        >
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

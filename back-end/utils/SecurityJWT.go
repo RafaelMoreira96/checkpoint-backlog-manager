@@ -10,11 +10,12 @@ import (
 
 var secretKey = []byte("game-beating-jwt")
 
-func GenerateJWT(userUD uint, role string) (string, error) {
+func GenerateJWT(userUD uint, role string, permission int) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": userUD,
-		"role":    role,
-		"exp":     time.Now().Add(time.Hour * 72).Unix(),
+		"user_id":    userUD,
+		"role":       role,
+		"permission": permission,
+		"exp":        time.Now().Add(time.Hour * 72).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -52,7 +53,13 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Role not found"})
 	}
 
+	permission, ok := claims["permission"].(float64)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Permission not found"})
+	}
+
 	c.Locals("userID", uint(userID))
 	c.Locals("role", role)
+	c.Locals("permission", uint(permission))
 	return c.Next()
 }

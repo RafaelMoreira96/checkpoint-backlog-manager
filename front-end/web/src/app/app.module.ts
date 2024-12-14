@@ -35,6 +35,7 @@ import { BacklogFormComponent } from './pages/player/registers/backlog-form/back
 import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-list.component';
 import { GameBeatenListComponent } from './pages/player/lists/game-beaten-list/game-beaten-list.component';
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
+import { UnauthorizedComponent } from './components/error-pages/unauthorized/unauthorized.component';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import { PlayerProfileComponent } from './pages/player/player-profile/player-pro
     CsvModeComponent,
     BacklogFormComponent,
     BacklogListComponent,
-    PlayerProfileComponent
+    PlayerProfileComponent,
+    UnauthorizedComponent
   ],
   imports: [
     CommonModule,
