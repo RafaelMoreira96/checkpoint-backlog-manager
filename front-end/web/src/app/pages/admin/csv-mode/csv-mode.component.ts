@@ -1,16 +1,22 @@
 import { Component } from '@angular/core';
+import { CsvFunctionsService } from '../../../services/csv-functions.service';
+import { ToastrService } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-csv-mode',
   templateUrl: './csv-mode.component.html',
-  styleUrl: './csv-mode.component.css',
+  styleUrls: ['./csv-mode.component.css'],
 })
 export class CsvModeComponent {
   activeTab: string = 'genero'; // Aba padrão ativa
   selectedFiles: { [key: string]: File | null } = {
     genero: null,
     fabricante: null,
+    console: null,
   };
+
+  constructor(private service: CsvFunctionsService, private toast: ToastrService) {} // Injeta o serviço no construtor
 
   onFileSelected(event: Event, tipo: string): void {
     const inputElement = event.target as HTMLInputElement;
@@ -21,51 +27,44 @@ export class CsvModeComponent {
 
   onSubmitGenero(): void {
     if (this.selectedFiles['genero']) {
-      this.readCsv(this.selectedFiles['genero']);
+      const file = this.selectedFiles['genero'];
+      this.service.importGenreCsv(file).subscribe(
+        (response) => {
+          this.toast.success("Gêneros importados com sucesso!", "Sucesso!");
+          window.location.reload();
+        },
+        (error) => {
+          console.error('Erro ao importar gêneros', error);
+        }
+      );
     }
   }
 
   onSubmitFabricante(): void {
     if (this.selectedFiles['fabricante']) {
-      this.readCsv(this.selectedFiles['fabricante']);
+      const file = this.selectedFiles['fabricante'];
+      this.service.importManufacturerCsv(file).subscribe(
+        (response) => {
+          console.log('Fabricantes importados com sucesso', response);
+        },
+        (error) => {
+          console.error('Erro ao importar fabricantes', error);
+        }
+      );
     }
   }
 
-  /* processCsv(file: File | null, tipo: string): void {
-    for (let index = 0; index < array.length; index++) {
-      const element = array[index];
-    }
-
-    if (file) {
-      console.log(`Processando CSV de ${tipo}:`, file.name);
-    }
-  } */
-
-  readCsv(file: File | null): void {
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsText(file); // Lê o arquivo como texto
-
-      reader.onload = () => {
-        const csvContent = reader.result as string;
-        const rows = csvContent.split('\n'); // Divide o conteúdo em linhas
-
-        for (let i = 0; i < rows.length; i++) {
-          const row = rows[i].trim(); // Remove espaços extras
-          if (row) {
-            // Evita linhas vazias
-            const columns = row.split(','); // Divide a linha em colunas usando vírgula como delimitador
-            console.log(`Linha ${i + 1}:`, columns);
-            // Aqui você pode processar cada coluna individualmente, por exemplo:
-            // const name = columns[0];
-            // const age = columns[1];
-          }
+  onSubmitConsole(): void {
+    if (this.selectedFiles['console']) {
+      const file = this.selectedFiles['console'];
+      this.service.importConsoleCsv(file).subscribe(
+        (response) => {
+          console.log('Consoles importados com sucesso', response);
+        },
+        (error) => {
+          console.error('Erro ao importar consoles', error);
         }
-      };
-
-      reader.onerror = () => {
-        console.error('Erro ao ler o arquivo CSV');
-      };
+      );
     }
   }
 }

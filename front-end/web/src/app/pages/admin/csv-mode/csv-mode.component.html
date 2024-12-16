@@ -27,11 +27,11 @@
         <li class="nav-item" role="presentation">
           <button
             class="nav-link"
-            [ngClass]="{ active: activeTab === 'coming-soon' }"
-            (click)="activeTab = 'coming-soon'"
+            [ngClass]="{ active: activeTab === 'consoles' }"
+            (click)="activeTab = 'consoles'"
             type="button"
           >
-            Em Breve
+            Inserir CSV de consoles
           </button>
         </li>
       </ul>
@@ -62,6 +62,12 @@
       <!-- Aba 2: Inserir lista de fabricantes -->
       <div *ngIf="activeTab === 'fabricante'">
         <h5 class="card-title">Inserir lista de fabricantes</h5>
+        <p class="card-text">
+          Insira um arquivo CSV com os fabricantes que deseja adicionar ao banco de
+          dados. 
+          <br/>
+          O arquivo deve conter uma coluna com o nome do fabricante e ano de fundação.
+        </p>
         <form (submit)="onSubmitFabricante()">
           <input
             type="file"
@@ -74,7 +80,28 @@
         </form>
       </div>
 
-      <!-- Aba 3: Em Breve -->
+      <!-- Aba 3: Inserir lista de fabricantes -->
+      <div *ngIf="activeTab === 'consoles'">
+        <h5 class="card-title">Inserir lista de consoles</h5>
+        <p class="card-text">
+          Insira um arquivo CSV com os consoles que deseja adicionar ao banco de
+          dados. 
+          <br/>
+          O arquivo deve conter uma coluna com o nome do console, a fabricante e ano de lançamento do console.
+        </p>
+        <form (submit)="onSubmitFabricante()">
+          <input
+            type="file"
+            accept=".csv"
+            (change)="onFileSelected($event, 'fabricante')"
+            class="form-control mb-3"
+            required
+          />
+          <button type="submit" class="btn btn-primary">Inserir</button>
+        </form>
+      </div>
+
+      <!-- Aba 4: Em Breve -->
       <div *ngIf="activeTab === 'coming-soon'">
         <h5 class="card-title">Funcionalidade em Desenvolvimento</h5>
         <p class="card-text">

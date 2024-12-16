@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-register-user',
   templateUrl: './register-user.component.html',
-  styleUrl: './register-user.component.css',
+  styleUrls: ['./register-user.component.css'], // Correção: 'styleUrls' para array, não 'styleUrl'
 })
 export class RegisterUserComponent implements OnInit {
   admin: Administrator = new Administrator();
@@ -23,59 +23,54 @@ export class RegisterUserComponent implements OnInit {
   ngOnInit(): void {
     const idAdmin = this.route.snapshot.paramMap.get('id_admin');
     if (idAdmin) {
-      console.log(idAdmin);
       this.isEditing = true;
-      this.getUser(+idAdmin);
+      this.getUser(Number(idAdmin)); // Correção: Garantir que 'idAdmin' seja convertido para número
     }
   }
 
-  getUser(id: number) {
+  getUser(id: number): void {
     this.adminService.getAdministrator(id).subscribe(
       (admin: any) => {
         this.admin = admin;
       },
       (error) => {
-        this.toastr.error('Erro ao carregar os dados do usuário', 'Erro');
+        this.toastr.error('Erro ao carregar os dados do administrador.', 'Erro');
       }
     );
   }
 
   registerUser(): void {
     if (this.isEditing) {
-      this.updateUser();
+      this.updateUserById();
     } else {
       this.createUser();
     }
-    this.router.navigate(['admin/list-user']);
   }
 
   createUser(): void {
-    this.admin.access_type = Number(this.admin.access_type)
+    this.admin.access_type = Number(this.admin.access_type); // Garantir conversão
     this.adminService.registerAdministrator(this.admin).subscribe(
-      (resp) => {
-        
+      () => {
         this.toastr.success('Administrador cadastrado com sucesso!', 'Sucesso');
-        this.admin = new Administrator();
+        this.admin = new Administrator(); // Limpa o formulário após o sucesso
+        this.router.navigate(['admin/list-user']); // Mover navegação aqui para evitar redirecionamento prematuro
       },
       (error) => {
-        this.toastr.error('Erro ao cadastrar gênero.', 'Erro');
+        this.toastr.error('Erro ao cadastrar o administrador.', 'Erro'); // Corrigir mensagem
       }
     );
   }
 
-  updateUser(): void {
-    this.adminService
-      .updateAdministrator(this.admin.id_administrator, this.admin)
-      .subscribe(
-        (resp) => {
-          this.toastr.success(
-            'Administrador atualizado com sucesso!',
-            'Sucesso'
-          );
-        },
-        (error) => {
-          this.toastr.error('Erro ao atualizar gênero.', 'Erro');
-        }
-      );
+  updateUserById(): void {
+    this.admin.access_type = Number(this.admin.access_type); // Ensure conversion
+    this.adminService.updateAdministrator(this.admin.id_administrator, this.admin).subscribe(
+      () => {
+        this.toastr.success('Administrador atualizado com sucesso!', 'Sucesso');
+        this.router.navigate(['admin/list-user']); // Move navigation here to avoid premature redirection
+      },
+      (error) => {
+        this.toastr.error('Erro ao atualizar o administrador.', 'Erro'); // Correct message
+      }
+    );
   }
 }

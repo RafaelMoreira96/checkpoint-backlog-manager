@@ -1,6 +1,11 @@
 package controllers
 
 import (
+	"encoding/csv"
+	"io"
+	"strconv"
+	"strings"
+
 	"github.com/RafaelMoreira96/game-beating-project/controllers/utils"
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
@@ -171,4 +176,121 @@ func ReactivateConsole(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(console)
+}
+
+func ImportConsolesFromCSV(c *fiber.Ctx) error {
+	utils.GetAdminTokenInfos(c)
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error retrieving file: " + err.Error(),
+		})
+	}
+
+	f, err := file.Open()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error opening file: " + err.Error(),
+		})
+	}
+	defer f.Close()
+
+	reader := csv.NewReader(f)
+	reader.Comma = ','
+	reader.LazyQuotes = true
+	db := database.GetDatabase()
+
+	tx := db.Begin()
+	if tx.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error starting transaction: " + tx.Error.Error(),
+		})
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	recordIndex := 0
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "error reading CSV file: " + err.Error(),
+			})
+		}
+
+		if recordIndex == 0 && strings.ToLower(record[0]) == "nome do console" {
+			recordIndex++
+			continue
+		}
+
+		if len(record) < 3 || record[0] == "" || record[1] == "" || record[2] == "" {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "invalid record at line " + strconv.Itoa(recordIndex+1),
+			})
+		}
+
+		consoleName := strings.TrimSpace(record[0])
+		manufacturerName := strings.TrimSpace(record[1])
+
+		releaseDate := strings.TrimSpace(record[2])
+
+		var manufacturer models.Manufacturer
+		if err := tx.Where("name_manufacturer = ?", manufacturerName).First(&manufacturer).Error; err != nil {
+			errorLog := models.ErrorLog{
+				ConsoleName:      consoleName,
+				ManufacturerName: manufacturerName,
+				ErrorMessage:     "manufacturer not found",
+				LineNumber:       recordIndex + 1,
+			}
+
+			if err := tx.Create(&errorLog).Error; err != nil {
+				tx.Rollback()
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"message": "error saving error log: " + err.Error(),
+				})
+			}
+
+			recordIndex++
+			continue
+		}
+
+		console := models.Console{
+			NameConsole:    consoleName,
+			ManufacturerID: manufacturer.IdManufacturer,
+			ReleaseDate:    releaseDate,
+			IsActive:       true,
+		}
+
+		if err := console.Validate(); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "validation error at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
+			})
+		}
+
+		if err := tx.Create(&console).Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "error inserting record at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
+			})
+		}
+
+		recordIndex++
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error committing transaction: " + err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": "consoles imported successfully",
+	})
 }

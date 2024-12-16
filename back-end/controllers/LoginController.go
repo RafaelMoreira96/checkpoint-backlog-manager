@@ -1,11 +1,15 @@
 package controllers
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
 	"github.com/RafaelMoreira96/game-beating-project/utils"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -71,6 +75,9 @@ func LoginAdmin(c *fiber.Ctx) error {
 		})
 	}
 
+	user.Nickname = strings.TrimSpace(user.Nickname)
+	user.Password = strings.TrimSpace(user.Password)
+
 	if user.Nickname == "" || user.Password == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "nickname and password are required",
@@ -79,8 +86,13 @@ func LoginAdmin(c *fiber.Ctx) error {
 
 	var administrator models.Administrator
 	if err := db.Where("nickname = ?", user.Nickname).First(&administrator).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "user not found",
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "user not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "internal server error",
 		})
 	}
 
@@ -96,6 +108,7 @@ func LoginAdmin(c *fiber.Ctx) error {
 		})
 	}
 
+	// Generate JWT token
 	token, err := utils.GenerateJWT(administrator.IdAdministrator, "admin", int(administrator.AccessType))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -103,6 +116,7 @@ func LoginAdmin(c *fiber.Ctx) error {
 		})
 	}
 
+	// Return success response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
 		"token":   token,

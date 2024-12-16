@@ -48,18 +48,14 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Player ID not found"})
 	}
 
-	role, ok := claims["role"].(string)
-	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Role not found"})
-	}
-
 	permission, ok := claims["permission"].(float64)
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Permission not found"})
 	}
 
 	c.Locals("userID", uint(userID))
-	c.Locals("role", role)
+	c.Locals("role", claims["role"].(string))
 	c.Locals("permission", uint(permission))
+
 	return c.Next()
 }

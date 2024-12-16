@@ -1,13 +1,16 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/RafaelMoreira96/game-beating-project/controllers/utils"
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func AddAdministrator(c *fiber.Ctx) error {
@@ -16,7 +19,7 @@ func AddAdministrator(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&administrator); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error parsing administrator",
+			"message": "error parsing administrator: " + err.Error(),
 		})
 	}
 
@@ -41,15 +44,9 @@ func AddAdministrator(c *fiber.Ctx) error {
 
 	administrator.Password = hashedPassword
 	var administratorDB models.Administrator
-	if err := db.Where("nickname = ?", administrator.Nickname).First(&administratorDB).Error; err == nil {
+	if err := db.Where("nickname = ? OR email = ?", administrator.Nickname, administrator.Email).First(&administratorDB).Error; err == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "administrator already exists",
-		})
-	}
-
-	if err := db.Where("email = ?", administrator.Email).First(&administratorDB).Error; err == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "email already exists",
+			"message": "nickname or email already exists",
 		})
 	}
 
@@ -63,9 +60,33 @@ func AddAdministrator(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(administrator)
 }
 
-/* Into administrator account functions */
+func ViewAdministratorById(c *fiber.Ctx) error {
+	adminID, err := utils.GetAdminTokenInfos(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
+
+	db := database.GetDatabase()
+	var administrator models.Administrator
+
+	if err := db.Where("id_administrator = ? AND is_active = 1", c.Params("id")).First(&administrator).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Administrator not found. ID: " + fmt.Sprint(adminID),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(administrator)
+}
+
 func ViewAdministratorProfile(c *fiber.Ctx) error {
-	adminID, _ := utils.GetAdminTokenInfos(c)
+	adminID, err := utils.GetAdminTokenInfos(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
 
 	db := database.GetDatabase()
 	var administrator models.Administrator
@@ -80,7 +101,12 @@ func ViewAdministratorProfile(c *fiber.Ctx) error {
 }
 
 func ListAdministrators(c *fiber.Ctx) error {
-	utils.GetAdminTokenInfos(c)
+	_, err := utils.GetAdminTokenInfos(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
 
 	db := database.GetDatabase()
 	var administrators []models.Administrator
@@ -94,56 +120,64 @@ func ListAdministrators(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(administrators)
 }
 
-func CancelAdministratorInProfile(c *fiber.Ctx) error {
-	adminID, _ := utils.GetAdminTokenInfos(c)
-
+func deactivateAdministrator(c *fiber.Ctx, adminID uint) error {
 	db := database.GetDatabase()
 	var administrator models.Administrator
 
 	if err := db.Where("id_administrator = ?", adminID).First(&administrator).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "administrator not found" + err.Error(),
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "administrator not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error retrieving administrator",
 		})
 	}
 
 	administrator.IsActive = false
 	if err := db.Save(&administrator).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error deleting admin: " + err.Error(),
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error deactivating administrator",
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "administrator deleted",
+		"message": "administrator deactivated",
 	})
+}
+
+func CancelAdministratorInProfile(c *fiber.Ctx) error {
+	adminID, err := utils.GetAdminTokenInfos(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
+
+	return deactivateAdministrator(c, adminID)
 }
 
 func CancelAdministratorInList(c *fiber.Ctx) error {
 	utils.GetAdminTokenInfos(c)
 
-	db := database.GetDatabase()
-	var administrator models.Administrator
-
-	if err := db.Where("id_administrator = ?", c.Params("id")).First(&administrator).Error; err != nil {
+	adminID, err := strconv.ParseUint(c.Params("id"), 10, 0)
+	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "administrator not found" + err.Error(),
+			"message": "invalid administrator ID",
 		})
 	}
 
-	administrator.IsActive = false
-	if err := db.Save(&administrator).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error deleting admin: " + err.Error(),
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "administrator deleted",
-	})
+	return deactivateAdministrator(c, uint(adminID))
 }
 
 func UpdateAdministrator(c *fiber.Ctx) error {
-	adminID, _ := utils.GetAdminTokenInfos(c)
+	adminID, err := utils.GetAdminTokenInfos(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
 
 	db := database.GetDatabase()
 	var administrator models.Administrator
@@ -173,7 +207,6 @@ func UpdateAdministrator(c *fiber.Ctx) error {
 	administrator.Name = updatedAdministrator.Name
 	administrator.Email = updatedAdministrator.Email
 	administrator.Nickname = updatedAdministrator.Nickname
-	administrator.Password = updatedAdministrator.Password
 
 	if updatedAdministrator.Password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(updatedAdministrator.Password), bcrypt.DefaultCost)
@@ -192,4 +225,67 @@ func UpdateAdministrator(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(administrator)
+}
+
+func UpdateAdministratorById(c *fiber.Ctx) error {
+	_, err := utils.GetAdminTokenInfos(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
+
+	db := database.GetDatabase()
+	var administrator models.Administrator
+	if err := c.BodyParser(&administrator); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error parsing administrator",
+		})
+	}
+
+	if administrator.IdAdministrator == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "administrator ID is required",
+		})
+	}
+
+	var administratorDB models.Administrator
+	if err := db.Where("id_administrator = ?", c.Params("id")).First(&administratorDB).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "administrator not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error getting administrator",
+		})
+	}
+
+	administratorDB.Name = administrator.Name
+	administratorDB.Email = administrator.Email
+	administratorDB.Nickname = administrator.Nickname
+	administratorDB.AccessType = administrator.AccessType
+	administratorDB.IsActive = administrator.IsActive
+
+	if administrator.Password != administratorDB.Password {
+		hashedPassword, err := utils.HashPassword(administrator.Password)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "error hashing password",
+			})
+		}
+
+		administratorDB.Password = hashedPassword
+	}
+
+	if err := db.Save(&administratorDB).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error updating administrator",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":       "administrator updated successfully",
+		"administrator": administratorDB,
+	})
 }

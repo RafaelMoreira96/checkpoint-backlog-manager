@@ -7,7 +7,7 @@ import { HomeComponent } from './pages/player/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RegisterGameComponent } from './pages/player/registers/register-game/register-game.component';
 import { AboutProjectComponent } from './pages/player/about-project/about-project.component';
 import { ProjectUpdatesLogComponent } from './pages/player/project-updates-log/project-updates-log.component';
@@ -81,7 +81,7 @@ import { UnauthorizedComponent } from './components/error-pages/unauthorized/una
   ],
   providers: [
     provideClientHydration(),
-    provideHttpClient()
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })

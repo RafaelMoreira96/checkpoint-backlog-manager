@@ -22,7 +22,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getProfile() {
-    this.service.viewAdministrator().subscribe(
+    this.service.getAdministrator().subscribe(
       (result: any) => {
         this.profile = result;
       },

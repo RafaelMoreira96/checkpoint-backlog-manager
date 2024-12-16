@@ -17,21 +17,18 @@ export class RoleGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    const requiredRoles = route.data['role']; // Pega os papéis permitidos da rota (pode ser array ou string)
-    const userRole = this.authService.getUserRole(); // Pega o papel do usuário
+    const requiredRoles = route.data['role']; 
+    const userRole = this.authService.getUserRole();
 
     if (Array.isArray(requiredRoles)) {
-      // Se a rota aceita múltiplos papéis
       if (requiredRoles.includes(userRole)) {
         return true;
       }
     } else if (requiredRoles === userRole) {
-      // Se a rota aceita um único papel
       return true;
     }
 
-    // Se o usuário não tem permissão
-    this.router.navigate(['unauthorized']); // Redireciona para uma página de acesso negado
+    this.router.navigate(['unauthorized']); 
     return false;
   }
 }

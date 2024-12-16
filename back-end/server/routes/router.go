@@ -57,12 +57,13 @@ func ProtectedMethods(app *fiber.App) {
 	app.Delete("/api/v1/player/delete", controllers.DeletePlayer)
 
 	/* Administrator routes methods */
-	app.Get("/api/v1/admin/view/:id", controllers.ViewAdministratorProfile)
+	app.Get("/api/v1/admin/view/:id", controllers.ViewAdministratorById)
 	app.Get("/api/v1/admin/view", controllers.ViewAdministratorProfile)
 	app.Delete("/api/v1/admin/delete", controllers.CancelAdministratorInProfile)
 	app.Delete("/api/v1/admin/delete/:id", controllers.CancelAdministratorInList)
 	app.Get("/api/v1/admin/list", controllers.ListAdministrators)
-	app.Put("/api/v1/admin/update/:id", controllers.UpdateAdministrator)
+	app.Put("/api/v1/admin/update/:id", controllers.UpdateAdministratorById)
+	app.Put("/api/v1/admin/update", controllers.UpdateAdministrator)
 
 	/* Game routes methods */
 	app.Post("/api/v1/game", controllers.AddGame)
@@ -90,4 +91,8 @@ func ProtectedMethods(app *fiber.App) {
 	app.Get("/api/v1/admin/last_admin_added", controllers.LastAdminsRegistered)
 	app.Get("/api/v1/admin/cards_info", controllers.AdminCardsInfo)
 
+	/* CSV Mode functions */
+	app.Post("/api/v1/admin/csv/add_list_genres", controllers.ImportGenresFromCSV)
+	app.Post("/api/v1/admin/csv/add_list_manufacturers", controllers.ImportManufacturersFromCSV)
+	app.Post("/api/v1/admin/csv/add_list_consoles", controllers.ImportConsolesFromCSV)
 }
