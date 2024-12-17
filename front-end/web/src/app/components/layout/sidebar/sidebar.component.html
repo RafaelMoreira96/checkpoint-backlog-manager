@@ -28,8 +28,62 @@
   <div class="sidebar-wrapper scrollbar scrollbar-inner">
     <div class="sidebar-content">
       <ul class="nav nav-secondary">
+        
+        <!-- Items da área do jogador -->
         <ng-container *ngIf="role === 'player'">
-          <li *ngFor="let item of menuItemsPlayer" class="nav-item">
+          <li *ngFor="let item of menuItemsPlayer.dashboardItem" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Registros</h4>
+          </li>
+          <li *ngFor="let item of menuItemsPlayer.registersItem" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Listagens</h4>
+          </li>
+          <li *ngFor="let item of menuItemsPlayer.listItems" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Sobre o projeto</h4>
+          </li>
+          <li *ngFor="let item of menuItemsPlayer.infoProject" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Configurações</h4>
+          </li>
+          <li *ngFor="let item of menuItemsPlayer.configs" class="nav-item">
             <a routerLink="{{ item.link }}">
               <i class="{{ item.icon }}"></i>
               <p>{{ item.name }}</p>
@@ -37,8 +91,48 @@
           </li>
         </ng-container>
 
+        <!-- Items da área do administrador -->
         <ng-container *ngIf="role === 'admin'">
-          <li *ngFor="let item of menuItemsAdmin" class="nav-item">
+          <li *ngFor="let item of menuItemsAdmin.dashboardItem" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Registros</h4>
+          </li>
+          <li *ngFor="let item of menuItemsAdmin.registersItems" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Listagens</h4>
+          </li>
+          <li *ngFor="let item of menuItemsAdmin.listsItems" class="nav-item">
+            <a routerLink="{{ item.link }}">
+              <i class="{{ item.icon }}"></i>
+              <p>{{ item.name }}</p>
+            </a>
+          </li>
+
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Configurações</h4>
+          </li>
+          <li *ngFor="let item of menuItemsAdmin.othersItems" class="nav-item">
             <a routerLink="{{ item.link }}">
               <i class="{{ item.icon }}"></i>
               <p>{{ item.name }}</p>

@@ -7,6 +7,16 @@
         <li class="nav-item" role="presentation">
           <button
             class="nav-link"
+            [ngClass]="{ active: activeTab === 'instructions' }"
+            (click)="activeTab = 'instructions'"
+            type="button"
+          >
+            Instruções
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
             [ngClass]="{ active: activeTab === 'genero' }"
             (click)="activeTab = 'genero'"
             type="button"
@@ -43,8 +53,8 @@
         <h5 class="card-title">Inserir lista de gêneros</h5>
         <p class="card-text">
           Insira um arquivo CSV com os gêneros que deseja adicionar ao banco de
-          dados. 
-          <br/>
+          dados.
+          <br />
           O arquivo deve conter uma coluna com o nome do gênero apenas.
         </p>
         <form (submit)="onSubmitGenero()">
@@ -63,10 +73,11 @@
       <div *ngIf="activeTab === 'fabricante'">
         <h5 class="card-title">Inserir lista de fabricantes</h5>
         <p class="card-text">
-          Insira um arquivo CSV com os fabricantes que deseja adicionar ao banco de
-          dados. 
-          <br/>
-          O arquivo deve conter uma coluna com o nome do fabricante e ano de fundação.
+          Insira um arquivo CSV com os fabricantes que deseja adicionar ao banco
+          de dados.
+          <br />
+          O arquivo deve conter uma coluna com o nome do fabricante e ano de
+          fundação.
         </p>
         <form (submit)="onSubmitFabricante()">
           <input
@@ -85,15 +96,16 @@
         <h5 class="card-title">Inserir lista de consoles</h5>
         <p class="card-text">
           Insira um arquivo CSV com os consoles que deseja adicionar ao banco de
-          dados. 
-          <br/>
-          O arquivo deve conter uma coluna com o nome do console, a fabricante e ano de lançamento do console.
+          dados.
+          <br />
+          O arquivo deve conter uma coluna com o nome do console, a fabricante e
+          ano de lançamento do console.
         </p>
-        <form (submit)="onSubmitFabricante()">
+        <form (submit)="onSubmitConsole()">
           <input
             type="file"
             accept=".csv"
-            (change)="onFileSelected($event, 'fabricante')"
+            (change)="onFileSelected($event, 'console')"
             class="form-control mb-3"
             required
           />
@@ -102,11 +114,19 @@
       </div>
 
       <!-- Aba 4: Em Breve -->
-      <div *ngIf="activeTab === 'coming-soon'">
-        <h5 class="card-title">Funcionalidade em Desenvolvimento</h5>
+      <div *ngIf="activeTab === 'instructions'">
+        <h5 class="card-title">
+          Instruções para manipular a importação de CSV
+        </h5>
         <p class="card-text">
-          Estamos trabalhando em novos recursos. Em breve, você terá acesso a
-          mais funcionalidades!
+          <p class="text-break">
+          Caro administrador, para importar corretamente as listas no formato
+          .csv, certifique-se que as informações apresentadas em cada aba sejam
+          seguida a risca. Outra observação é: ao inserir uma lista de consoles,
+          certifique-se de que as fabricantes estejam salvas no sistema, pois se
+          não estiver salva, a importação não salvará o registro do console sem
+          o dado do fabricante do mesmo. Entretanto, irá gerar um log de erro
+          que você poderá verificar posteriormente o que não foi salvo.
         </p>
       </div>
     </div>

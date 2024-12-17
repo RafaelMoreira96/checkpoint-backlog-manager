@@ -9,14 +9,14 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./csv-mode.component.css'],
 })
 export class CsvModeComponent {
-  activeTab: string = 'genero'; // Aba padrão ativa
+  activeTab: string = 'instructions';
   selectedFiles: { [key: string]: File | null } = {
     genero: null,
     fabricante: null,
     console: null,
   };
 
-  constructor(private service: CsvFunctionsService, private toast: ToastrService) {} // Injeta o serviço no construtor
+  constructor(private service: CsvFunctionsService, private toast: ToastrService) {} 
 
   onFileSelected(event: Event, tipo: string): void {
     const inputElement = event.target as HTMLInputElement;
@@ -45,7 +45,8 @@ export class CsvModeComponent {
       const file = this.selectedFiles['fabricante'];
       this.service.importManufacturerCsv(file).subscribe(
         (response) => {
-          console.log('Fabricantes importados com sucesso', response);
+          this.toast.success("Fabricantes importados com sucesso!", "Sucesso!");
+          window.location.reload();
         },
         (error) => {
           console.error('Erro ao importar fabricantes', error);
@@ -59,7 +60,8 @@ export class CsvModeComponent {
       const file = this.selectedFiles['console'];
       this.service.importConsoleCsv(file).subscribe(
         (response) => {
-          console.log('Consoles importados com sucesso', response);
+          this.toast.success("Consoles importados com sucesso!", "Sucesso!");
+          window.location.reload();
         },
         (error) => {
           console.error('Erro ao importar consoles', error);

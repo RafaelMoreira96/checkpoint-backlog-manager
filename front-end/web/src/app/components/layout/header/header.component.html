@@ -1,20 +1,47 @@
 <div class="main-header">
   <nav
-    class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
+    class="navbar navbar-header navbar-expand-lg border-bottom"
+    [ngClass]="{
+      'navbar-dark bg-dark': isDarkMode,
+      'navbar-light bg-light': !isDarkMode
+    }"
   >
-    <div class="adjust-header container">
-      <ul class="px-4 navbar-nav topbar-nav ms-md-auto align-items-center">
-        <li class="nav-item topbar-user dropdown hidden-caret">
-          <a
-            class="dropdown-toggle profile-pic"
-            data-bs-toggle="dropdown"
-            (click)="logout()"
-            aria-expanded="false"
-          >
-            <span class="profile-username">
-              <span class="fw-bold"> Deslogar </span>
+    <div class="adjust-header container d-flex justify-content-end">
+      <ul class="navbar-nav d-flex flex-row align-items-center">
+        <!-- Botão para alternar o tema -->
+        <li class="nav-item me-3">
+          <button class="btn btn-outline-secondary" (click)="toggleTheme()">
+            <i
+              class="fa"
+              [ngClass]="{ 
+                'fa-sun text-dark': !isDarkMode, 
+                'fa-moon text-white': isDarkMode 
+              }"
+            ></i>
+            {{ isDarkMode ? "Modo Claro" : "Modo Escuro" }}
+          </button>
+        </li>
+
+        <!-- Botão de logout -->
+        <li class="nav-item">
+          <button class="btn btn-outline-secondary" (click)="logout()">
+            <i
+              class="fa fa-sign-out-alt"
+              [ngClass]="{
+                'text-white': isDarkMode,
+                'text-dark': !isDarkMode
+              }"
+            ></i>
+            <span
+              class="fw-bold ms-2"
+              [ngClass]="{
+                'text-white': isDarkMode,
+                'text-dark': !isDarkMode
+              }"
+            >
+              Deslogar
             </span>
-          </a>
+          </button>
         </li>
       </ul>
     </div>
