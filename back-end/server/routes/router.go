@@ -72,7 +72,6 @@ func ProtectedMethods(app *fiber.App) {
 	app.Get("/api/v1/game/list_beaten", controllers.GetBeatenList)
 	app.Get("/api/v1/game/:id_game", controllers.GetGame)
 	app.Delete("/api/v1/game/delete_beaten/:id_game", controllers.DeleteGame)
-	app.Post("/api/v1/game/import_csv", controllers.ImportGamesFromCSV)
 
 	/* Project Update Log routes method */
 	app.Post("/api/v1/log", controllers.AddLog)
@@ -93,8 +92,12 @@ func ProtectedMethods(app *fiber.App) {
 	app.Get("/api/v1/admin/last_admin_added", controllers.LastAdminsRegistered)
 	app.Get("/api/v1/admin/cards_info", controllers.AdminCardsInfo)
 
-	/* CSV Mode functions */
+	/* ADMIN - CSV Mode functions */
 	app.Post("/api/v1/admin/csv/add_list_genres", controllers.ImportGenresFromCSV)
 	app.Post("/api/v1/admin/csv/add_list_manufacturers", controllers.ImportManufacturersFromCSV)
 	app.Post("/api/v1/admin/csv/add_list_consoles", controllers.ImportConsolesFromCSV)
+
+	/* PLAYER - CSV Mode functions */
+	app.Post("/api/v1/game/import_csv", controllers.ImportGamesFromCSV)
+	app.Post("/api/v1/backlog/import_csv", controllers.ImportBacklogFromCSV)
 }

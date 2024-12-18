@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { CsvFunctionsService } from '../../../services/csv-functions.service';
 import { ToastrService } from 'ngx-toastr';
-
+import { AdminCsvFunctionsService } from '../../../services/admin-csv-functions.service';
 
 @Component({
   selector: 'app-csv-mode',
@@ -16,7 +15,10 @@ export class CsvModeComponent {
     console: null,
   };
 
-  constructor(private service: CsvFunctionsService, private toast: ToastrService) {} 
+  constructor(
+    private service: AdminCsvFunctionsService,
+    private toast: ToastrService
+  ) {}
 
   onFileSelected(event: Event, tipo: string): void {
     const inputElement = event.target as HTMLInputElement;
@@ -30,7 +32,7 @@ export class CsvModeComponent {
       const file = this.selectedFiles['genero'];
       this.service.importGenreCsv(file).subscribe(
         (response) => {
-          this.toast.success("Gêneros importados com sucesso!", "Sucesso!");
+          this.toast.success('Gêneros importados com sucesso!', 'Sucesso!');
           this.selectedFiles['genero'] = null;
         },
         (error) => {
@@ -45,7 +47,7 @@ export class CsvModeComponent {
       const file = this.selectedFiles['fabricante'];
       this.service.importManufacturerCsv(file).subscribe(
         (response) => {
-          this.toast.success("Fabricantes importados com sucesso!", "Sucesso!");
+          this.toast.success('Fabricantes importados com sucesso!', 'Sucesso!');
           this.selectedFiles['fabricantes'] = null;
         },
         (error) => {
@@ -60,7 +62,7 @@ export class CsvModeComponent {
       const file = this.selectedFiles['console'];
       this.service.importConsoleCsv(file).subscribe(
         (response) => {
-          this.toast.success("Consoles importados com sucesso!", "Sucesso!");
+          this.toast.success('Consoles importados com sucesso!', 'Sucesso!');
           this.selectedFiles['consoles'] = null;
         },
         (error) => {

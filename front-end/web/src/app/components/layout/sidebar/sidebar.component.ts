@@ -28,7 +28,10 @@ export class SidebarComponent {
       { link: 'project-updates-log', name: 'Log de atualizações', icon: 'fas fa-book-open' },
     ],
 
-    configs: [{ link: 'player-profile', name: 'Perfil', icon: 'fas fa-user' }],
+    configs: [
+      { link: 'player-profile', name: 'Perfil', icon: 'fas fa-user' },
+      { link: 'import-csv', name: 'Importar CSV', icon: 'icon-control-play'}
+    ],
   };
 
   menuItemsAdmin = {

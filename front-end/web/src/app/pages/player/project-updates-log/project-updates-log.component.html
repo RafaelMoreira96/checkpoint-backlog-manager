@@ -1,6 +1,17 @@
 <div class="container-fluid">
   <h2 class="mb-2">Atualizações do projeto</h2>
 
+  <div *ngIf="logs.length == 0" class="card" style="margin-bottom: 1rem">
+    <div class="card-body">
+      <h4 class="card-title">
+        Não há logs registrados para este projeto.
+      </h4>
+      <h6 class="card-subtitle mb-2 text-body-secondary pb-2">
+        Em breve, aparecerá!
+      </h6>
+    </div>
+  </div>
+  
   <div *ngFor="let log of logs" class="card" style="margin-bottom: 1rem">
     <div class="card-body">
       <h4 class="card-title">

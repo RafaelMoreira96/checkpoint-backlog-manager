@@ -12,9 +12,8 @@ type Date struct {
 	time.Time
 }
 
-const DateFormat = "2006-01-02"
+const DateFormat = "02/01/2006"
 
-// Scan implementa a interface Scanner para que o tipo Date funcione com o banco de dados
 func (d *Date) Scan(value interface{}) error {
 	if value == nil {
 		*d = Date{Time: time.Time{}}
@@ -28,25 +27,34 @@ func (d *Date) Scan(value interface{}) error {
 	return nil
 }
 
-// Value implementa a interface para gravar no banco de dados
 func (d Date) Value() (driver.Value, error) {
 	return d.Time, nil
 }
 
-// MarshalJSON converte a data para o formato JSON
 func (d Date) MarshalJSON() ([]byte, error) {
 	return json.Marshal(d.Format(DateFormat))
 }
 
-// UnmarshalJSON converte o formato JSON para o tipo Date
 func (d *Date) UnmarshalJSON(data []byte) error {
-	var err error
-	parsedTime, err := time.Parse(`"`+DateFormat+`"`, string(data))
-	if err != nil {
-		return err
+	dateStr := string(data)
+	dateStr = dateStr[1 : len(dateStr)-1]
+
+	formats := []string{
+		"02/01/2006",
+		"2006-01-02",
 	}
-	d.Time = parsedTime
-	return nil
+
+	var parsedTime time.Time
+	var err error
+	for _, format := range formats {
+		parsedTime, err = time.Parse(format, dateStr)
+		if err == nil {
+			d.Time = parsedTime
+			return nil
+		}
+	}
+
+	return fmt.Errorf("invalid date format: %s", dateStr)
 }
 
 func Today() Date {
@@ -56,8 +64,9 @@ func Today() Date {
 func ParseDate(dateStr string) (Date, error) {
 	formats := []string{
 		"02/01/2006",
+		"02/01/06",
 		"2006-01-02",
-		"01/02/2006",
+		"2006-02-01",
 	}
 
 	var parsedDate time.Time
@@ -66,9 +75,20 @@ func ParseDate(dateStr string) (Date, error) {
 	for _, format := range formats {
 		parsedDate, err = time.Parse(format, dateStr)
 		if err == nil {
+			if format == "02/01/06" {
+				parsedDate = adjustYear(parsedDate)
+			}
 			return Date{Time: parsedDate}, nil
 		}
 	}
 
 	return Date{}, errors.New("invalid date format: " + dateStr)
+}
+
+func adjustYear(parsedDate time.Time) time.Time {
+	year := parsedDate.Year()
+	if year < 100 {
+		parsedDate = parsedDate.AddDate(2000-1, 0, 0)
+	}
+	return parsedDate
 }

@@ -24,5 +24,11 @@ func Connect() *gorm.DB {
 }
 
 func GetDatabase() *gorm.DB {
+
+	db.Exec("PRAGMA cache_size = 10000")
+	db.Exec("PRAGMA temp_store = MEMORY")
+	db.Exec("PRAGMA synchronous = OFF")
+	db.Exec("PRAGMA journal_mode = WAL")
+
 	return db
 }

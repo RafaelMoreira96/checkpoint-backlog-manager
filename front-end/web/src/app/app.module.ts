@@ -37,6 +37,7 @@ import { GameBeatenListComponent } from './pages/player/lists/game-beaten-list/g
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
 import { UnauthorizedComponent } from './components/error-pages/unauthorized/unauthorized.component';
 import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
+import { ImportCsvComponent } from './pages/player/import-csv/import-csv.component';
 
 
 @NgModule({
@@ -69,7 +70,8 @@ import { NotFoundComponent } from './pages/default-pages/not-found/not-found.com
     BacklogListComponent,
     PlayerProfileComponent,
     UnauthorizedComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    ImportCsvComponent
   ],
   imports: [
     FormsModule,

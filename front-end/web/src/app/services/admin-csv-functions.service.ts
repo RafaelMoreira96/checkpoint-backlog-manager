@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class CsvFunctionsService {
+export class AdminCsvFunctionsService {
   BASE_URL = API_CONFIG.BASE_URL + '/api/v1/admin/csv';
 
   constructor(private http: HttpClient) {}

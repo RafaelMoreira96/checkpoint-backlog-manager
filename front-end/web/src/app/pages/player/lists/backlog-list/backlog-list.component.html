@@ -13,6 +13,12 @@
       </tr>
     </thead>
     <tbody>
+      <tr *ngIf="games.length === 0">
+        <td colspan="9" class="text-center">
+          Não há jogos no backlog para exibir.
+        </td>
+      </tr>
+
       <tr *ngFor="let game of games; let i = index">
         <td>{{ i + 1 }}</td>
         <td>{{ game.name_game }}</td>

@@ -27,6 +27,7 @@ import { BacklogFormComponent } from './pages/player/registers/backlog-form/back
 import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-list.component';
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
 import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
+import { ImportCsvComponent } from './pages/player/import-csv/import-csv.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -50,7 +51,7 @@ const routes: Routes = [
       { path: 'about-project', component: AboutProjectComponent },
       { path: 'project-updates-log', component: ProjectUpdatesLogComponent },
       { path: 'player-profile', component: PlayerProfileComponent },
-
+      { path: 'import-csv', component: ImportCsvComponent}
     ],
   },
 
