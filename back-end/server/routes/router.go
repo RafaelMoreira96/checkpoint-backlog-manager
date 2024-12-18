@@ -53,8 +53,9 @@ func ProtectedMethods(app *fiber.App) {
 	app.Put("/api/v1/genre/activate/:id", controllers.ReactivateGenre)
 
 	/* Player routes methods */
-	app.Get("/api/v1/player/view", controllers.ViewPlayerProfile)
+	app.Get("/api/v1/player/view", controllers.ViewPlayerProfileInfo)
 	app.Delete("/api/v1/player/delete", controllers.DeletePlayer)
+	app.Put("/api/v1/player/update", controllers.UpdatePlayer)
 
 	/* Administrator routes methods */
 	app.Get("/api/v1/admin/view/:id", controllers.ViewAdministratorById)
@@ -71,6 +72,7 @@ func ProtectedMethods(app *fiber.App) {
 	app.Get("/api/v1/game/list_beaten", controllers.GetBeatenList)
 	app.Get("/api/v1/game/:id_game", controllers.GetGame)
 	app.Delete("/api/v1/game/delete_beaten/:id_game", controllers.DeleteGame)
+	app.Post("/api/v1/game/import_csv", controllers.ImportGamesFromCSV)
 
 	/* Project Update Log routes method */
 	app.Post("/api/v1/log", controllers.AddLog)

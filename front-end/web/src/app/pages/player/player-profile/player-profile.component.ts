@@ -11,6 +11,9 @@ import { Router } from '@angular/router';
 })
 export class PlayerProfileComponent implements OnInit {
   profile: Player = new Player();
+  isEditing: boolean = false;
+  finishedGames: number = 0;
+  backlogGames: number = 0;
 
   constructor(
     private service: PlayerService,
@@ -25,11 +28,31 @@ export class PlayerProfileComponent implements OnInit {
   getProfile() {
     this.service.viewPlayer().subscribe(
       (result: any) => {
-        this.profile = result;
+        console.log(result);
+        this.profile = result.player;
+        this.finishedGames = result.quantity_finished_games;
+        this.backlogGames = result.quantity_backlog_games;
       },
       (error) => {
         this.toast.error('Erro ao carregar perfil');
         this.router.navigate(['/login']);
+      }
+    );
+  }
+
+  isEditingMode(): void {
+    this.isEditing = !this.isEditing;
+  }
+
+  updateProfile(): void {
+    this.service.updatePlayer(this.profile).subscribe(
+      (result: any) => {
+        this.toast.success('Perfil atualizado com sucesso!');
+        this.isEditing = false;
+      },
+      (error) => {
+        this.toast.error('Erro ao atualizar o perfil');
+        console.error(error);
       }
     );
   }

@@ -24,7 +24,7 @@ import { ListConsoleComponent } from './pages/admin/console/list-console/list-co
 import { ListGenreComponent } from './pages/admin/genre/list-genre/list-genre.component';
 import { ListManufacturerComponent } from './pages/admin/manufacturer/list-manufacturer/list-manufacturer.component';
 import { ListUserComponent } from './pages/admin/user/list-user/list-user.component';
-import { CommonModule } from '@angular/common';
+
 import { ListLogComponent } from './pages/admin/log/list-log/list-log.component';
 import { ProfileComponent } from './pages/admin/profile/profile.component';
 import { CsvModeComponent } from './pages/admin/csv-mode/csv-mode.component';
@@ -36,6 +36,7 @@ import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-
 import { GameBeatenListComponent } from './pages/player/lists/game-beaten-list/game-beaten-list.component';
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
 import { UnauthorizedComponent } from './components/error-pages/unauthorized/unauthorized.component';
+import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
 
 
 @NgModule({
@@ -67,10 +68,10 @@ import { UnauthorizedComponent } from './components/error-pages/unauthorized/una
     BacklogFormComponent,
     BacklogListComponent,
     PlayerProfileComponent,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    NotFoundComponent
   ],
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,

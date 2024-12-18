@@ -55,7 +55,7 @@ func AddPlayer(c *fiber.Ctx) error {
 }
 
 /* Into player account functions */
-func ViewPlayerProfile(c *fiber.Ctx) error {
+func ViewPlayerProfileInfo(c *fiber.Ctx) error {
 	playerID, _ := utils.GetPlayerTokenInfos(c)
 
 	db := database.GetDatabase()
@@ -67,7 +67,28 @@ func ViewPlayerProfile(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(player)
+	var games []models.Game
+	if err := db.Where("player_id =?", playerID).Find(&games).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error getting backlog games",
+		})
+	}
+
+	finished_games := 0
+	backlog_games := 0
+	for i := 0; i < len(games); i++ {
+		if games[i].Status == 0 {
+			finished_games += 1
+		} else {
+			backlog_games += 1
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"player":                  player,
+		"quantity_finished_games": finished_games,
+		"quantity_backlog_games":  backlog_games,
+	})
 }
 
 func DeletePlayer(c *fiber.Ctx) error {
@@ -107,4 +128,67 @@ func GetAllPlayers(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(players)
+}
+
+func UpdatePlayer(c *fiber.Ctx) error {
+	playerID, err := utils.GetPlayerTokenInfos(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid or missing token",
+		})
+	}
+
+	db := database.GetDatabase()
+	if db == nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "database connection error",
+		})
+	}
+
+	var player models.Player
+	if err := db.Where("id_player =?", playerID).First(&player).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "player not found",
+		})
+	}
+
+	var updatedPlayer models.Player
+	if err := c.BodyParser(&updatedPlayer); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error parsing player",
+		})
+	}
+
+	if updatedPlayer.NamePlayer != "" {
+		player.NamePlayer = updatedPlayer.NamePlayer
+	}
+
+	if updatedPlayer.Nickname != "" {
+		var playerDB models.Player
+		if err := db.Where("nickname = ?", updatedPlayer.Nickname).First(&playerDB).Error; err == nil && playerDB.IdPlayer != player.IdPlayer {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "nickname already exists",
+			})
+		}
+		player.Nickname = updatedPlayer.Nickname
+	}
+
+	if updatedPlayer.Password != "" {
+		hashedPassword, err := utils.HashPassword(updatedPlayer.Password)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "error hashing password",
+			})
+		}
+		player.Password = hashedPassword
+	}
+
+	if err := db.Save(&player).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error updating player",
+		})
+	}
+
+	player.Password = ""
+	return c.Status(fiber.StatusOK).JSON(player)
 }

@@ -28,10 +28,12 @@
   <div class="sidebar-wrapper scrollbar scrollbar-inner">
     <div class="sidebar-content">
       <ul class="nav nav-secondary">
-        
         <!-- Items da área do jogador -->
         <ng-container *ngIf="role === 'player'">
-          <li *ngFor="let item of menuItemsPlayer.dashboardItem" class="nav-item">
+          <li
+            *ngFor="let item of menuItemsPlayer.dashboardItem"
+            class="nav-item"
+          >
             <a routerLink="{{ item.link }}">
               <i class="{{ item.icon }}"></i>
               <p>{{ item.name }}</p>
@@ -44,7 +46,10 @@
             </span>
             <h4 class="text-section">Registros</h4>
           </li>
-          <li *ngFor="let item of menuItemsPlayer.registersItem" class="nav-item">
+          <li
+            *ngFor="let item of menuItemsPlayer.registersItem"
+            class="nav-item"
+          >
             <a routerLink="{{ item.link }}">
               <i class="{{ item.icon }}"></i>
               <p>{{ item.name }}</p>
@@ -93,7 +98,10 @@
 
         <!-- Items da área do administrador -->
         <ng-container *ngIf="role === 'admin'">
-          <li *ngFor="let item of menuItemsAdmin.dashboardItem" class="nav-item">
+          <li
+            *ngFor="let item of menuItemsAdmin.dashboardItem"
+            class="nav-item"
+          >
             <a routerLink="{{ item.link }}">
               <i class="{{ item.icon }}"></i>
               <p>{{ item.name }}</p>
@@ -106,7 +114,10 @@
             </span>
             <h4 class="text-section">Registros</h4>
           </li>
-          <li *ngFor="let item of menuItemsAdmin.registersItems" class="nav-item">
+          <li
+            *ngFor="let item of menuItemsAdmin.registersItems"
+            class="nav-item"
+          >
             <a routerLink="{{ item.link }}">
               <i class="{{ item.icon }}"></i>
               <p>{{ item.name }}</p>
@@ -146,7 +157,7 @@
 <!-- End Sidebar -->
 
 <div class="main-panel">
-  <div class="">
+  <div>
     <app-header />
   </div>
 

@@ -26,6 +26,7 @@ import { SidebarComponent } from './components/layout/sidebar/sidebar.component'
 import { BacklogFormComponent } from './pages/player/registers/backlog-form/backlog-form.component';
 import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-list.component';
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
+import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -36,7 +37,7 @@ const routes: Routes = [
   {
     path: '',
     component: SidebarComponent,
-    canActivate: [AuthGuard, RoleGuard],
+    canActivate: [AuthGuard],
     data: { role: 'player' },
     children: [
       { path: 'home', component: HomeComponent },
@@ -49,6 +50,7 @@ const routes: Routes = [
       { path: 'about-project', component: AboutProjectComponent },
       { path: 'project-updates-log', component: ProjectUpdatesLogComponent },
       { path: 'player-profile', component: PlayerProfileComponent },
+
     ],
   },
 
@@ -60,7 +62,6 @@ const routes: Routes = [
     data: { role: 'admin' },
     children: [
       { path: 'dashboard', component: DashboardComponent },
-
       { path: 'register-log', component: RegisterLogComponent },
       { path: 'register-console', component: RegisterConsoleComponent },
       {
@@ -77,7 +78,7 @@ const routes: Routes = [
         path: 'register-manufacturer/:id_manufacturer',
         component: RegisterManufacturerComponent,
       },
-      { path: 'register-user', component: RegisterUserComponent, data: { permission: '1'} },
+      { path: 'register-user', component: RegisterUserComponent },
       { path: 'register-user/:id_admin', component: RegisterUserComponent },
 
       { path: 'list-logs', component: ListLogComponent },
@@ -88,11 +89,11 @@ const routes: Routes = [
 
       { path: 'profile', component: ProfileComponent },
       { path: 'csv-mode', component: CsvModeComponent },
+
     ],
   },
-
-  { path: '**', redirectTo: '/login' },
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

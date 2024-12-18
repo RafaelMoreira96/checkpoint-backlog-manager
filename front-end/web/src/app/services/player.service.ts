@@ -25,4 +25,10 @@ export class PlayerService {
       headers: this.headers,
     });
   }
+
+  updatePlayer(data: any) {
+    return this.http.put(`${this.BASE_URL}/update`, data, {
+      headers: this.headers,
+    });
+  }
 }

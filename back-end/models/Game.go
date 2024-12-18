@@ -23,17 +23,17 @@ func (s StatusGame) String() string {
 }
 
 type Game struct {
-	IdGame      uint       `gorm:"primaryKey" json:"id_game" validate:"required"`
+	IdGame      uint       `gorm:"primaryKey" json:"id_game"`
 	NameGame    string     `json:"name_game" validate:"required,min=1,max=255"`
 	Developer   string     `json:"developer" validate:"required,min=1,max=255"`
-	GenreID     uint       `json:"genre_id" validate:"required"`
+	GenreID     uint       `json:"genre_id"`
 	Genre       Genre      `gorm:"foreignKey:GenreID" json:"genre"`
-	ConsoleID   uint       `json:"console_id" validate:"required"`
+	ConsoleID   uint       `json:"console_id"`
 	Console     Console    `gorm:"foreignKey:ConsoleID" json:"console"`
 	DateBeating utils.Date `json:"date_beating" validate:"omitempty"`
 	TimeBeating float64    `json:"time_beating" validate:"gte=0"`
 	ReleaseYear string     `json:"release_year" validate:"omitempty,len=4,numeric"`
-	Status      StatusGame `json:"status" validate:"required"`
+	Status      StatusGame `json:"status"`
 	PlayerID    uint       `json:"player_id" validate:"required"`
 	Player      Player     `gorm:"foreignKey:PlayerID" json:"-"`
 	CreatedAt   time.Time  `json:"created_at"`

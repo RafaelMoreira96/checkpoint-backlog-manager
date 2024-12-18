@@ -15,11 +15,7 @@ export class SidebarComponent {
 
     registersItem: [
       { link: 'register-game', name: 'Registrar jogo', icon: 'fas fa-save' },
-      {
-        link: 'register-backlog',
-        name: 'Registrar backlog',
-        icon: 'far fa-save',
-      },
+      { link: 'register-backlog', name: 'Registrar backlog', icon: 'far fa-save' },
     ],
 
     listItems: [
@@ -28,16 +24,8 @@ export class SidebarComponent {
     ],
 
     infoProject: [
-      {
-        link: 'about-project',
-        name: 'Sobre o projeto',
-        icon: 'fab fa-stack-exchange',
-      },
-      {
-        link: 'project-updates-log',
-        name: 'Log de atualizações',
-        icon: 'fas fa-book-open',
-      },
+      { link: 'about-project', name: 'Sobre o projeto', icon: 'fab fa-stack-exchange' },
+      { link: 'project-updates-log', name: 'Log de atualizações', icon: 'fas fa-book-open' },
     ],
 
     configs: [{ link: 'player-profile', name: 'Perfil', icon: 'fas fa-user' }],
@@ -47,26 +35,11 @@ export class SidebarComponent {
     dashboardItem: [{ link: 'dashboard', name: 'Dashboard', icon: 'fas fa-home' }],
     registersItems: [
       {
-        link: 'register-user',
-        name: 'Registrar usuário',
-        icon: 'fas fa-user-plus',
-      },
+        link: 'register-user', name: 'Registrar usuário', icon: 'fas fa-user-plus' },
       { link: 'register-log', name: 'Registrar log', icon: 'far fa-list-alt' },
-      {
-        link: 'register-genre',
-        name: 'Registrar gênero',
-        icon: 'icon-information',
-      },
-      {
-        link: 'register-console',
-        name: 'Registrar console',
-        icon: 'icon-game-controller',
-      },
-      {
-        link: 'register-manufacturer',
-        name: 'Registrar fabricante',
-        icon: 'icon-grid',
-      },
+      { link: 'register-genre', name: 'Registrar gênero', icon: 'icon-information' },
+      { link: 'register-console', name: 'Registrar console', icon: 'icon-game-controller' },
+      { link: 'register-manufacturer', name: 'Registrar fabricante', icon: 'icon-grid' },
     ],
 
     listsItems: [
@@ -74,11 +47,7 @@ export class SidebarComponent {
       { link: 'list-logs', name: 'Listar logs', icon: 'fas fa-tasks' },
       { link: 'list-genre', name: 'Listar gêneros', icon: 'fas fa-indent' },
       { link: 'list-console', name: 'Listar consoles', icon: 'fas fa-gamepad' },
-      {
-        link: 'list-manufacturer',
-        name: 'Listar fabricantes',
-        icon: 'fas fa-building',
-      },
+      { link: 'list-manufacturer', name: 'Listar fabricantes', icon: 'fas fa-building' },
     ],
 
     othersItems: [
@@ -92,6 +61,7 @@ export class SidebarComponent {
   ngOnInit(): void {
     this.role = this.auth.getUserRole() ?? '';
   }
+  
   logout() {
     if (this.role == 'admin') {
       this.auth.logout();

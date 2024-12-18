@@ -31,7 +31,7 @@ export class CsvModeComponent {
       this.service.importGenreCsv(file).subscribe(
         (response) => {
           this.toast.success("Gêneros importados com sucesso!", "Sucesso!");
-          window.location.reload();
+          this.selectedFiles['genero'] = null;
         },
         (error) => {
           console.error('Erro ao importar gêneros', error);
@@ -46,7 +46,7 @@ export class CsvModeComponent {
       this.service.importManufacturerCsv(file).subscribe(
         (response) => {
           this.toast.success("Fabricantes importados com sucesso!", "Sucesso!");
-          window.location.reload();
+          this.selectedFiles['fabricantes'] = null;
         },
         (error) => {
           console.error('Erro ao importar fabricantes', error);
@@ -61,7 +61,7 @@ export class CsvModeComponent {
       this.service.importConsoleCsv(file).subscribe(
         (response) => {
           this.toast.success("Consoles importados com sucesso!", "Sucesso!");
-          window.location.reload();
+          this.selectedFiles['consoles'] = null;
         },
         (error) => {
           console.error('Erro ao importar consoles', error);
