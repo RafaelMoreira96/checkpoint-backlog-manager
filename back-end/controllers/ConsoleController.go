@@ -57,7 +57,7 @@ func GetConsoles(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var consoles []models.Console
 
-	if err := db.Preload("Manufacturer").Where("is_active = true").Find(&consoles).Error; err != nil {
+	if err := db.Preload("Manufacturer").Where("is_active = true").Order("name_console ASC").Find(&consoles).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "error into find consoles",
 		})

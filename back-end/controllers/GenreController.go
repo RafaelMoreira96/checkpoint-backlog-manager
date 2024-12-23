@@ -51,7 +51,7 @@ func ListAllGenres(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var genres []models.Genre
 
-	if err := db.Where("is_active = true").Find(&genres).Error; err != nil {
+	if err := db.Where("is_active = true").Order("name_genre ASC").Find(&genres).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(genres)
 	}
 
@@ -63,7 +63,7 @@ func ListDeactivateGenres(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var genres []models.Genre
 
-	if err := db.Where("is_active = false").Find(&genres).Error; err != nil {
+	if err := db.Where("is_active = false").Order("name_genre ASC").Find(&genres).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(genres)
 	}
 

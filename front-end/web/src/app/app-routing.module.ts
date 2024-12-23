@@ -51,7 +51,6 @@ const routes: Routes = [
       { path: 'about-project', component: AboutProjectComponent },
       { path: 'project-updates-log', component: ProjectUpdatesLogComponent },
       { path: 'player-profile', component: PlayerProfileComponent },
-      { path: 'import-csv', component: ImportCsvComponent}
     ],
   },
 

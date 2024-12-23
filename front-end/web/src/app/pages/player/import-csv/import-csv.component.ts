@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './import-csv.component.css',
 })
 export class ImportCsvComponent {
-  activeTab: string = 'instructions';
+  activeTab: string = 'jogos-zerados';
   selectedFiles: { [key: string]: File | null } = {
     genero: null,
     fabricante: null,

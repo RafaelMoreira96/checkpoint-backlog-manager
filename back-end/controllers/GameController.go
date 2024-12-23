@@ -11,6 +11,8 @@ import (
 	"github.com/RafaelMoreira96/game-beating-project/models"
 	date_utils "github.com/RafaelMoreira96/game-beating-project/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/texttheater/golang-levenshtein/levenshtein"
+	"gorm.io/gorm"
 )
 
 func AddGame(c *fiber.Ctx) error {
@@ -253,11 +255,12 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 
 		var consoleID uint
 		if consoleName != "" {
-			var console models.Console
-			if err := tx.Where("name_console = ?", consoleName).First(&console).Error; err != nil {
-				consoleID = 0
+			// Encontra o console mais próximo com base no nome
+			closestConsoleID, _ := findClosestConsoleName(tx, consoleName)
+			if closestConsoleID > 0 {
+				consoleID = closestConsoleID
 			} else {
-				consoleID = console.IdConsole
+				consoleID = 0 // Console não encontrado
 			}
 		}
 
@@ -269,6 +272,14 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 			} else {
 				genreID = genre.IdGenre
 			}
+		}
+
+		var gameExists models.Game
+		if err := db.Where("name_game = ?", gameName).First(&gameExists).Error; err == nil {
+			// O jogo foi encontrado no banco de dados
+			return c.Status(fiber.StatusOK).JSON(fiber.Map{
+				"message": "game found in database: " + gameName,
+			})
 		}
 
 		game := models.Game{
@@ -456,4 +467,29 @@ func ImportBacklogFromCSV(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "games imported successfully",
 	})
+}
+
+func findClosestConsoleName(tx *gorm.DB, inputName string) (uint, string) {
+	var consoles []models.Console
+	tx.Select("id_console, name_console").Find(&consoles)
+
+	closestConsoleID := uint(0)
+	closestConsoleName := ""
+	highestSimilarity := 0.8 // Ajuste o limite de similaridade, se necessário (80%)
+
+	for _, console := range consoles {
+		// Normaliza as strings para comparação (minúsculas e sem espaços extras)
+		cleanedInput := strings.ToLower(strings.TrimSpace(inputName))
+		cleanedConsole := strings.ToLower(strings.TrimSpace(console.NameConsole))
+
+		// Calcula a similaridade usando a distância de Levenshtein
+		similarity := levenshtein.RatioForStrings([]rune(cleanedInput), []rune(cleanedConsole), levenshtein.DefaultOptions)
+		if similarity > highestSimilarity {
+			highestSimilarity = similarity
+			closestConsoleID = console.IdConsole
+			closestConsoleName = console.NameConsole
+		}
+	}
+
+	return closestConsoleID, closestConsoleName
 }

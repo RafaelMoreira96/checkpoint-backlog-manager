@@ -24,6 +24,19 @@
               <li class="nav-item" role="presentation">
                 <a
                   class="nav-link"
+                  id="import-csv-tab"
+                  data-bs-toggle="tab"
+                  href="#import-csv"
+                  role="tab"
+                  aria-controls="settings"
+                  aria-selected="false"
+                  tabindex="-1"
+                  >Importar CSV</a
+                >
+              </li>
+              <li class="nav-item" role="presentation">
+                <a
+                  class="nav-link"
                   id="settings-tab"
                   data-bs-toggle="tab"
                   href="#settings"
@@ -115,6 +128,42 @@
                       [disabled]="!isEditing"
                     />
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item Importar CSV -->
+            <div
+              class="tab-pane fade"
+              id="import-csv"
+              role="tabpanel"
+              aria-labelledby="import-csv-tab"
+            >
+              <div class="align-itens-center">
+                <app-import-csv />
+                <div class="alert alert-primary m-2">
+                  <p>
+                    Caro jogador, para importar corretamente as listas no
+                    formato .csv, certifique-se que as informações apresentadas
+                    em cada aba sejam seguida a risca.
+                  </p>
+                  <p>
+                    Cabeçalho do csv necesário para a importação correta dos
+                    jogos zerados: <br />
+                    Nome do jogo; Gênero; Desenvolvedora; Console; Data de
+                    conclusão; Tempo (em float); Ano de lançamento
+                  </p>
+                  <p>
+                    Cabeçalho do csv necesário para a importação correta do
+                    backlog: <br />
+                    Nome do jogo, Desenvolvedor, Console, Gênero, Ano de
+                    lançamento
+                  </p>
+                  <p>
+                    Observações: a importação do csv aceita tanto a separação
+                    por vírgula (,) quanto por ponto e vírgula (;). Na hora de
+                    importar, pode nao vir as informações adequadamente.
+                  </p>
                 </div>
               </div>
             </div>

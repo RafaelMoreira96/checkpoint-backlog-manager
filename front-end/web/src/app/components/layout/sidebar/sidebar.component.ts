@@ -30,7 +30,6 @@ export class SidebarComponent {
 
     configs: [
       { link: 'player-profile', name: 'Perfil', icon: 'fas fa-user' },
-      { link: 'import-csv', name: 'Importar CSV', icon: 'icon-control-play'}
     ],
   };
 

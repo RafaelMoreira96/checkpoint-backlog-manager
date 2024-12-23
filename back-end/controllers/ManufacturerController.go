@@ -56,7 +56,7 @@ func ListAllManufacturers(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var manufacturers []models.Manufacturer
 
-	if err := db.Where("is_active = true").Find(&manufacturers).Error; err != nil {
+	if err := db.Where("is_active = true").Order("name_manufacturer ASC").Find(&manufacturers).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(manufacturers)
 	}
 
@@ -68,7 +68,7 @@ func ListDeactivateManufacturers(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var manufacturers []models.Manufacturer
 
-	if err := db.Where("is_active = false").Find(&manufacturers).Error; err != nil {
+	if err := db.Where("is_active = false").Order("name_manufacturer ASC").Find(&manufacturers).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(manufacturers)
 	}
 
