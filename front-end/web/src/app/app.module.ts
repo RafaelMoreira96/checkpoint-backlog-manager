@@ -38,6 +38,7 @@ import { PlayerProfileComponent } from './pages/player/player-profile/player-pro
 import { UnauthorizedComponent } from './components/error-pages/unauthorized/unauthorized.component';
 import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
 import { ImportCsvComponent } from './pages/player/import-csv/import-csv.component';
+import { IndexComponent } from './pages/public/index/index.component';
 
 
 @NgModule({
@@ -71,7 +72,8 @@ import { ImportCsvComponent } from './pages/player/import-csv/import-csv.compone
     PlayerProfileComponent,
     UnauthorizedComponent,
     NotFoundComponent,
-    ImportCsvComponent
+    ImportCsvComponent,
+    IndexComponent
   ],
   imports: [
     FormsModule,

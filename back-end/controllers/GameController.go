@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -171,6 +172,7 @@ func GetGame(c *fiber.Ctx) error {
 func ImportGamesFromCSV(c *fiber.Ctx) error {
 	playerID, _ := utils.GetPlayerTokenInfos(c)
 
+	// Recupera o arquivo CSV
 	file, err := c.FormFile("file")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -178,6 +180,7 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 		})
 	}
 
+	// Abre o arquivo CSV
 	f, err := file.Open()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -186,10 +189,12 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 	}
 	defer f.Close()
 
+	// Configura o leitor CSV
 	reader := csv.NewReader(f)
 	reader.Comma = ';'
 	reader.LazyQuotes = true
 
+	// Começa a transação no banco de dados
 	db := database.GetDatabase()
 	tx := db.Begin()
 	if tx.Error != nil {
@@ -218,31 +223,32 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 			})
 		}
 
+		// Pula o cabeçalho
 		if recordIndex == 0 && strings.ToLower(strings.TrimSpace(record[0])) == "nome do jogo" {
 			recordIndex++
 			continue
 		}
 
+		// Verifica o formato e obrigatoriedade dos dados
 		if len(record) < 7 || strings.TrimSpace(record[0]) == "" {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "invalid record at line " + strconv.Itoa(recordIndex+1),
+				"message": fmt.Sprintf("invalid record at line %d", recordIndex+1),
 			})
 		}
 
+		// Atribuição dos dados
 		gameName := strings.TrimSpace(record[0])
 		genreName := strings.TrimSpace(record[1])
 		developer := strings.TrimSpace(record[2])
 		consoleName := strings.TrimSpace(record[3])
 		dateStr := record[4]
-
 		var dateBeating date_utils.Date
-
 		if dateStr != "" {
 			var err error
 			dateBeating, err = date_utils.ParseDate(dateStr)
 			if err != nil {
 				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"message": "invalid date format at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
+					"message": fmt.Sprintf("invalid date format at line %d: %s", recordIndex+1, err.Error()),
 				})
 			}
 		}
@@ -253,40 +259,34 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 
 		releaseYear := strings.TrimSpace(record[6])
 
-		var consoleID uint
+		// Encontra o ID do console
+		var consoleID *uint
 		if consoleName != "" {
-			// Encontra o console mais próximo com base no nome
 			closestConsoleID, _ := findClosestConsoleName(tx, consoleName)
 			if closestConsoleID > 0 {
-				consoleID = closestConsoleID
+				consoleID = &closestConsoleID
 			} else {
-				consoleID = 0 // Console não encontrado
+				consoleID = nil
 			}
 		}
 
-		var genreID uint
+		// Encontra o ID do gênero
+		var genreID *uint
 		if genreName != "" {
 			var genre models.Genre
 			if err := tx.Where("name_genre = ?", genreName).First(&genre).Error; err != nil {
-				genreID = 0
+				genreID = nil // Gênero não encontrado
 			} else {
-				genreID = genre.IdGenre
+				genreID = &genre.IdGenre
 			}
 		}
 
-		var gameExists models.Game
-		if err := db.Where("name_game = ?", gameName).First(&gameExists).Error; err == nil {
-			// O jogo foi encontrado no banco de dados
-			return c.Status(fiber.StatusOK).JSON(fiber.Map{
-				"message": "game found in database: " + gameName,
-			})
-		}
-
+		// Cria o objeto de jogo
 		game := models.Game{
 			NameGame:    gameName,
 			Developer:   developer,
-			GenreID:     genreID,
-			ConsoleID:   consoleID,
+			GenreID:     genreID,   // Pode ser nil
+			ConsoleID:   consoleID, // Pode ser nil
 			DateBeating: date_utils.Date(dateBeating),
 			TimeBeating: timeBeating,
 			ReleaseYear: releaseYear,
@@ -294,43 +294,43 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 			Status:      models.Beaten,
 		}
 
+		// Validação do objeto Game
 		if err := game.Validate(); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "validation error at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
+				"message": fmt.Sprintf("validation error at line %d: %s", recordIndex+1, err.Error()),
 			})
 		}
 
-		// Adiciona o jogo no lote
 		gamesBatch = append(gamesBatch, game)
 
-		// Realiza o commit a cada 100 registros
+		// Insere os jogos em lotes
 		if len(gamesBatch) >= batchSize {
 			if err := tx.Create(&gamesBatch).Error; err != nil {
 				tx.Rollback()
 				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-					"message": "error inserting batch at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
+					"message": fmt.Sprintf("error inserting batch at line %d: %s", recordIndex+1, err.Error()),
 				})
 			}
-			// Limpa o lote
 			gamesBatch = []models.Game{}
 		}
 
 		recordIndex++
 	}
 
-	// Commit dos registros restantes
+	// Insere o restante dos jogos
 	if len(gamesBatch) > 0 {
 		if err := tx.Create(&gamesBatch).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "error inserting remaining records: " + err.Error(),
+				"message": fmt.Sprintf("error inserting remaining records: %s", err.Error()),
 			})
 		}
 	}
 
+	// Commit da transação
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error committing transaction: " + err.Error(),
+			"message": fmt.Sprintf("error committing transaction: %s", err.Error()),
 		})
 	}
 
@@ -342,6 +342,7 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 func ImportBacklogFromCSV(c *fiber.Ctx) error {
 	playerID, _ := utils.GetPlayerTokenInfos(c)
 
+	// Recupera o arquivo CSV
 	file, err := c.FormFile("file")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -357,10 +358,12 @@ func ImportBacklogFromCSV(c *fiber.Ctx) error {
 	}
 	defer f.Close()
 
+	// Configura o leitor CSV
 	reader := csv.NewReader(f)
-	reader.Comma = ','
+	reader.Comma = ',' // Verifique o separador correto
 	reader.LazyQuotes = true
 
+	// Começa a transação no banco de dados
 	db := database.GetDatabase()
 	tx := db.Begin()
 	if tx.Error != nil {
@@ -386,49 +389,49 @@ func ImportBacklogFromCSV(c *fiber.Ctx) error {
 			})
 		}
 
-		// Pular o cabeçalho (primeira linha) do CSV
+		// Pula o cabeçalho
 		if recordIndex == 0 && strings.ToLower(strings.TrimSpace(record[0])) == "nome do jogo" {
 			recordIndex++
 			continue
 		}
 
-		// Verificar se o nome do jogo está vazio (campo obrigatório)
-		if len(record) < 1 || strings.TrimSpace(record[0]) == "" {
+		// Verifica o formato e obrigatoriedade dos dados
+		if len(record) < 5 || strings.TrimSpace(record[0]) == "" {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "invalid record at line " + strconv.Itoa(recordIndex+1) + ": nome do jogo é obrigatório",
+				"message": fmt.Sprintf("invalid record at line %d: nome do jogo é obrigatório", recordIndex+1),
 			})
 		}
 
-		// Atribuir valores dos campos
+		// Atribuição dos dados
 		gameName := strings.TrimSpace(record[0])
 		developer := strings.TrimSpace(record[1])
 		consoleName := strings.TrimSpace(record[2])
 		genreName := strings.TrimSpace(record[3])
 		releaseYear := strings.TrimSpace(record[4])
 
-		// Obter o ID do Console, se disponível
-		var consoleID uint
+		// Encontra o ID do console
+		var consoleID *uint
 		if consoleName != "" {
 			var console models.Console
 			if err := tx.Where("name_console = ?", consoleName).First(&console).Error; err != nil {
-				consoleID = 0
+				consoleID = nil // Console não encontrado
 			} else {
-				consoleID = console.IdConsole
+				consoleID = &console.IdConsole
 			}
 		}
 
-		// Obter o ID do Gênero, se disponível
-		var genreID uint
+		// Encontra o ID do gênero
+		var genreID *uint
 		if genreName != "" {
 			var genre models.Genre
 			if err := tx.Where("name_genre = ?", genreName).First(&genre).Error; err != nil {
-				genreID = 0
+				genreID = nil // Gênero não encontrado
 			} else {
-				genreID = genre.IdGenre
+				genreID = &genre.IdGenre
 			}
 		}
 
-		// Criar o objeto de jogo
+		// Cria o objeto de jogo
 		game := models.Game{
 			NameGame:    gameName,
 			Developer:   developer,
@@ -436,36 +439,36 @@ func ImportBacklogFromCSV(c *fiber.Ctx) error {
 			ConsoleID:   consoleID,
 			ReleaseYear: releaseYear,
 			PlayerID:    playerID,
-			Status:      models.Backlog,
+			Status:      models.Backlog, // Status como Backlog
 		}
 
-		// Validar o objeto Game
+		// Validação do objeto Game
 		if err := game.Validate(); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "validation error at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
+				"message": fmt.Sprintf("validation error at line %d: %s", recordIndex+1, err.Error()),
 			})
 		}
 
-		// Inserir o jogo no banco de dados
+		// Insere o jogo no banco de dados
 		if err := tx.Create(&game).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "error inserting record at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
+				"message": fmt.Sprintf("error inserting record at line %d: %s", recordIndex+1, err.Error()),
 			})
 		}
 
 		recordIndex++
 	}
 
-	// Confirmar a transação
+	// Commit da transação
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error committing transaction: " + err.Error(),
+			"message": fmt.Sprintf("error committing transaction: %s", err.Error()),
 		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": "games imported successfully",
+		"message": "games imported to backlog successfully",
 	})
 }
 

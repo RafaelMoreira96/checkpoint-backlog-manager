@@ -194,8 +194,8 @@ func ImportManufacturersFromCSV(c *fiber.Ctx) error {
 	reader := csv.NewReader(f)
 	reader.Comma = ','
 	reader.LazyQuotes = true
-	db := database.GetDatabase()
 
+	db := database.GetDatabase()
 	tx := db.Begin()
 	if tx.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -216,6 +216,7 @@ func ImportManufacturersFromCSV(c *fiber.Ctx) error {
 			break
 		}
 		if err != nil {
+			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"message": "error reading CSV file: " + err.Error(),
 			})
@@ -227,6 +228,7 @@ func ImportManufacturersFromCSV(c *fiber.Ctx) error {
 		}
 
 		if len(record) < 2 || record[0] == "" || record[1] == "" {
+			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": "invalid record at line " + strconv.Itoa(recordIndex+1),
 			})
@@ -236,6 +238,7 @@ func ImportManufacturersFromCSV(c *fiber.Ctx) error {
 
 		yearFounded, err := strconv.Atoi(strings.TrimSpace(record[1]))
 		if err != nil {
+			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": "invalid year format at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
 			})
@@ -254,13 +257,14 @@ func ImportManufacturersFromCSV(c *fiber.Ctx) error {
 		}
 
 		if err := manufacturer.Validate(); err != nil {
+			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": "validation error at line " + strconv.Itoa(recordIndex+1) + ": " + err.Error(),
 			})
 		}
 
 		var existingManufacturer models.Manufacturer
-		if err := tx.Where("name = ?", manufacturer.NameManufacturer).First(&existingManufacturer).Error; err == nil {
+		if err := tx.Where("name_manufacturer = ?", manufacturer.NameManufacturer).First(&existingManufacturer).Error; err == nil {
 			recordIndex++
 			continue
 		}

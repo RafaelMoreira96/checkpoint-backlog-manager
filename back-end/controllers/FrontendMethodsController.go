@@ -70,7 +70,10 @@ func CardsInfo(c *fiber.Ctx) error {
 
 	currentYear, currentMonth, _ := time.Now().Date()
 	for _, game := range games {
-		genreCount[game.GenreID]++
+		if game.GenreID != nil {
+			genreCount[*game.GenreID]++
+		}
+
 		totalHoursPlayed += int(game.TimeBeating)
 
 		if game.DateBeating.Year() == currentYear && game.DateBeating.Month() == currentMonth {

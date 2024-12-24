@@ -9,14 +9,14 @@
       class="table table-striped table-bordered"
     >
       <thead class="thead-dark">
-        <tr>
+        <tr class="text-center">
           <th>#</th>
-          <th>Nome do Jogo</th>
+          <th class="col-5">Nome do Jogo</th>
           <th>Gênero</th>
           <th>Desenvolvedor</th>
           <th>Ano de Lançamento</th>
           <th>Plataforma</th>
-          <th>Tempo de Conclusão (horas)</th>
+          <th class="col-1">Tempo de Conclusão</th>
           <th>Data de Conclusão</th>
           <th>Ações</th>
         </tr>
@@ -35,7 +35,7 @@
           <td>{{ game.developer }}</td>
           <td>{{ game.release_year }}</td>
           <td>{{ game.console?.name_console }}</td>
-          <td>{{ game.time_beating }}</td>
+          <td>{{ game.time_beating <= 1 ? game.time_beating + ' hora' : game.time_beating + ' horas'}}</td>
           <td>
             {{
               game.date_beating == "01/01/0001"

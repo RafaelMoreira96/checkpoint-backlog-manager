@@ -28,9 +28,11 @@ import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
 import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
 import { ImportCsvComponent } from './pages/player/import-csv/import-csv.component';
+import { IndexComponent } from './pages/public/index/index.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', component: IndexComponent},
+  //{ path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: PlayerLoginComponent },
   { path: 'admin-login', component: AdminLoginComponent },
 

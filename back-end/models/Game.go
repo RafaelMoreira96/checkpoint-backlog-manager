@@ -26,9 +26,9 @@ type Game struct {
 	IdGame      uint       `gorm:"primaryKey" json:"id_game"`
 	NameGame    string     `json:"name_game" validate:"required,min=1,max=255"`
 	Developer   string     `json:"developer" validate:"required,min=1,max=255"`
-	GenreID     uint       `json:"genre_id"`
+	GenreID     *uint      `json:"genre_id"`
 	Genre       Genre      `gorm:"foreignKey:GenreID" json:"genre"`
-	ConsoleID   uint       `json:"console_id"`
+	ConsoleID   *uint      `json:"console_id"`
 	Console     Console    `gorm:"foreignKey:ConsoleID" json:"console"`
 	DateBeating utils.Date `json:"date_beating"`
 	TimeBeating float64    `json:"time_beating" validate:"gte=0"`

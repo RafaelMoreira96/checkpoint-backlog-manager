@@ -12,7 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 )
 
-func RunServer() {
+func RunServer(mode uint) {
 	app := fiber.New()
 
 	app.Use(helmet.New())
@@ -24,7 +24,14 @@ func RunServer() {
 
 	app.Use(compress.New())
 
-	database.Connect()
+	if mode == 1 {
+		log.Println("Ambiente de desenvolvimento usando SQLite")
+		database.ConnectOnSQLite()
+	} else {
+		log.Println("Ambiente de produção")
+		database.ConnectOnPostgres()
+	}
+
 	routes.SetupRoutes(app)
 
 	if err := app.Listen(":8000"); err != nil {
