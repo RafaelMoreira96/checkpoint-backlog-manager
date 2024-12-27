@@ -28,7 +28,6 @@ export class PlayerProfileComponent implements OnInit {
   getProfile() {
     this.service.viewPlayer().subscribe(
       (result: any) => {
-        console.log(result);
         this.profile = result.player;
         this.finishedGames = result.quantity_finished_games;
         this.backlogGames = result.quantity_backlog_games;
@@ -40,8 +39,13 @@ export class PlayerProfileComponent implements OnInit {
     );
   }
 
-  isEditingMode(): void {
-    this.isEditing = !this.isEditing;
+  editingMode(): void {
+    this.isEditing = true;
+  }
+
+  cancelEditing(): void {
+    this.isEditing = false;
+    this.getProfile();
   }
 
   updateProfile(): void {

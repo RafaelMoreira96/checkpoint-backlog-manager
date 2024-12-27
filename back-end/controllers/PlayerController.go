@@ -139,14 +139,9 @@ func UpdatePlayer(c *fiber.Ctx) error {
 	}
 
 	db := database.GetDatabase()
-	if db == nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "database connection error",
-		})
-	}
 
 	var player models.Player
-	if err := db.Where("id_player =?", playerID).First(&player).Error; err != nil {
+	if err := db.Where("id_player = ?", playerID).First(&player).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "player not found",
 		})
@@ -173,7 +168,7 @@ func UpdatePlayer(c *fiber.Ctx) error {
 		player.Nickname = updatedPlayer.Nickname
 	}
 
-	if updatedPlayer.Password != "" {
+	if updatedPlayer.Password != "" && updatedPlayer.Password != player.Password {
 		hashedPassword, err := utils.HashPassword(updatedPlayer.Password)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

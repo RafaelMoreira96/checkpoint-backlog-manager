@@ -26,15 +26,14 @@ import { SidebarComponent } from './components/layout/sidebar/sidebar.component'
 import { BacklogFormComponent } from './pages/player/registers/backlog-form/backlog-form.component';
 import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-list.component';
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
-import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
-import { ImportCsvComponent } from './pages/player/import-csv/import-csv.component';
+import { RegisterPlayerComponent } from './pages/public/register-player/register-player.component';
 import { IndexComponent } from './pages/public/index/index.component';
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
-  //{ path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: PlayerLoginComponent },
   { path: 'admin-login', component: AdminLoginComponent },
+  { path: 'register-player', component: RegisterPlayerComponent },
 
   // Player routes
   {
@@ -91,7 +90,6 @@ const routes: Routes = [
 
       { path: 'profile', component: ProfileComponent },
       { path: 'csv-mode', component: CsvModeComponent },
-
     ],
   },
 ];

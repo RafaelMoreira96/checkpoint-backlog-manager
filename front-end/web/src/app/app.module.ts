@@ -39,6 +39,7 @@ import { UnauthorizedComponent } from './components/error-pages/unauthorized/una
 import { NotFoundComponent } from './pages/default-pages/not-found/not-found.component';
 import { ImportCsvComponent } from './pages/player/import-csv/import-csv.component';
 import { IndexComponent } from './pages/public/index/index.component';
+import { RegisterPlayerComponent } from './pages/public/register-player/register-player.component';
 
 
 @NgModule({
@@ -73,7 +74,8 @@ import { IndexComponent } from './pages/public/index/index.component';
     UnauthorizedComponent,
     NotFoundComponent,
     ImportCsvComponent,
-    IndexComponent
+    IndexComponent,
+    RegisterPlayerComponent
   ],
   imports: [
     FormsModule,

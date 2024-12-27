@@ -19,6 +19,9 @@ func PublicMethods(app *fiber.App) {
 	/* Register player method */
 	app.Post("/api/v1/player", controllers.AddPlayer)
 	app.Post("/api/v1/admin", controllers.AddAdministrator)
+
+	/* LANDING PAGE */
+	app.Get("/api/v1/landing-page/stats", controllers.StatsInfo)
 }
 
 func ProtectedMethods(app *fiber.App) {
@@ -100,4 +103,5 @@ func ProtectedMethods(app *fiber.App) {
 	/* PLAYER - CSV Mode functions */
 	app.Post("/api/v1/game/import_csv", controllers.ImportGamesFromCSV)
 	app.Post("/api/v1/backlog/import_csv", controllers.ImportBacklogFromCSV)
+
 }
