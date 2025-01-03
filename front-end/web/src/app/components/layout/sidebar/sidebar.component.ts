@@ -58,6 +58,8 @@ export class SidebarComponent {
     ],
   };
 
+  isSidebarVisible: boolean = true;
+
   constructor(private auth: AuthService, private router: Router) {}
 
   ngOnInit(): void {
@@ -72,5 +74,9 @@ export class SidebarComponent {
       this.auth.logout();
       this.router.navigate(['/login']);
     }
+  }
+
+  toggleSidebar() {
+    this.isSidebarVisible = !this.isSidebarVisible;
   }
 }

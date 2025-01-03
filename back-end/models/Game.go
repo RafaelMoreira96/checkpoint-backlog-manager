@@ -25,6 +25,7 @@ func (s StatusGame) String() string {
 type Game struct {
 	IdGame      uint       `gorm:"primaryKey" json:"id_game"`
 	NameGame    string     `json:"name_game" validate:"required,min=1,max=255"`
+	UrlImage    string     `json:"url_image"`
 	Developer   string     `json:"developer" validate:"required,min=1,max=255"`
 	GenreID     *uint      `json:"genre_id"`
 	Genre       Genre      `gorm:"foreignKey:GenreID" json:"genre"`

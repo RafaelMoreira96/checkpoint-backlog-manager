@@ -4,6 +4,7 @@ import { Genre } from "./genre";
 export class Game {
   id_game: number;
   name_game: string;
+  url_image: string;
   developer: string;
   genre_id: number;
   genre?: Genre;
@@ -20,6 +21,7 @@ export class Game {
   constructor() {
     this.id_game = 0;
     this.name_game = '';
+    this.url_image = '';
     this.developer = '';
     this.genre_id = 0;
     this.genre = new Genre; 

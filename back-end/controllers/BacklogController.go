@@ -25,20 +25,6 @@ func AddBacklogGame(c *fiber.Ctx) error {
 		})
 	}
 
-	var genre models.Genre
-	if err := db.Where("id_genre = ?", game.GenreID).First(&genre).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "genre not found",
-		})
-	}
-
-	var console models.Console
-	if err := db.Where("id_console = ?", game.ConsoleID).First(&console).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "console not found",
-		})
-	}
-
 	game.PlayerID = playerID
 	game.Status = 1
 	if err := db.Create(&game).Error; err != nil {

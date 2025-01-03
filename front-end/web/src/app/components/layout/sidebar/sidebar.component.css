@@ -12,3 +12,15 @@
   background-color: #f0f0f0;
   color: #000;
 }
+
+.sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.d-none {
+  transform: translateX(-100%);
+}
+
+.main-panel.full-width {
+  width: 100% !important;
+}

@@ -7,11 +7,20 @@ import { GenreService } from '../../../../services/genre.service';
 import { ToastrService } from 'ngx-toastr';
 import { BacklogService } from '../../../../services/backlog.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ApiIgdbService } from '../../../../services/api-igdb.service';
+
+export interface GameFromIGDBService {
+  id: number;
+  name: string;
+  developer: string;
+  url_image: string;
+  release_year: number;
+}
 
 @Component({
   selector: 'app-backlog-form',
   templateUrl: './backlog-form.component.html',
-  styleUrl: './backlog-form.component.css'
+  styleUrls: ['./backlog-form.component.css']
 })
 export class BacklogFormComponent {
   game: Game = new Game();
@@ -19,6 +28,7 @@ export class BacklogFormComponent {
 
   nameGame: string = '';
   developer: string = '';
+  url_image: string = '';
   selectedConsole: number | undefined;
   selectedGenre: number | undefined;
   dateBeating: string | undefined;
@@ -26,14 +36,20 @@ export class BacklogFormComponent {
   releaseYear: string | undefined;
   consoles: Console[] = [];
   genres: Genre[] = [];
+  
+  // Para IGDB
+  igdb_game_search: string = '';
+  searchResults: any[] = [];
+  loadingSearch: boolean = false;
 
   constructor(
     private consoleService: ConsoleService,
     private genreService: GenreService,
     private backlogService: BacklogService,
+    private apiIgdbService: ApiIgdbService,
     private toastr: ToastrService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -86,6 +102,98 @@ export class BacklogFormComponent {
     });
   }
 
+  // Método para buscar o jogo na IGDB
+  searchGameFromIGDB(): void {
+      if (!this.igdb_game_search.trim()) return;
+  
+      this.loadingSearch = true;
+      const query = `fields name, cover, first_release_date; limit 5; search "${this.igdb_game_search}";`;
+  
+      this.apiIgdbService.getGames(query).subscribe({
+        next: (result: any[]) => {
+          this.searchResults = [];
+          let requestIndex = 0;
+  
+          const processGame = (game: any) => {
+            let gameItem: GameFromIGDBService = {
+              id: 0,
+              name: '',
+              developer: '',
+              url_image: '',
+              release_year: 0,
+            };
+  
+            const cover_query = `fields image_id; where game = ${game.id};`;
+            this.apiIgdbService.getCoverById(cover_query).subscribe(
+              (cover: any) => {
+                const url_image = cover[0]?.image_id
+                  ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${cover[0].image_id}.jpg`
+                  : '';
+  
+                gameItem.id = game.id;
+                gameItem.name = game.name;
+                gameItem.url_image = url_image;
+  
+                if (game.first_release_date) {
+                  gameItem.release_year = new Date(
+                    game.first_release_date * 1000
+                  ).getFullYear();
+                } else {
+                  gameItem.release_year = 0;
+                }
+  
+                const companies_query = `fields company.name; where game = ${game.id};`;
+                this.apiIgdbService
+                  .getInvolvedCompanyById(companies_query)
+                  .subscribe(
+                    (company_result: any) => {
+                      gameItem.developer =
+                        company_result[0]?.company?.name || 'Desconhecido';
+                      this.searchResults.push(gameItem);
+                    },
+                    (error) => {
+                      console.error('Error fetching companies:', error);
+                      gameItem.developer = 'Desconhecido';
+                      this.searchResults.push(gameItem);
+                    }
+                  );
+              },
+              (error) => {
+                console.error('Error fetching cover:', error);
+              }
+            );
+  
+            this.igdb_game_search = '';
+          };
+  
+          const processGamesSequentially = () => {
+            if (requestIndex < result.length) {
+              const game = result[requestIndex];
+              processGame(game);
+              requestIndex++;
+              setTimeout(processGamesSequentially, 500);
+            } else {
+              this.loadingSearch = false;
+            }
+          };
+  
+          processGamesSequentially();
+        },
+        error: () => {
+          this.toastr.error('Erro ao buscar jogos na IGDB.', 'Erro');
+          this.loadingSearch = false;
+        },
+      });
+    }
+
+ selectGameFromSearch(game: GameFromIGDBService): void {
+     this.nameGame = game.name;
+     this.releaseYear = game.release_year.toString();
+     this.developer = game.developer;
+     this.url_image = game.url_image;
+     this.toastr.info(`Jogo "${game.name}" selecionado.`, 'Informação');
+   }
+
   registerGame(): void {
     if (this.isEditing) {
       this.updateGame();
@@ -99,6 +207,7 @@ export class BacklogFormComponent {
     this.game = {
       id_game: 0, 
       name_game: this.nameGame,
+      url_image: this.url_image,
       developer: this.developer,
       console_id: Number(this.selectedConsole) ?? 0,
       genre_id: Number(this.selectedGenre) ?? 0,
@@ -126,6 +235,7 @@ export class BacklogFormComponent {
     this.game = {
       id_game: this.game.id_game,
       name_game: this.nameGame,
+      url_image: '',
       developer: this.developer,
       console_id: Number(this.selectedConsole) ?? 0,
       genre_id: Number(this.selectedGenre) ?? 0,
@@ -147,5 +257,11 @@ export class BacklogFormComponent {
         this.toastr.error('Erro ao atualizar jogo.', 'Erro');
       }
     });
+  }
+
+  isFormValid(): boolean {
+    return (
+      this.nameGame.trim() !== ''
+    );
   }
 }

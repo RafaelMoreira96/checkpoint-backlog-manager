@@ -1,0 +1,108 @@
+<div class="container mt-4">
+    <h1 class="text-center">Área de Testes</h1>
+    
+    <!-- Container de Abas -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link active" 
+          id="search-tab" 
+          data-bs-toggle="tab" 
+          data-bs-target="#search" 
+          type="button" 
+          role="tab" 
+          aria-controls="search" 
+          aria-selected="true">
+          Buscar Jogos
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link" 
+          id="register-tab" 
+          data-bs-toggle="tab" 
+          data-bs-target="#register" 
+          type="button" 
+          role="tab" 
+          aria-controls="register" 
+          aria-selected="false">
+          Criar Registro de Jogos
+        </button>
+      </li>
+    </ul>
+  
+    <!-- Conteúdo das Abas -->
+    <div class="tab-content mt-3">
+      <!-- Aba de Busca -->
+      <div 
+        class="tab-pane fade show active" 
+        id="search" 
+        role="tabpanel" 
+        aria-labelledby="search-tab">
+        
+        <div class="mb-3">
+          <label for="searchInput" class="form-label">Buscar por Nome do Jogo:</label>
+          <input 
+            id="searchInput" 
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="name_game" 
+            placeholder="Digite o nome do jogo" 
+          />
+        </div>
+        <button 
+          class="btn btn-primary" 
+          (click)="searchFunction()">
+          Buscar
+        </button>
+  
+        <div *ngIf="results_game.length" class="mt-4">
+          <h2>Resultados da Busca</h2>
+          <div class="row">
+            <div 
+              *ngFor="let game of results_game" 
+              class="col-6 col-sm-4 col-md-3 mb-3"
+            >
+              <div class="card h-100">
+                <img 
+                  *ngIf="game.url_image" 
+                  [src]="game.url_image" 
+                  alt="{{ game.name }}" 
+                  class="card-img-top" 
+                  style="object-fit: cover; height: 150px;"
+                />
+                <div class="card-body text-center">
+                  <h5 class="card-title">{{ game.name }} {{ game.id }} {{ getYearFromUnix(game.release_year) }} {{ game.developer }} </h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Aba de Registro -->
+      <div 
+        class="tab-pane fade" 
+        id="register" 
+        role="tabpanel" 
+        aria-labelledby="register-tab">
+        
+        <div class="mb-3">
+          <label for="registerInput" class="form-label">Registrar Novo Jogo:</label>
+          <input 
+            id="registerInput" 
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="name_game" 
+            placeholder="Digite o nome do jogo" 
+          />
+        </div>
+        <button 
+          class="btn btn-success" 
+          (click)="createGameRegisterFunction()">
+          Registrar
+        </button>
+      </div>
+    </div>
+  </div>
+  

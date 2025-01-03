@@ -40,6 +40,7 @@ import { NotFoundComponent } from './pages/default-pages/not-found/not-found.com
 import { ImportCsvComponent } from './pages/player/import-csv/import-csv.component';
 import { IndexComponent } from './pages/public/index/index.component';
 import { RegisterPlayerComponent } from './pages/public/register-player/register-player.component';
+import { PageTestComponent } from './pages/player/page-test/page-test.component';
 
 
 @NgModule({
@@ -75,7 +76,8 @@ import { RegisterPlayerComponent } from './pages/public/register-player/register
     NotFoundComponent,
     ImportCsvComponent,
     IndexComponent,
-    RegisterPlayerComponent
+    RegisterPlayerComponent,
+    PageTestComponent
   ],
   imports: [
     FormsModule,

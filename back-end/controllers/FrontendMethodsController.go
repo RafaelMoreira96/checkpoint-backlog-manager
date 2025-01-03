@@ -63,8 +63,8 @@ func CardsInfo(c *fiber.Ctx) error {
 	}
 
 	genreCount := make(map[uint]int)
-	var totalHoursPlayed int
-	var totalHoursPlayedThisMonth int
+	var totalHoursPlayed float64
+	var totalHoursPlayedThisMonth float64
 	var gamesFinishedThisMonth int
 	totalGamesFinished := len(games)
 
@@ -74,11 +74,11 @@ func CardsInfo(c *fiber.Ctx) error {
 			genreCount[*game.GenreID]++
 		}
 
-		totalHoursPlayed += int(game.TimeBeating)
+		totalHoursPlayed += game.TimeBeating
 
 		if game.DateBeating.Year() == currentYear && game.DateBeating.Month() == currentMonth {
 			gamesFinishedThisMonth++
-			totalHoursPlayedThisMonth += int(game.TimeBeating)
+			totalHoursPlayedThisMonth += game.TimeBeating
 		}
 	}
 

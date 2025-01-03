@@ -42,7 +42,7 @@ export class HomeComponent {
             name_game: result[i].name_game,
             genre: result[i].genre.name_genre,
             console: result[i].console.name_console,
-            time_beating: result[i].time_beating,
+            time_beating: result[i].time_beating.toFixed(2),
             date_beating: result[i].date_beating,
           });
         }
@@ -76,14 +76,14 @@ export class HomeComponent {
             icon: 'far fa-clock',
             title: 'Tempo total (no mês)',
             data:
-              result.total_hours_played_this_month.toString() + ' horas' ||
+              result.total_hours_played_this_month.toFixed(2) + ' horas' ||
               'N/A',
           },
           {
             colorIcon: 'info',
             icon: 'fas fa-clock',
             title: 'Tempo total',
-            data: result.total_hours_played?.toString() + ' horas' || 'N/A',
+            data: result.total_hours_played?.toFixed(2) + ' horas' || 'N/A',
           },
           {
             colorIcon: 'warning',

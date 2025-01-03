@@ -28,6 +28,7 @@ import { BacklogListComponent } from './pages/player/lists/backlog-list/backlog-
 import { PlayerProfileComponent } from './pages/player/player-profile/player-profile.component';
 import { RegisterPlayerComponent } from './pages/public/register-player/register-player.component';
 import { IndexComponent } from './pages/public/index/index.component';
+import { PageTestComponent } from './pages/player/page-test/page-test.component';
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
@@ -52,6 +53,7 @@ const routes: Routes = [
       { path: 'about-project', component: AboutProjectComponent },
       { path: 'project-updates-log', component: ProjectUpdatesLogComponent },
       { path: 'player-profile', component: PlayerProfileComponent },
+      { path: 'page-test', component: PageTestComponent}
     ],
   },
 
