@@ -25,11 +25,11 @@ func RunServer(mode uint) {
 	app.Use(compress.New())
 
 	if mode == 1 {
-		log.Println("Ambiente de desenvolvimento usando SQLite")
-		database.ConnectOnSQLite()
+		log.Println("DEV MODE")
+		database.ConnectDevMode()
 	} else {
-		log.Println("Ambiente de produção")
-		database.ConnectOnPostgres()
+		log.Println("PROD MODE - WARNING FOR DEBUG")
+		database.ConnectProdMode()
 	}
 
 	routes.SetupRoutes(app)

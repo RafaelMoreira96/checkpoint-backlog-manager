@@ -34,7 +34,7 @@ func BeatedByConsole(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 
 	var consoles []models.Console
-	if err := db.Where("is_active = 1").Find(&consoles).Error; err != nil {
+	if err := db.Where("is_active = true").Find(&consoles).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching consoles",
 		})
@@ -87,7 +87,7 @@ func BeatedByGenre(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 
 	var genres []models.Genre
-	if err := db.Where("is_active = 1").Find(&genres).Error; err != nil {
+	if err := db.Where("is_active = true").Find(&genres).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching genres",
 		})
