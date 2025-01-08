@@ -28,6 +28,7 @@
     "angular-datatables": "^18.0.0",
     "animate.css": "^4.1.1",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.7",
     "express": "^4.18.2",
     "ngx-toastr": "^19.0.0",
     "rxjs": "~7.8.0",

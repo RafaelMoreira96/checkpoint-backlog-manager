@@ -12,7 +12,7 @@ export class Game {
   console?: Console;   
   date_beating: string;
   time_beating: number;
-  release_year: string;
+  release_year: number;
   status: number;
   player_id: number;
   created_at: Date;
@@ -29,7 +29,7 @@ export class Game {
     this.console = new Console;
     this.date_beating = '';
     this.time_beating = 0;
-    this.release_year = '';
+    this.release_year = 0;
     this.status = 0;
     this.player_id = 0;
     this.created_at = new Date();

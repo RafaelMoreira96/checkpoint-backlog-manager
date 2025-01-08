@@ -33,7 +33,7 @@ export class BacklogFormComponent {
   selectedGenre: number | undefined;
   dateBeating: string | undefined;
   timeBeating: number | undefined;
-  releaseYear: string | undefined;
+  releaseYear: number | undefined;
   consoles: Console[] = [];
   genres: Genre[] = [];
   
@@ -68,6 +68,7 @@ export class BacklogFormComponent {
         this.game = data;
         this.nameGame = this.game.name_game;
         this.developer = this.game.developer;
+        this.url_image = this.game.url_image;
         this.selectedConsole = this.game.console_id;
         this.selectedGenre = this.game.genre_id;
         this.dateBeating = this.game.date_beating;
@@ -107,7 +108,7 @@ export class BacklogFormComponent {
       if (!this.igdb_game_search.trim()) return;
   
       this.loadingSearch = true;
-      const query = `fields name, cover, first_release_date; limit 5; search "${this.igdb_game_search}";`;
+      const query = `fields name, cover, first_release_date; limit 15; search "${this.igdb_game_search}";`;
   
       this.apiIgdbService.getGames(query).subscribe({
         next: (result: any[]) => {
@@ -188,7 +189,7 @@ export class BacklogFormComponent {
 
  selectGameFromSearch(game: GameFromIGDBService): void {
      this.nameGame = game.name;
-     this.releaseYear = game.release_year.toString();
+     this.releaseYear = game.release_year;
      this.developer = game.developer;
      this.url_image = game.url_image;
      this.toastr.info(`Jogo "${game.name}" selecionado.`, 'Informação');
@@ -213,7 +214,7 @@ export class BacklogFormComponent {
       genre_id: Number(this.selectedGenre) ?? 0,
       date_beating: this.dateBeating ?? '2001-01-01',
       time_beating: this.timeBeating ?? 0, 
-      release_year: this.releaseYear ?? '',
+      release_year: this.releaseYear ?? 0,
       status: 1,
       player_id: 0,
       created_at: new Date(), 
@@ -235,13 +236,13 @@ export class BacklogFormComponent {
     this.game = {
       id_game: this.game.id_game,
       name_game: this.nameGame,
-      url_image: '',
+      url_image: this.game.url_image,
       developer: this.developer,
       console_id: Number(this.selectedConsole) ?? 0,
       genre_id: Number(this.selectedGenre) ?? 0,
       date_beating: this.dateBeating ?? '2001-01-01',
       time_beating: this.timeBeating ?? 0,
-      release_year: this.releaseYear ?? '',
+      release_year: this.releaseYear ?? 0,
       status: 1,
       player_id: 0,
       created_at: this.game.created_at,

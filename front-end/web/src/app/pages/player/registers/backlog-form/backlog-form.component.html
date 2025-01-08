@@ -130,10 +130,6 @@
               id="console"
               [(ngModel)]="selectedConsole"
               name="console"
-              required
-              [ngClass]="{
-                'is-invalid': gameForm.submitted && !selectedConsole
-              }"
             >
               <option value="" disabled selected>Selecione o console</option>
               <option
@@ -159,8 +155,6 @@
               id="genre"
               [(ngModel)]="selectedGenre"
               name="genre"
-              required
-              [ngClass]="{ 'is-invalid': gameForm.submitted && !selectedGenre }"
             >
               <option value="" disabled selected>Selecione o gênero</option>
               <option *ngFor="let genre of genres" [value]="genre.id_genre">
@@ -181,7 +175,7 @@
             class="btn btn-primary btn-block"
             [disabled]="gameForm.invalid || !isFormValid()"
           >
-            Cadastrar Jogo
+            {{ isEditing ? "Atualizar Jogo" : "Cadastrar Jogo" }}
           </button>
         </form>
       </div>

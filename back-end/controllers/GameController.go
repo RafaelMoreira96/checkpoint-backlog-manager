@@ -140,6 +140,7 @@ func UpdateGame(c *fiber.Ctx) error {
 	game.GenreID = newGame.GenreID
 	game.ConsoleID = newGame.ConsoleID
 	game.Status = newGame.Status
+	game.UrlImage = newGame.UrlImage
 	game.DateBeating = newGame.DateBeating
 	game.TimeBeating = newGame.TimeBeating
 	game.Developer = newGame.Developer
@@ -257,7 +258,18 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 		processedTimeBeating := strings.Replace(rawTimeBeating, ",", ".", -1)
 		timeBeating, _ := strconv.ParseFloat(processedTimeBeating, 64)
 
-		releaseYear := strings.TrimSpace(record[6])
+		//releaseYear := uint(strings.TrimSpace(record[6]))
+
+		// Supondo que `record[6]` é a string que contém o ano de lançamento
+		releaseYearStr := strings.TrimSpace(record[6])                // Remove espaços em branco ao redor da string
+		releaseYear, err := strconv.ParseUint(releaseYearStr, 10, 32) // Converte para uint
+		if err != nil {
+			// Trate o erro, por exemplo:
+			return fmt.Errorf("erro ao converter o ano de lançamento: %v", err)
+		}
+
+		// `releaseYear` agora é um valor `uint64`. Se necessário, converta para `uint`
+		//releaseYearUint := uint(releaseYear)
 
 		// Encontra o ID do console
 		var consoleID *uint
@@ -289,7 +301,7 @@ func ImportGamesFromCSV(c *fiber.Ctx) error {
 			ConsoleID:   consoleID, // Pode ser nil
 			DateBeating: date_utils.Date(dateBeating),
 			TimeBeating: timeBeating,
-			ReleaseYear: releaseYear,
+			ReleaseYear: int(releaseYear),
 			PlayerID:    playerID,
 			Status:      models.Beaten,
 		}
@@ -407,7 +419,18 @@ func ImportBacklogFromCSV(c *fiber.Ctx) error {
 		developer := strings.TrimSpace(record[1])
 		consoleName := strings.TrimSpace(record[2])
 		genreName := strings.TrimSpace(record[3])
-		releaseYear := strings.TrimSpace(record[4])
+		//releaseYear := strings.TrimSpace(record[4])
+
+		// Supondo que `record[6]` é a string que contém o ano de lançamento
+		releaseYearStr := strings.TrimSpace(record[6])                // Remove espaços em branco ao redor da string
+		releaseYear, err := strconv.ParseUint(releaseYearStr, 10, 32) // Converte para uint
+		if err != nil {
+			// Trate o erro, por exemplo:
+			return fmt.Errorf("erro ao converter o ano de lançamento: %v", err)
+		}
+
+		// `releaseYear` agora é um valor `uint64`. Se necessário, converta para `uint`
+		//releaseYearUint := uint(releaseYear)
 
 		// Encontra o ID do console
 		var consoleID *uint
@@ -437,7 +460,7 @@ func ImportBacklogFromCSV(c *fiber.Ctx) error {
 			Developer:   developer,
 			GenreID:     genreID,
 			ConsoleID:   consoleID,
-			ReleaseYear: releaseYear,
+			ReleaseYear: int(releaseYear),
 			PlayerID:    playerID,
 			Status:      models.Backlog, // Status como Backlog
 		}

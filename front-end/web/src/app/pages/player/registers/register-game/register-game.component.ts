@@ -27,14 +27,15 @@ export class RegisterGameComponent implements OnInit {
   isEditing: boolean = false;
   igdb_game_search: string = '';
 
-  nameGame: string = '';
+  name_game: string = '';
   developer: string = '';
   url_image: string = '';
+
   selectedConsole: number | undefined;
   selectedGenre: number | undefined;
   dateBeating: string | undefined;
   timeBeating: number | undefined;
-  releaseYear: string | undefined;
+  releaseYear: number | undefined;
   consoles: Console[] = [];
   genres: Genre[] = [];
 
@@ -62,8 +63,8 @@ export class RegisterGameComponent implements OnInit {
   }
 
   selectGameFromSearch(game: GameFromIGDBService): void {
-    this.nameGame = game.name;
-    this.releaseYear = game.release_year.toString();
+    this.name_game = game.name;
+    this.releaseYear = game.release_year;
     this.developer = game.developer;
     this.url_image = game.url_image;
     this.toastr.info(`Jogo "${game.name}" selecionado.`, 'Informação');
@@ -73,7 +74,7 @@ export class RegisterGameComponent implements OnInit {
     this.gameService.getGame(id).subscribe(
       (data: any) => {
         this.game = data;
-        this.nameGame = this.game.name_game;
+        this.name_game = this.game.name_game;
         this.developer = this.game.developer;
         this.url_image = this.game.url_image;
         this.selectedConsole = this.game.console_id;
@@ -123,14 +124,14 @@ export class RegisterGameComponent implements OnInit {
   createGame(): void {
     this.game = {
       id_game: 0,
-      name_game: this.nameGame,
+      name_game: this.name_game,
       url_image: this.url_image,
       developer: this.developer,
       console_id: Number(this.selectedConsole) ?? 0,
       genre_id: Number(this.selectedGenre) ?? 0,
       date_beating: this.dateBeating ?? '',
       time_beating: this.timeBeating ?? 0,
-      release_year: this.releaseYear ?? '',
+      release_year: this.releaseYear ?? 0,
       status: 0,
       player_id: 0,
       created_at: new Date(),
@@ -148,15 +149,22 @@ export class RegisterGameComponent implements OnInit {
   }
 
   updateGame(): void {
-    this.game.name_game = this.nameGame;
-    this.game.developer = this.developer;
-    this.game.url_image = this.url_image;
-    this.game.console_id = Number(this.selectedConsole) ?? 0;
-    this.game.genre_id = Number(this.selectedGenre) ?? 0;
-    this.game.date_beating = this.dateBeating ?? '';
-    this.game.time_beating = Number(this.timeBeating);
-    this.game.release_year = this.releaseYear ?? '';
-
+    this.game = {
+      id_game: this.game.id_game,
+      name_game: this.name_game,
+      url_image: this.url_image,
+      developer: this.developer,
+      console_id: Number(this.selectedConsole),
+      genre_id: Number(this.selectedGenre),
+      date_beating: this.dateBeating ?? '',
+      time_beating: Number(this.timeBeating),
+      release_year: this.releaseYear ?? 0,
+      status: 0,
+      player_id: 0,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+    console.log(this.game.url_image);
     this.gameService.updateGame(this.game.id_game, this.game).subscribe({
       next: (response) => {
         this.toastr.success('Jogo atualizado com sucesso!', 'Sucesso');
@@ -171,7 +179,7 @@ export class RegisterGameComponent implements OnInit {
     if (!this.igdb_game_search.trim()) return;
 
     this.loadingSearch = true;
-    const query = `fields name, cover, first_release_date; limit 5; search "${this.igdb_game_search}";`;
+    const query = `fields name, cover, first_release_date; limit 15; search "${this.igdb_game_search}";`;
 
     this.apiIgdbService.getGames(query).subscribe({
       next: (result: any[]) => {
@@ -252,13 +260,19 @@ export class RegisterGameComponent implements OnInit {
 
   isFormValid(): boolean {
     return (
-      this.nameGame.trim() !== '' &&
+      this.name_game.trim() !== '' &&
       this.developer.trim() !== '' &&
       this.selectedConsole !== undefined &&
       this.selectedGenre !== undefined &&
-      this.releaseYear?.trim() !== '' &&
+      this.releaseYear !== 0 &&
       this.dateBeating !== undefined &&
       this.timeBeating !== undefined
     );
+  }
+
+  getNameGameForSearchIGDB() {
+    if (this.name_game != null){
+      this.igdb_game_search = this.name_game;
+    }
   }
 }

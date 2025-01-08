@@ -41,6 +41,8 @@ import { ImportCsvComponent } from './pages/player/import-csv/import-csv.compone
 import { IndexComponent } from './pages/public/index/index.component';
 import { RegisterPlayerComponent } from './pages/public/register-player/register-player.component';
 import { PageTestComponent } from './pages/player/page-test/page-test.component';
+import { GamingInformationComponent } from './pages/player/gaming-information/gaming-information.component';
+import { StatisticInfoComponent } from './pages/player/gaming-information/statistic-info/statistic-info.component';
 
 
 @NgModule({
@@ -77,7 +79,9 @@ import { PageTestComponent } from './pages/player/page-test/page-test.component'
     ImportCsvComponent,
     IndexComponent,
     RegisterPlayerComponent,
-    PageTestComponent
+    PageTestComponent,
+    GamingInformationComponent,
+    StatisticInfoComponent
   ],
   imports: [
     FormsModule,

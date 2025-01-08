@@ -11,7 +11,10 @@ export class SidebarComponent {
   role: string = '';
 
   menuItemsPlayer = {
-    dashboardItem: [{ link: 'home', name: 'Home', icon: 'fas fa-home' }],
+    dashboardItem: [
+      { link: 'home', name: 'Home', icon: 'fas fa-home' },
+      { link: 'gaming-information', name: 'Informações Gamísticas', icon: 'icon-grid' },
+    ],
 
     registersItem: [
       { link: 'register-game', name: 'Registrar jogo', icon: 'fas fa-save' },

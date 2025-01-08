@@ -9,15 +9,10 @@
 <!-- Sidebar -->
 <div class="sidebar" [ngClass]="{ 'd-none' : !isSidebarVisible }" data-background-color="dark">
   <div class="sidebar-logo">
+    
     <!-- Logo Header -->
     <div class="logo-header" data-background-color="dark">
-      <a routerLink="home" class="logo gap-2">
-        <img
-          src="/icon_page_login.svg"
-          alt="CheckPOINT"
-          class="img-fluid img-white"
-          style="max-width: 40px"
-        />
+      <a routerLink="home" class="logo gap-2 align-items-center">
         <h2 class="fs-3 text-white" style="max-width: 30px;">Check<b>POINT</b></h2>
       </a>
       <div class="nav-toggle">
@@ -34,6 +29,7 @@
     </div>
     <!-- End Logo Header -->
   </div>
+  
   <div class="sidebar-wrapper scrollbar scrollbar-inner">
     <div class="sidebar-content">
       <ul class="nav nav-secondary">

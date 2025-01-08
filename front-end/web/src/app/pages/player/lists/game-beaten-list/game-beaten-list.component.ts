@@ -11,11 +11,14 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class GameBeatenListComponent implements OnInit {
   games: Game[] = [];
+  filteredGames: Game[] = []; // Lista filtrada
+  searchTerm: string = ''; // Termo de busca
   selectedGameId: number | null = null;
   currentPage: number = 1;
-  pageSize: number = 25;
+  pageSize: number = 24;
   totalGames: number = 0; // Para calcular o total de páginas
   isLoading: boolean = false;
+  isCardView: boolean = true; 
 
   constructor(
     private service: GameService,
@@ -27,12 +30,17 @@ export class GameBeatenListComponent implements OnInit {
     this.getGames();
   }
 
+  toggleViewMode(): void {
+    this.isCardView = !this.isCardView; // Alterna entre tabela e card
+  }
+
   getGames(): void {
     this.isLoading = true;
     this.service.getGames().subscribe(
       (result: any) => {
         this.games = result;
-        this.totalGames = this.games.length;
+        this.filteredGames = result; // Inicializa a lista filtrada com todos os jogos
+        this.totalGames = this.filteredGames.length;
         this.isLoading = false;
       },
       (error) => {
@@ -66,9 +74,21 @@ export class GameBeatenListComponent implements OnInit {
     this.router.navigate(['register-game', game.id_game]);
   }
 
+  // Método de filtragem
+  filterGames(): void {
+    const lowerCaseSearch = this.searchTerm.toLowerCase();
+    this.filteredGames = this.games.filter((game) => 
+      game.name_game.toLowerCase().includes(lowerCaseSearch) ||
+      (game.console?.name_console?.toLowerCase() || '').includes(lowerCaseSearch) ||
+      (game.genre?.name_genre?.toLowerCase() || '').includes(lowerCaseSearch)
+    );
+    this.totalGames = this.filteredGames.length; // Atualiza o total de jogos após filtragem
+    this.currentPage = 1; // Reseta a paginação
+  }
+
   get paginatedGames(): Game[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.games.slice(startIndex, startIndex + this.pageSize);
+    return this.filteredGames.slice(startIndex, startIndex + this.pageSize);
   }
 
   nextPage(): void {

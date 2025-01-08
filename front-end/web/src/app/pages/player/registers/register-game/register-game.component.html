@@ -9,6 +9,7 @@
         class="btn btn-primary"
         data-bs-toggle="modal"
         data-bs-target="#searchModal"
+        (click)="getNameGameForSearchIGDB()"
       >
         Buscar na IGDB
       </button>
@@ -18,7 +19,9 @@
       <div class="row mb-4">
         <div class="col-md-4 d-flex justify-content-center align-items-center">
           <img
-            [src]="url_image || 'https://via.placeholder.com/150?text=Sem+Imagem'"
+            [src]="
+              url_image || 'https://via.placeholder.com/150?text=Sem+Imagem'
+            "
             alt="Capa do Jogo"
             class="img-fluid rounded"
             style="max-height: 200px"
@@ -26,25 +29,31 @@
         </div>
         <div class="col-md-8">
           <!-- Nome do Jogo -->
-          <div class="form-group mb-2">
-            <label for="nameGame">Nome do Jogo</label>
+          <div class="form-group">
+            <label for="name_game">Nome do Jogo</label>
             <input
               type="text"
               class="form-control"
-              id="nameGame"
-              [(ngModel)]="nameGame"
-              name="nameGame"
+              id="name_game"
+              [(ngModel)]="name_game"
+              name="name_game"
               placeholder="Digite o nome do jogo"
               required
-              [ngClass]="{'is-invalid': gameForm.submitted && gameForm.controls['nameGame'].invalid}"
+              [ngClass]="{
+                'is-invalid':
+                  gameForm.submitted && gameForm.controls['name_game'].invalid
+              }"
             />
-            <div *ngIf="gameForm.submitted && gameForm.controls['nameGame']?.errors?.['required']" class="invalid-feedback">
+            <div
+              *ngIf="gameForm.submitted && gameForm.controls['name_game']?.errors?.['required']"
+              class="invalid-feedback"
+            >
               Nome do jogo é obrigatório.
             </div>
           </div>
 
           <!-- URL da Imagem -->
-          <div class="form-group mb-2">
+          <div class="form-group">
             <label for="url_image">URL da Imagem</label>
             <input
               type="text"
@@ -57,7 +66,7 @@
           </div>
 
           <!-- Desenvolvedor -->
-          <div class="form-group mb-2">
+          <div class="form-group">
             <label for="developer">Desenvolvedor</label>
             <input
               type="text"
@@ -67,15 +76,21 @@
               name="developer"
               placeholder="Digite o nome do desenvolvedor"
               required
-              [ngClass]="{'is-invalid': gameForm.submitted && gameForm.controls['developer'].invalid}"
+              [ngClass]="{
+                'is-invalid':
+                  gameForm.submitted && gameForm.controls['developer'].invalid
+              }"
             />
-            <div *ngIf="gameForm.submitted && gameForm.controls['developer']?.errors?.['required']" class="invalid-feedback">
+            <div
+              *ngIf="gameForm.submitted && gameForm.controls['developer']?.errors?.['required']"
+              class="invalid-feedback"
+            >
               Desenvolvedor é obrigatório.
             </div>
           </div>
 
           <!-- Ano de Lançamento -->
-          <div class="form-group mb-2">
+          <div class="form-group">
             <label for="releaseYear">Ano de Lançamento</label>
             <input
               type="text"
@@ -85,9 +100,15 @@
               name="releaseYear"
               placeholder="Digite o ano de lançamento"
               required
-              [ngClass]="{'is-invalid': gameForm.submitted && gameForm.controls['releaseYear'].invalid}"
+              [ngClass]="{
+                'is-invalid':
+                  gameForm.submitted && gameForm.controls['releaseYear'].invalid
+              }"
             />
-            <div *ngIf="gameForm.submitted && gameForm.controls['releaseYear']?.errors?.['required']" class="invalid-feedback">
+            <div
+              *ngIf="gameForm.submitted && gameForm.controls['releaseYear']?.errors?.['required']"
+              class="invalid-feedback"
+            >
               Ano de lançamento é obrigatório.
             </div>
           </div>
@@ -95,7 +116,7 @@
       </div>
 
       <!-- Console -->
-      <div class="form-group mb-3">
+      <div class="form-group">
         <label for="console">Console</label>
         <select
           class="form-control"
@@ -103,20 +124,23 @@
           [(ngModel)]="selectedConsole"
           name="console"
           required
-          [ngClass]="{'is-invalid': gameForm.submitted && !selectedConsole}"
+          [ngClass]="{ 'is-invalid': gameForm.submitted && !selectedConsole }"
         >
           <option value="" disabled selected>Selecione o console</option>
           <option *ngFor="let console of consoles" [value]="console.id_console">
             {{ console.name_console }}
           </option>
         </select>
-        <div *ngIf="gameForm.submitted && !selectedConsole" class="invalid-feedback">
+        <div
+          *ngIf="gameForm.submitted && !selectedConsole"
+          class="invalid-feedback"
+        >
           Console é obrigatório.
         </div>
       </div>
-      
+
       <!-- Gênero -->
-      <div class="form-group mb-3">
+      <div class="form-group">
         <label for="genre">Gênero</label>
         <select
           class="form-control"
@@ -124,20 +148,23 @@
           [(ngModel)]="selectedGenre"
           name="genre"
           required
-          [ngClass]="{'is-invalid': gameForm.submitted && !selectedGenre}"
+          [ngClass]="{ 'is-invalid': gameForm.submitted && !selectedGenre }"
         >
           <option value="" disabled selected>Selecione o gênero</option>
           <option *ngFor="let genre of genres" [value]="genre.id_genre">
             {{ genre.name_genre }}
           </option>
         </select>
-        <div *ngIf="gameForm.submitted && !selectedGenre" class="invalid-feedback">
+        <div
+          *ngIf="gameForm.submitted && !selectedGenre"
+          class="invalid-feedback"
+        >
           Gênero é obrigatório.
         </div>
       </div>
 
       <!-- Data de Conclusão -->
-      <div class="form-group mb-3">
+      <div class="form-group">
         <label for="dateBeating">Data de Conclusão</label>
         <input
           type="date"
@@ -175,7 +202,6 @@
     </form>
   </div>
 </div>
-
 
 <!-- Modal -->
 <div
