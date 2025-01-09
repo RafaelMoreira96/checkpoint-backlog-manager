@@ -195,35 +195,35 @@ func AdminCardsInfo(c *fiber.Ctx) error {
 	}
 	gamesCount := len(games)
 
-	genreCount, err := countEntities(&models.Genre{}, "is_active = 1")
+	genreCount, err := countEntities(&models.Genre{}, "is_active = true")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching genres",
 		})
 	}
 
-	consoleCount, err := countEntities(&models.Console{}, "is_active = 1")
+	consoleCount, err := countEntities(&models.Console{}, "is_active = true")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching consoles",
 		})
 	}
 
-	manufacturerCount, err := countEntities(&models.Manufacturer{}, "is_active = 1")
+	manufacturerCount, err := countEntities(&models.Manufacturer{}, "is_active = true")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching manufacturers",
 		})
 	}
 
-	playerCount, err := countEntities(&models.Player{}, "is_active = 1")
+	playerCount, err := countEntities(&models.Player{}, "is_active = true")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching players",
 		})
 	}
 
-	administratorCount, err := countEntities(&models.Administrator{}, "is_active = 1")
+	administratorCount, err := countEntities(&models.Administrator{}, "is_active = true")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error fetching administrators",

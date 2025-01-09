@@ -28,34 +28,23 @@ export class StatisticInfoComponent implements OnInit {
   constructor(private service: GamisticStatisticsService) {}
 
   ngOnInit() {
-    this.beatenByConsole();
-    this.beatenByGenre();
-    this.beatenByReleaseYear();
+    this.beatenStats();
   }
 
-  beatenByConsole() {
-    this.service.getBeatenByConsole().subscribe((response: any) => {
-      this.consoleStats = response.filter(
+  beatenStats() {
+    this.service.getBeatenStats().subscribe((response: any) => {
+      this.consoleStats = response.consoleStats.filter(
         (console: any) => console.game_count !== 0
       );
-      this.calculatePages();
-      this.updatePaginatedItems();
-    });
-  }
 
-  beatenByGenre() {
-    this.service.getBeatenByGenre().subscribe((response: any) => {
-      this.genresStats = response.filter(
+      this.genresStats = response.genreStats.filter(
         (genre: any) => genre.genre_count !== 0
       );
-      this.calculatePages();
-      this.updatePaginatedItems();
-    });
-  }
 
-  beatenByReleaseYear() {
-    this.service.getBeatenByReleaseYear().subscribe((response: any) => {
-      this.yearsStats = response.filter((year: any) => year.year_count !== 0);
+      this.yearsStats = response.yearStats.filter(
+        (year: any) => year.year_count !== 0
+      );
+
       this.calculatePages();
       this.updatePaginatedItems();
     });

@@ -102,11 +102,8 @@ func ProtectedMethods(app *fiber.App) {
 
 	/* PLAYER - CSV Mode functions */
 	app.Post("/api/v1/game/import_csv", controllers.ImportGamesFromCSV)
-	app.Post("/api/v1/backlog/import_csv", controllers.ImportBacklogFromCSV)
 
 	/* PLAYER - Gamistics Information */
-	app.Get("/api/v1/statistics/beaten-by-console", controllers.BeatedByConsole)
-	app.Get("/api/v1/statistics/beaten-by-genre", controllers.BeatedByGenre)
-	app.Get("/api/v1/statistics/beaten-by-release-year", controllers.BeatedByReleaseDate)
+	app.Get("/api/v1/statistics/beaten-statistics", controllers.BeatedStats)
 
 }

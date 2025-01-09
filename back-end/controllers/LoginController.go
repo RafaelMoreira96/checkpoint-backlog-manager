@@ -52,7 +52,7 @@ func LoginPlayer(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := utils.GenerateJWT(player.IdPlayer, "player", 2)
+	token, err := utils.GenerateJWT(player.NamePlayer, player.Nickname, player.IsActive, player.IdPlayer, "player", 2)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error generating token",
@@ -109,7 +109,7 @@ func LoginAdmin(c *fiber.Ctx) error {
 	}
 
 	// Generate JWT token
-	token, err := utils.GenerateJWT(administrator.IdAdministrator, "admin", int(administrator.AccessType))
+	token, err := utils.GenerateJWT(administrator.Name, administrator.Nickname, administrator.IsActive, administrator.IdAdministrator, "admin", int(administrator.AccessType))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "error generating token",

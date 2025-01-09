@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -8,12 +8,13 @@ import { Router } from '@angular/router';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
+  @Input() isSidebarVisible: boolean = true;
   role: string = '';
 
   menuItemsPlayer = {
     dashboardItem: [
       { link: 'home', name: 'Home', icon: 'fas fa-home' },
-      { link: 'gaming-information', name: 'Informações Gamísticas', icon: 'icon-grid' },
+      { link: 'gaming-information', name: 'Informações Gamísticas', icon: 'fas fa-bars' },
     ],
 
     registersItem: [
@@ -60,8 +61,6 @@ export class SidebarComponent {
       { link: 'profile', name: 'Perfil', icon: 'fas fa-user' },
     ],
   };
-
-  isSidebarVisible: boolean = true;
 
   constructor(private auth: AuthService, private router: Router) {}
 

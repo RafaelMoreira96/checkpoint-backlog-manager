@@ -1,8 +1,23 @@
-@media (max-width: 768px) {
-    .adjust-header {
-      top: 45px !important; /* Aplica o estilo quando a tela for menor que 768px */
-    }
+.text-dark {
+  color: #000 !important;
+}
 
-  }
-  
-  
+.text-white {
+  color: #fff !important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: #000;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: #3498db;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #fff;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: #3498db; 
+}

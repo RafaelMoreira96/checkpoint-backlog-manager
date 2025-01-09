@@ -8,7 +8,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 export class ApiIgdbService {
   private BASE_URL = '/api';
   private CLIENT_ID = 'zlv00a8uei2v4b7a7nhyqe484c9t1v';
-  private TOKEN = 'a5nxsmq2xhinrcmevd61i4evbyjzaw';
+  private TOKEN = '09hbmqhrs9y8zggelpoq7qqv6r3nna';
 
   constructor(private http: HttpClient) {}
 

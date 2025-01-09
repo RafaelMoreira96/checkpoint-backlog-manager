@@ -1,24 +1,76 @@
-<div class="main-header">
+<div class="main-header mr-2">
   <nav
-    class="navbar navbar-header navbar-expand-lg border-bottom"
+    class="navbar navbar-expand-lg border-bottom"
     [ngClass]="{
       'navbar-dark bg-dark': isDarkMode,
       'navbar-light bg-light': !isDarkMode
     }"
   >
-    <div class="adjust-header container d-flex justify-content-end">
+    <div class="container-fluid">
+      <!-- Botão do Menu Hamburger -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarMenu"
+        aria-controls="navbarMenu"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+        (click)="onToggleSidebar()"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Menu Hamburger -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+        <ul class="navbar-nav" *ngIf="toggleSidebar">
+          <!-- Menu Admin -->
+          <ng-container *ngIf="role === 'admin'; else playerMenu">
+            <ng-container *ngFor="let item of menuItemsAdmin | keyvalue">
+              <li
+                class="nav-item"
+                *ngFor="let subItem of item.value"
+                (click)="closeNavbar()"
+              >
+                <a class="nav-link" [routerLink]="subItem.link">
+                  <i [class]="subItem.icon"></i>
+                  {{ subItem.name }}
+                </a>
+              </li>
+            </ng-container>
+          </ng-container>
+
+          <!-- Menu Player -->
+          <ng-template #playerMenu>
+            <ng-container *ngFor="let item of menuItemsPlayer | keyvalue">
+              <li
+                class="nav-item"
+                *ngFor="let subItem of item.value"
+                (click)="closeNavbar()"
+              >
+                <a class="nav-link" [routerLink]="subItem.link">
+                  <i [class]="subItem.icon"></i>
+                  {{ subItem.name }}
+                </a>
+              </li>
+            </ng-container>
+          </ng-template>
+        </ul>
+      </div>
+
+      <!-- Botões fixos -->
       <ul class="navbar-nav d-flex flex-row align-items-center">
         <!-- Botão para alternar o tema -->
         <li class="nav-item me-3">
           <button class="btn btn-outline-secondary" (click)="toggleTheme()">
             <i
               class="fa"
-              [ngClass]="{ 
-                'fa-sun text-dark': !isDarkMode, 
-                'fa-moon text-white': isDarkMode 
+              [ngClass]="{
+                'fa-sun text-dark': !isDarkMode,
+                'fa-moon text-white': isDarkMode
               }"
             ></i>
-            {{ isDarkMode ? "Modo Claro" : "Modo Escuro" }}
+            {{ isDarkMode ? 'Modo Claro' : 'Modo Escuro' }}
           </button>
         </li>
 

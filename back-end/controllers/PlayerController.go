@@ -54,43 +54,6 @@ func AddPlayer(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(player)
 }
 
-/* Into player account functions */
-func ViewPlayerProfileInfo(c *fiber.Ctx) error {
-	playerID, _ := utils.GetPlayerTokenInfos(c)
-
-	db := database.GetDatabase()
-	var player models.Player
-
-	if err := db.Where("id_player = ?", playerID).First(&player).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "player not found",
-		})
-	}
-
-	var games []models.Game
-	if err := db.Where("player_id =?", playerID).Find(&games).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error getting backlog games",
-		})
-	}
-
-	finished_games := 0
-	backlog_games := 0
-	for i := 0; i < len(games); i++ {
-		if games[i].Status == 0 {
-			finished_games += 1
-		} else {
-			backlog_games += 1
-		}
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"player":                  player,
-		"quantity_finished_games": finished_games,
-		"quantity_backlog_games":  backlog_games,
-	})
-}
-
 func DeletePlayer(c *fiber.Ctx) error {
 	playerID, _ := utils.GetPlayerTokenInfos(c)
 
@@ -113,21 +76,6 @@ func DeletePlayer(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "player deleted",
 	})
-}
-
-/* For administrator account methods */
-func GetAllPlayers(c *fiber.Ctx) error {
-	utils.GetAdminTokenInfos(c)
-
-	db := database.GetDatabase()
-	var players []models.Player
-	if err := db.Find(&players).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error fetching players",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(players)
 }
 
 func UpdatePlayer(c *fiber.Ctx) error {
@@ -186,4 +134,56 @@ func UpdatePlayer(c *fiber.Ctx) error {
 
 	player.Password = ""
 	return c.Status(fiber.StatusOK).JSON(player)
+}
+
+/* Into player account functions */
+func ViewPlayerProfileInfo(c *fiber.Ctx) error {
+	playerID, _ := utils.GetPlayerTokenInfos(c)
+
+	db := database.GetDatabase()
+	var player models.Player
+
+	if err := db.Where("id_player = ?", playerID).First(&player).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "player not found",
+		})
+	}
+
+	var games []models.Game
+	if err := db.Where("player_id =?", playerID).Find(&games).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error getting backlog games",
+		})
+	}
+
+	finished_games := 0
+	backlog_games := 0
+	for i := 0; i < len(games); i++ {
+		if games[i].Status == 0 {
+			finished_games += 1
+		} else {
+			backlog_games += 1
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"player":                  player,
+		"quantity_finished_games": finished_games,
+		"quantity_backlog_games":  backlog_games,
+	})
+}
+
+/* For administrator account methods */
+func GetAllPlayers(c *fiber.Ctx) error {
+	utils.GetAdminTokenInfos(c)
+
+	db := database.GetDatabase()
+	var players []models.Player
+	if err := db.Find(&players).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error fetching players",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(players)
 }

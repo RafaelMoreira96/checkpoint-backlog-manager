@@ -71,7 +71,7 @@ func ViewAdministratorById(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var administrator models.Administrator
 
-	if err := db.Where("id_administrator = ? AND is_active = 1", c.Params("id")).First(&administrator).Error; err != nil {
+	if err := db.Where("id_administrator = ? AND is_active = true", c.Params("id")).First(&administrator).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "Administrator not found. ID: " + fmt.Sprint(adminID),
 		})
@@ -91,7 +91,7 @@ func ViewAdministratorProfile(c *fiber.Ctx) error {
 	db := database.GetDatabase()
 	var administrator models.Administrator
 
-	if err := db.Where("id_administrator = ? AND is_active = 1", adminID).First(&administrator).Error; err != nil {
+	if err := db.Where("id_administrator = ? AND is_active = true", adminID).First(&administrator).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "Administrator not found. ID: " + fmt.Sprint(adminID),
 		})

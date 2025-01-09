@@ -1,73 +1,25 @@
-<div class="text-center">
-  <div class="card-header">
-    <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link"
-          [ngClass]="{ active: activeTab === 'jogos-zerados' }"
-          (click)="activeTab = 'jogos-zerados'"
-          type="button"
-        >
-          Inserir lista de jogos
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link"
-          [ngClass]="{ active: activeTab === 'backlog' }"
-          (click)="activeTab = 'backlog'"
-          type="button"
-        >
-          Inserir backlog
-        </button>
-      </li>
-    </ul>
-  </div>
-
-  <div class="card-body">
-    <!-- Aba 1: Inserir lista de jogos zerados -->
-    <div *ngIf="activeTab === 'jogos-zerados'">
-      <h5 class="card-title">Inserir lista de jogos</h5>
-      <p class="card-text">
-        Insira um arquivo CSV com os gêneros que deseja adicionar ao banco de
-        dados.
-        <br />
-        O arquivo deve conter uma coluna com o nome do gênero apenas.
-      </p>
-      <form (submit)="onSubmitGameList()">
-        <input
-          type="file"
-          accept=".csv"
-          (change)="onFileSelected($event, 'jogos-zerados')"
-          class="form-control mb-3"
-          required
-        />
-        <button type="submit" class="btn btn-primary">Inserir</button>
-      </form>
+<h5 class="card-title">Inserir lista de jogos</h5>
+<p class="card-text">
+  Insira um arquivo CSV com os jogos que deseja adicionar ao banco de dados.
+  <br />
+  O arquivo deve conter as colunas necessárias para os jogos, como nome, gênero, desenvolvedora, console, ano de lançamento, entre outros.
+</p>
+<form (submit)="onSubmitGameList()">
+  <div class="row align-items-center">
+    <div class="col-8">
+      <input
+        type="file"
+        accept=".csv"
+        (change)="onFileSelected($event, 'jogos-zerados')"
+        class="form-control mb-3"
+        aria-label="Selecione o arquivo CSV"
+        required
+      />
     </div>
-
-    <!-- Aba 2: Inserir lista de backlog -->
-    <div *ngIf="activeTab === 'backlog'">
-      <h5 class="card-title">Inserir backlog</h5>
-      <p class="card-text">
-        Insira um arquivo CSV com os fabricantes que deseja adicionar ao banco
-        de dados.
-        <br />
-        O arquivo deve conter uma coluna com o nome do fabricante e ano de
-        fundação.
-      </p>
-      <form (submit)="onSubmitBacklog()">
-        <input
-          type="file"
-          accept=".csv"
-          (change)="onFileSelected($event, 'backlog')"
-          class="form-control mb-3"
-          required
-        />
-        <button type="submit" class="btn btn-primary">Inserir</button>
-      </form>
+    <div class="col-4">
+      <button type="submit" class="btn btn-primary w-100">
+        Inserir
+      </button>
     </div>
-
-    
   </div>
-</div>
+</form>

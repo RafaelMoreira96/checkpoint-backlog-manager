@@ -1,11 +1,8 @@
 package controllers
 
 import (
-	"sort"
-
 	"github.com/RafaelMoreira96/game-beating-project/controllers/utils"
 	"github.com/RafaelMoreira96/game-beating-project/database"
-	"github.com/RafaelMoreira96/game-beating-project/models"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,147 +26,125 @@ type YearGameCount struct {
 	PercentageYear float64 `json:"percentage_year"`
 }
 
-func BeatedByConsole(c *fiber.Ctx) error {
+func BeatedStats(c *fiber.Ctx) error {
 	playerID, _ := utils.GetPlayerTokenInfos(c)
 	db := database.GetDatabase()
 
-	var consoles []models.Console
-	if err := db.Where("is_active = true").Find(&consoles).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error fetching consoles",
-		})
-	}
-
+	// Estruturas para armazenar os resultados
 	var consoleGameCounts []ConsoleGameCount
-	var totalGames int
+	var genreGameCounts []GenreGameCount
+	var yearGameCounts []YearGameCount
 
-	for _, console := range consoles {
-		var games []models.Game
-		if err := db.Where("player_id = ?", playerID).Where("console_id = ?", console.IdConsole).Where("status = 0").Find(&games).Error; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "error fetching games",
-			})
-		}
-		totalGames += len(games)
+	// Query 1: Consoles
+	var consoleStats []struct {
+		ConsoleID   uint
+		NameConsole string
+		GameCount   int
+	}
+	if err := db.Raw(`
+		SELECT 
+			c.id_console AS console_id, 
+			c.name_console, 
+			COUNT(g.id_game) AS game_count
+		FROM consoles c
+		LEFT JOIN games g ON g.console_id = c.id_console AND g.player_id = ? AND g.status = 0
+		WHERE c.is_active = true
+		GROUP BY c.id_console, c.name_console
+	`, playerID).Scan(&consoleStats).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "error fetching console stats"})
 	}
 
-	for _, console := range consoles {
-		var games []models.Game
-		if err := db.Where("player_id = ?", playerID).Where("console_id = ?", console.IdConsole).Where("status = 0").Find(&games).Error; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "error fetching games",
-			})
-		}
-
-		count := len(games)
+	totalGamesByConsole := 0
+	for _, stat := range consoleStats {
+		totalGamesByConsole += stat.GameCount
+	}
+	for _, stat := range consoleStats {
 		percentage := 0.0
-		if totalGames > 0 {
-			percentage = float64(count) / float64(totalGames) * 100
+		if totalGamesByConsole > 0 {
+			percentage = float64(stat.GameCount) / float64(totalGamesByConsole) * 100
 		}
-
 		consoleGameCounts = append(consoleGameCounts, ConsoleGameCount{
-			ConsoleID:         console.IdConsole,
-			NameConsole:       console.NameConsole,
-			GameCount:         count,
+			ConsoleID:         stat.ConsoleID,
+			NameConsole:       stat.NameConsole,
+			GameCount:         stat.GameCount,
 			PercentageConsole: percentage,
 		})
 	}
 
-	sort.Slice(consoleGameCounts, func(i, j int) bool {
-		return consoleGameCounts[i].GameCount > consoleGameCounts[j].GameCount
-	})
-
-	return c.Status(fiber.StatusOK).JSON(consoleGameCounts)
-}
-
-func BeatedByGenre(c *fiber.Ctx) error {
-	playerID, _ := utils.GetPlayerTokenInfos(c)
-	db := database.GetDatabase()
-
-	var genres []models.Genre
-	if err := db.Where("is_active = true").Find(&genres).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error fetching genres",
-		})
+	// Query 2: Gêneros
+	var genreStats []struct {
+		GenreID   uint
+		NameGenre string
+		GameCount int
+	}
+	if err := db.Raw(`
+		SELECT 
+			g.id_genre AS genre_id, 
+			g.name_genre, 
+			COUNT(game.id_game) AS game_count
+		FROM genres g
+		LEFT JOIN games game ON game.genre_id = g.id_genre AND game.player_id = ? AND game.status = 0
+		WHERE g.is_active = true
+		GROUP BY g.id_genre, g.name_genre
+	`, playerID).Scan(&genreStats).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "error fetching genre stats"})
 	}
 
-	var genreGameCounts []GenreGameCount
-	var totalGames int
-
-	for _, genre := range genres {
-		var games []models.Game
-		if err := db.Where("player_id = ?", playerID).Where("genre_id = ?", genre.IdGenre).Where("status = 0").Find(&games).Error; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "error fetching games",
-			})
-		}
-		totalGames += len(games)
+	totalGamesByGenre := 0
+	for _, stat := range genreStats {
+		totalGamesByGenre += stat.GameCount
 	}
-
-	for _, genre := range genres {
-		var games []models.Game
-		if err := db.Where("player_id = ?", playerID).Where("genre_id = ?", genre.IdGenre).Where("status = 0").Find(&games).Error; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "error fetching games",
-			})
-		}
-
-		count := len(games)
+	for _, stat := range genreStats {
 		percentage := 0.0
-		if totalGames > 0 {
-			percentage = float64(count) / float64(totalGames) * 100
+		if totalGamesByGenre > 0 {
+			percentage = float64(stat.GameCount) / float64(totalGamesByGenre) * 100
 		}
-
 		genreGameCounts = append(genreGameCounts, GenreGameCount{
-			GenreID:         genre.IdGenre,
-			NameGenre:       genre.NameGenre,
-			GenreCount:      count,
+			GenreID:         stat.GenreID,
+			NameGenre:       stat.NameGenre,
+			GenreCount:      stat.GameCount,
 			PercentageGenre: percentage,
 		})
 	}
 
-	sort.Slice(genreGameCounts, func(i, j int) bool {
-		return genreGameCounts[i].GenreCount > genreGameCounts[j].GenreCount
-	})
-
-	return c.Status(fiber.StatusOK).JSON(genreGameCounts)
-}
-
-func BeatedByReleaseDate(c *fiber.Ctx) error {
-	playerID, _ := utils.GetPlayerTokenInfos(c)
-	db := database.GetDatabase()
-
-	var games []models.Game
-	if err := db.Where("player_id = ?", playerID).Where("status = 0").Find(&games).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error fetching games",
-		})
+	// Query 3: Datas de Lançamento
+	var yearStats []struct {
+		ReleaseYear int
+		GameCount   int
+	}
+	if err := db.Raw(`
+		SELECT 
+			game.release_year, 
+			COUNT(game.id_game) AS game_count
+		FROM games game
+		WHERE game.player_id = ? AND game.status = 0
+		GROUP BY game.release_year
+	`, playerID).Scan(&yearStats).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "error fetching year stats"})
 	}
 
-	totalGames := len(games)
-
-	yearGameCountMap := make(map[int]int)
-	for _, game := range games {
-		yearGameCountMap[game.ReleaseYear]++
+	totalGamesByYear := 0
+	for _, stat := range yearStats {
+		totalGamesByYear += stat.GameCount
 	}
-
-	var yearGameCounts []YearGameCount
-	for year, count := range yearGameCountMap {
+	for _, stat := range yearStats {
 		percentage := 0.0
-		if totalGames > 0 {
-			percentage = float64(count) / float64(totalGames) * 100
+		if totalGamesByYear > 0 {
+			percentage = float64(stat.GameCount) / float64(totalGamesByYear) * 100
 		}
-
 		yearGameCounts = append(yearGameCounts, YearGameCount{
-			Year:           year,
-			YearCount:      count,
+			Year:           stat.ReleaseYear,
+			YearCount:      stat.GameCount,
 			PercentageYear: percentage,
 		})
 	}
 
-	sort.Slice(yearGameCounts, func(i, j int) bool {
-		return yearGameCounts[i].Year > yearGameCounts[j].Year
-	})
+	// Consolidar todos os resultados
+	response := fiber.Map{
+		"consoleStats": consoleGameCounts,
+		"genreStats":   genreGameCounts,
+		"yearStats":    yearGameCounts,
+	}
 
-	return c.Status(fiber.StatusOK).JSON(yearGameCounts)
+	return c.Status(fiber.StatusOK).JSON(response)
 }
