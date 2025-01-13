@@ -10,7 +10,7 @@ import (
 
 var db *gorm.DB
 
-func ConnectDevMode() *gorm.DB {
+/* func ConnectDevMode() *gorm.DB {
 	hostname := "localhost"
 	username := "postgres"
 	databaseName := "game-beating-project"
@@ -33,6 +33,25 @@ func ConnectDevMode() *gorm.DB {
 	db = database
 	migrations.RunMigrations(db)
 
+	return db.Begin()
+} */
+
+func ConnectDevMode() *gorm.DB {
+	// URL de conexão fornecida
+	databaseURL := "postgres://neondb_owner:PXCF03zfNpGi@ep-mute-bonus-a5gap40d-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+
+	// Abrindo a conexão com o banco de dados usando GORM
+	database, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Erro ao conectar ao banco de dados: %v", err)
+		return nil
+	}
+
+	// Rodando migrações
+	db = database
+	migrations.RunMigrations(db)
+
+	// Retorna uma nova transação iniciada
 	return db.Begin()
 }
 
