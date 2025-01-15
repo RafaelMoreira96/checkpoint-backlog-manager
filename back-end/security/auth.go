@@ -1,6 +1,7 @@
-package utils
+package security
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -10,21 +11,23 @@ import (
 
 var secretKey = []byte("game-beating-jwt")
 
-func GenerateJWT(name_player string, nickname string, is_active bool, userUD uint, role string, permission int) (string, error) {
+// GenerateJWT gera um token JWT para autenticação
+func GenerateJWT(namePlayer string, nickname string, isActive bool, userID uint, role string, permission int) (string, error) {
 	claims := jwt.MapClaims{
-		"name_player": name_player,
-		"user_id":     userUD,
-		"is_active":   is_active,
+		"name_player": namePlayer,
+		"user_id":     userID,
+		"is_active":   isActive,
 		"nickname":    nickname,
 		"role":        role,
 		"permission":  permission,
-		"exp":         time.Now().Add(time.Hour * 72).Unix(),
+		"exp":         time.Now().Add(time.Hour * 72).Unix(), // Token expira em 72 horas
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(secretKey)
 }
 
+// JWTMiddleware é um middleware para validar tokens JWT
 func JWTMiddleware(c *fiber.Ctx) error {
 	tokenString := c.Get("Authorization")
 	if tokenString == "" {
@@ -34,6 +37,9 @@ func JWTMiddleware(c *fiber.Ctx) error {
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
 		return secretKey, nil
 	})
 
@@ -46,7 +52,7 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid claims"})
 	}
 
-	// Validação das chaves e conversões seguras
+	// Extrai e valida os dados do token
 	userID, ok := claims["user_id"].(float64)
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Player ID not found or invalid"})
@@ -77,6 +83,7 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Role not found or invalid"})
 	}
 
+	// Adiciona os dados do token ao contexto
 	c.Locals("userID", uint(userID))
 	c.Locals("role", role)
 	c.Locals("permission", uint(permission))

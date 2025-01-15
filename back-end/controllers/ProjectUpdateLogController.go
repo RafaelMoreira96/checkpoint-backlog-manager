@@ -1,65 +1,75 @@
 package controllers
 
 import (
-	"github.com/RafaelMoreira96/game-beating-project/controllers/utils"
-	"github.com/RafaelMoreira96/game-beating-project/database"
+	"strconv"
+
+	"github.com/RafaelMoreira96/game-beating-project/controllers/controllers_functions"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
 
-func AddLog(c *fiber.Ctx) error {
-	utils.GetAdminTokenInfos(c)
-	db := database.GetDatabase()
+type LogController struct {
+	logService *services.LogService
+}
+
+func NewLogController() *LogController {
+	return &LogController{
+		logService: services.NewLogService(),
+	}
+}
+
+// AddLog adiciona um novo log de atualização do projeto
+func (c *LogController) AddLog(ctx *fiber.Ctx) error {
+	controllers_functions.GetAdminTokenInfos(ctx)
+
 	var log models.ProjectUpdateLog
-	if err := c.BodyParser(&log); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	if err := ctx.BodyParser(&log); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "error parsing log",
 		})
 	}
 
-	if log.Description == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "insert a description",
+	log.AuthorID = ctx.Locals("userID").(uint)
+	if err := c.logService.AddLog(&log); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
 		})
 	}
 
-	if log.Content == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "insert a content",
-		})
-	}
-
-	log.AuthorID = c.Locals("userID").(uint)
-	db.Create(&log)
-	return c.Status(fiber.StatusCreated).JSON(log)
+	return ctx.Status(fiber.StatusCreated).JSON(log)
 }
 
-func DeleteLog(c *fiber.Ctx) error {
-	utils.GetAdminTokenInfos(c)
-	db := database.GetDatabase()
-	var log models.ProjectUpdateLog
+// DeleteLog remove um log de atualização do projeto pelo ID
+func (c *LogController) DeleteLog(ctx *fiber.Ctx) error {
+	controllers_functions.GetAdminTokenInfos(ctx)
 
-	if err := db.Where("id_project_update_log = ?", c.Params("id")).First(&log).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "log not found",
+	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "invalid log ID",
 		})
 	}
 
-	db.Delete(&log)
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	if err := c.logService.DeleteLog(uint(id)); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "log deleted",
 	})
 }
 
-func GetLogs(c *fiber.Ctx) error {
-	db := database.GetDatabase()
-	var logs []models.ProjectUpdateLog
-
-	if err := db.Preload("Author").Find(&logs).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error into find logs",
+// GetLogs retorna todos os logs de atualização do projeto
+func (c *LogController) GetLogs(ctx *fiber.Ctx) error {
+	logs, err := c.logService.GetLogs()
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(logs)
+	return ctx.Status(fiber.StatusOK).JSON(logs)
 }

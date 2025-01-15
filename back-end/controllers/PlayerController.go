@@ -1,189 +1,150 @@
 package controllers
 
 import (
-	"github.com/RafaelMoreira96/game-beating-project/controllers/utils"
-	"github.com/RafaelMoreira96/game-beating-project/database"
+	"errors"
+
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
 
-func AddPlayer(c *fiber.Ctx) error {
-	db := database.GetDatabase()
-	var player models.Player
-	player.IsActive = true
-
-	if err := c.BodyParser(&player); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error parsing player",
-		})
-	}
-
-	if player.NamePlayer == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "insert a player name",
-		})
-	}
-
-	if player.Password == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "password is required",
-		})
-	}
-
-	hashedPassword, err := utils.HashPassword(player.Password)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error hashing password",
-		})
-	}
-
-	player.Password = hashedPassword
-	var playerDB models.Player
-	if err := db.Where("nickname = ?", player.Nickname).First(&playerDB).Error; err == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "nickname already exists",
-		})
-	}
-
-	if err := db.Create(&player).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error creating player",
-		})
-	}
-
-	return c.Status(fiber.StatusCreated).JSON(player)
+type PlayerController struct {
+	playerService *services.PlayerService
 }
 
-func DeletePlayer(c *fiber.Ctx) error {
-	playerID, _ := utils.GetPlayerTokenInfos(c)
+func NewPlayerController() *PlayerController {
+	return &PlayerController{
+		playerService: services.NewPlayerService(),
+	}
+}
 
-	db := database.GetDatabase()
+// AddPlayer cria um novo jogador
+func (c *PlayerController) AddPlayer(ctx *fiber.Ctx) error {
 	var player models.Player
-
-	if err := db.Where("id_player = ?", playerID).First(&player).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "player not found" + err.Error(),
+	if err := ctx.BodyParser(&player); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error parsing player: " + err.Error(),
 		})
 	}
 
-	player.IsActive = false
-	if err := db.Save(&player).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error deleting player: " + err.Error(),
+	if err := c.playerService.AddPlayer(&player); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "player deleted",
+	return ctx.Status(fiber.StatusCreated).JSON(player)
+}
+
+// DeletePlayer desativa o jogador logado
+func (c *PlayerController) DeletePlayer(ctx *fiber.Ctx) error {
+	playerID, err := c.getPlayerIDFromToken(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
+
+	if err := c.playerService.DeletePlayer(playerID); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "player deactivated",
 	})
 }
 
-func UpdatePlayer(c *fiber.Ctx) error {
-	playerID, err := utils.GetPlayerTokenInfos(c)
+// UpdatePlayer atualiza o jogador logado
+func (c *PlayerController) UpdatePlayer(ctx *fiber.Ctx) error {
+	playerID, err := c.getPlayerIDFromToken(ctx)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "invalid or missing token",
-		})
-	}
-
-	db := database.GetDatabase()
-
-	var player models.Player
-	if err := db.Where("id_player = ?", playerID).First(&player).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "player not found",
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
 		})
 	}
 
 	var updatedPlayer models.Player
-	if err := c.BodyParser(&updatedPlayer); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error parsing player",
+	if err := ctx.BodyParser(&updatedPlayer); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error parsing player: " + err.Error(),
 		})
 	}
 
-	if updatedPlayer.NamePlayer != "" {
-		player.NamePlayer = updatedPlayer.NamePlayer
-	}
-
-	if updatedPlayer.Nickname != "" {
-		var playerDB models.Player
-		if err := db.Where("nickname = ?", updatedPlayer.Nickname).First(&playerDB).Error; err == nil && playerDB.IdPlayer != player.IdPlayer {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "nickname already exists",
-			})
-		}
-		player.Nickname = updatedPlayer.Nickname
-	}
-
-	if updatedPlayer.Password != "" && updatedPlayer.Password != player.Password {
-		hashedPassword, err := utils.HashPassword(updatedPlayer.Password)
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "error hashing password",
-			})
-		}
-		player.Password = hashedPassword
-	}
-
-	if err := db.Save(&player).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error updating player",
+	if err := c.playerService.UpdatePlayer(playerID, &updatedPlayer); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
 		})
 	}
 
-	player.Password = ""
-	return c.Status(fiber.StatusOK).JSON(player)
+	updatedPlayer.Password = "" // Não retornar a senha
+	return ctx.Status(fiber.StatusOK).JSON(updatedPlayer)
 }
 
-/* Into player account functions */
-func ViewPlayerProfileInfo(c *fiber.Ctx) error {
-	playerID, _ := utils.GetPlayerTokenInfos(c)
-
-	db := database.GetDatabase()
-	var player models.Player
-
-	if err := db.Where("id_player = ?", playerID).First(&player).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "player not found",
+// ViewPlayerProfileInfo retorna o perfil do jogador logado
+func (c *PlayerController) ViewPlayerProfileInfo(ctx *fiber.Ctx) error {
+	playerID, err := c.getPlayerIDFromToken(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
 		})
 	}
 
-	var games []models.Game
-	if err := db.Where("player_id =?", playerID).Find(&games).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error getting backlog games",
+	player, finishedGames, backlogGames, err := c.playerService.ViewPlayerProfileInfo(playerID)
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": err.Error(),
 		})
 	}
 
-	finished_games := 0
-	backlog_games := 0
-	for i := 0; i < len(games); i++ {
-		if games[i].Status == 0 {
-			finished_games += 1
-		} else {
-			backlog_games += 1
-		}
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"player":                  player,
-		"quantity_finished_games": finished_games,
-		"quantity_backlog_games":  backlog_games,
+		"quantity_finished_games": finishedGames,
+		"quantity_backlog_games":  backlogGames,
 	})
 }
 
-/* For administrator account methods */
-func GetAllPlayers(c *fiber.Ctx) error {
-	utils.GetAdminTokenInfos(c)
-
-	db := database.GetDatabase()
-	var players []models.Player
-	if err := db.Find(&players).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error fetching players",
+// GetAllPlayers retorna todos os jogadores (para administradores)
+func (c *PlayerController) GetAllPlayers(ctx *fiber.Ctx) error {
+	players, err := c.playerService.GetAllPlayers()
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(players)
+	return ctx.Status(fiber.StatusOK).JSON(players)
+}
+
+// RequestPasswordReset envia um e-mail de recuperação de senha
+func (c *PlayerController) RequestPasswordReset(ctx *fiber.Ctx) error {
+	var request struct {
+		Email string `json:"email"`
+	}
+
+	if err := ctx.BodyParser(&request); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error parsing request: " + err.Error(),
+		})
+	}
+
+	if err := c.playerService.RequestPasswordReset(request.Email); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "password reset email sent",
+	})
+}
+
+// getPlayerIDFromToken extrai o ID do jogador do token JWT
+func (c *PlayerController) getPlayerIDFromToken(ctx *fiber.Ctx) (uint, error) {
+	playerID, ok := ctx.Locals("userID").(uint)
+	if !ok {
+		return 0, errors.New("invalid token")
+	}
+	return playerID, nil
 }

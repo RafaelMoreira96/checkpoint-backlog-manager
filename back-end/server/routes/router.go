@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/RafaelMoreira96/game-beating-project/controllers"
-	"github.com/RafaelMoreira96/game-beating-project/utils"
+	"github.com/RafaelMoreira96/game-beating-project/security"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,13 +12,19 @@ func SetupRoutes(app *fiber.App) {
 }
 
 func PublicMethods(app *fiber.App) {
-	/* Login route method */
-	app.Post("api/v1/login", controllers.LoginPlayer)
-	app.Post("api/v1/admin_login", controllers.LoginAdmin)
+	/* Auth routes method */
+	authController := controllers.NewAuthController()
+	app.Post("api/v1/login", authController.LoginPlayer)
+	app.Post("api/v1/admin_login", authController.LoginAdmin)
 
-	/* Register player method */
-	app.Post("/api/v1/player", controllers.AddPlayer)
-	app.Post("/api/v1/admin", controllers.AddAdministrator)
+	/* Register and reset password for player methods */
+	playerController := controllers.NewPlayerController()
+	app.Post("/api/v1/player/register", playerController.AddPlayer)
+	app.Post("/api/v1/player/request_password_reset", playerController.RequestPasswordReset)
+
+	/* Register administrator method */
+	adminController := controllers.NewAdministratorController()
+	app.Post("/api/v1/admin/register", adminController.AddAdministrator) // Rota pública para adicionar administrador
 
 	/* LANDING PAGE */
 	app.Get("/api/v1/landing-page/stats", controllers.StatsInfo)
@@ -26,84 +32,88 @@ func PublicMethods(app *fiber.App) {
 
 func ProtectedMethods(app *fiber.App) {
 	// Security JWT implements
-	app.Use(utils.JWTMiddleware)
+	app.Use(security.JWTMiddleware)
 
 	/* Manufacturer routes methods */
-	app.Post("api/v1/manufacturer", controllers.AddManufacturer)
-	app.Get("api/v1/manufacturer/list", controllers.ListAllManufacturers)
-	app.Get("api/v1/manufacturer/:id", controllers.ViewManufacturer)
-	app.Get("api/v1/manufacturer/list/deactivated", controllers.ListDeactivateManufacturers)
-	app.Delete("api/v1/manufacturer/:id", controllers.DeleteManufacturer)
-	app.Put("api/v1/manufacturer/:id", controllers.UpdateManufacturer)
-	app.Put("api/v1/manufacturer/activate/:id", controllers.ReactivateManufacturer)
+	manufacturerController := controllers.NewManufacturerController()
+	app.Post("/api/v1/manufacturer", manufacturerController.AddManufacturer)
+	app.Get("/api/v1/manufacturer/list", manufacturerController.ListAllManufacturers)
+	app.Get("/api/v1/manufacturer/list/deactivated", manufacturerController.ListDeactivateManufacturers)
+	app.Get("/api/v1/manufacturer/:id", manufacturerController.ViewManufacturer)
+	app.Put("/api/v1/manufacturer/:id", manufacturerController.UpdateManufacturer)
+	app.Delete("/api/v1/manufacturer/:id", manufacturerController.DeleteManufacturer)
+	app.Put("/api/v1/manufacturer/activate/:id", manufacturerController.ReactivateManufacturer)
+	app.Post("/api/v1/admin/csv/add_list_manufacturers", manufacturerController.ImportManufacturersFromCSV)
 
 	/* Console routes methods */
-	app.Post("/api/v1/console", controllers.AddConsole)
-	app.Get("/api/v1/console/list", controllers.GetConsoles)
-	app.Get("/api/v1/console/deactivated_list", controllers.GetInactiveConsoles)
-	app.Get("/api/v1/console/:id", controllers.ViewConsole)
-	app.Delete("/api/v1/console/:id", controllers.DeleteConsole)
-	app.Put("/api/v1/console/:id", controllers.UpdateConsole)
-	app.Put("/api/v1/console/activate/:id", controllers.ReactivateConsole)
+	consoleController := controllers.NewConsoleController()
+	app.Post("/api/v1/console", consoleController.AddConsole)
+	app.Get("/api/v1/console/list", consoleController.GetConsoles)
+	app.Get("/api/v1/console/deactivated_list", consoleController.GetInactiveConsoles)
+	app.Get("/api/v1/console/:id", consoleController.ViewConsole)
+	app.Put("/api/v1/console/:id", consoleController.UpdateConsole)
+	app.Delete("/api/v1/console/:id", consoleController.DeleteConsole)
+	app.Put("/api/v1/console/activate/:id", consoleController.ReactivateConsole)
+	app.Post("/api/v1/console/import_csv", consoleController.ImportConsolesFromCSV)
 
 	/* Genre routes methods */
-	app.Post("/api/v1/genre", controllers.AddGenre)
-	app.Get("/api/v1/genre/list", controllers.ListAllGenres)
-	app.Get("/api/v1/genre/list/deactivated", controllers.ListDeactivateGenres)
-	app.Get("/api/v1/genre/:id", controllers.ViewGenre)
-	app.Delete("/api/v1/genre/:id", controllers.DeleteGenre)
-	app.Put("/api/v1/genre/:id", controllers.UpdateGenre)
-	app.Put("/api/v1/genre/activate/:id", controllers.ReactivateGenre)
+	genreController := controllers.NewGenreController()
+	app.Post("/api/v1/genre", genreController.AddGenre)
+	app.Get("/api/v1/genre/list", genreController.ListAllGenres)
+	app.Get("/api/v1/genre/list/deactivated", genreController.ListDeactivateGenres)
+	app.Get("/api/v1/genre/:id", genreController.ViewGenre)
+	app.Put("/api/v1/genre/:id", genreController.UpdateGenre)
+	app.Put("/api/v1/genre/activate/:id", genreController.ReactivateGenre)
+	app.Delete("/api/v1/genre/:id", genreController.DeleteGenre)
+	app.Post("/api/v1/admin/csv/add_list_genres", genreController.ImportGenresFromCSV)
 
 	/* Player routes methods */
-	app.Get("/api/v1/player/view", controllers.ViewPlayerProfileInfo)
-	app.Delete("/api/v1/player/delete", controllers.DeletePlayer)
-	app.Put("/api/v1/player/update", controllers.UpdatePlayer)
+	playerController := controllers.NewPlayerController()
+	app.Get("/api/v1/player/view", playerController.ViewPlayerProfileInfo)
+	app.Delete("/api/v1/player/delete", playerController.DeletePlayer)
+	app.Put("/api/v1/player/update", playerController.UpdatePlayer)
 
 	/* Administrator routes methods */
-	app.Get("/api/v1/admin/view/:id", controllers.ViewAdministratorById)
-	app.Get("/api/v1/admin/view", controllers.ViewAdministratorProfile)
-	app.Delete("/api/v1/admin/delete", controllers.CancelAdministratorInProfile)
-	app.Delete("/api/v1/admin/delete/:id", controllers.CancelAdministratorInList)
-	app.Get("/api/v1/admin/list", controllers.ListAdministrators)
-	app.Put("/api/v1/admin/update/:id", controllers.UpdateAdministratorById)
-	app.Put("/api/v1/admin/update", controllers.UpdateAdministrator)
+	adminController := controllers.NewAdministratorController()
+	app.Get("/api/v1/admin/view/:id", adminController.ViewAdministratorById)
+	app.Get("/api/v1/admin/view", adminController.ViewAdministratorProfile)
+	app.Delete("/api/v1/admin/delete", adminController.CancelAdministratorInProfile)
+	app.Delete("/api/v1/admin/delete/:id", adminController.CancelAdministratorInList)
+	app.Get("/api/v1/admin/list", adminController.ListAdministrators)
+	app.Put("/api/v1/admin/update/:id", adminController.UpdateAdministratorById)
+	app.Put("/api/v1/admin/update", adminController.UpdateAdministrator)
 
 	/* Game routes methods */
-	app.Post("/api/v1/game", controllers.AddGame)
-	app.Put("/api/v1/game/:id_game", controllers.UpdateGame)
-	app.Get("/api/v1/game/list_beaten", controllers.GetBeatenList)
-	app.Get("/api/v1/game/:id_game", controllers.GetGame)
-	app.Delete("/api/v1/game/delete_beaten/:id_game", controllers.DeleteGame)
+	gameController := controllers.NewGameController()
+	app.Post("/api/v1/game", gameController.AddGame)
+	app.Get("/api/v1/game/list_beaten", gameController.GetBeatenList)
+	app.Get("/api/v1/game/:id_game", gameController.GetGame)
+	app.Delete("/api/v1/game/delete_beaten/:id_game", gameController.DeleteGame)
+	app.Put("/api/v1/game/:id_game", gameController.UpdateGame)
+	app.Post("/api/v1/game/import_csv", gameController.ImportGamesFromCSV)
 
-	/* Project Update Log routes method */
-	app.Post("/api/v1/log", controllers.AddLog)
-	app.Delete("/api/v1/log/:id", controllers.DeleteLog)
-	app.Get("/api/v1/log/list", controllers.GetLogs)
+	/* Project Update Log routes methods */
+	logController := controllers.NewLogController()
+	app.Post("/api/v1/log", logController.AddLog)
+	app.Delete("/api/v1/log/:id", logController.DeleteLog)
+	app.Get("/api/v1/log/list", logController.GetLogs)
 
-	/* Aditional routes from home page for player account */
-	app.Get("/api/v1/player/last_games", controllers.LastGamesBeatingAdded)
-	app.Get("/api/v1/player/last_backlog", controllers.LastGamesBacklogAdded)
-	app.Get("/api/v1/player/prefered_genre", controllers.CardsInfo)
+	/* Frontend routes methods */
+	dashboardController := controllers.NewDashboardController()
+	app.Get("/api/v1/player/last_games", dashboardController.LastGamesBeatingAdded)
+	app.Get("/api/v1/player/last_backlog", dashboardController.LastGamesBacklogAdded)
+	app.Get("/api/v1/player/prefered_genre", dashboardController.CardsInfo)
+	app.Get("/api/v1/admin/last_players_added", dashboardController.LastPlayersRegistered)
+	app.Get("/api/v1/admin/last_admin_added", dashboardController.LastAdminsRegistered)
+	app.Get("/api/v1/admin/cards_info", dashboardController.AdminCardsInfo)
 
 	/* Backlog routes methods */
-	app.Post("/api/v1/backlog", controllers.AddBacklogGame)
-	app.Get("/api/v1/backlog/list", controllers.ListBacklogGames)
+	backlogController := controllers.NewBacklogController()
+	app.Post("/api/v1/backlog", backlogController.AddBacklogGame)
+	app.Get("/api/v1/backlog/list", backlogController.ListBacklogGames)
 
-	/* Aditional routes from dashboard page for admin accounts */
-	app.Get("/api/v1/admin/last_players_added", controllers.LastPlayersRegistered)
-	app.Get("/api/v1/admin/last_admin_added", controllers.LastAdminsRegistered)
-	app.Get("/api/v1/admin/cards_info", controllers.AdminCardsInfo)
+	statsController := controllers.NewStatsController()
+	app.Get("/api/v1/statistics/beaten-statistics", statsController.BeatedStats)
 
-	/* ADMIN - CSV Mode functions */
-	app.Post("/api/v1/admin/csv/add_list_genres", controllers.ImportGenresFromCSV)
-	app.Post("/api/v1/admin/csv/add_list_manufacturers", controllers.ImportManufacturersFromCSV)
-	app.Post("/api/v1/admin/csv/add_list_consoles", controllers.ImportConsolesFromCSV)
-
-	/* PLAYER - CSV Mode functions */
-	app.Post("/api/v1/game/import_csv", controllers.ImportGamesFromCSV)
-
-	/* PLAYER - Gamistics Information */
-	app.Get("/api/v1/statistics/beaten-statistics", controllers.BeatedStats)
-
+	//app.Post("/reset-password", ResetPassword)
 }

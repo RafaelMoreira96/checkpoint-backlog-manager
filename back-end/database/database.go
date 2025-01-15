@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"os"
 
 	"github.com/RafaelMoreira96/game-beating-project/database/migrations"
 	"gorm.io/driver/postgres"
@@ -10,58 +11,17 @@ import (
 
 var db *gorm.DB
 
-/* func ConnectDevMode() *gorm.DB {
-	hostname := "localhost"
-	username := "postgres"
-	databaseName := "game-beating-project"
-	password := "R4f4@123"
-	port := "5432"
-
-	databaseURL := "host=" + hostname +
-		" user=" + username +
-		" password=" + password +
-		" dbname=" + databaseName +
-		" port=" + port +
-		" sslmode=require TimeZone=America/Sao_Paulo"
-
-	database, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Erro ao conectar ao banco de dados: %v", err)
-		return nil
-	}
-
-	db = database
-	migrations.RunMigrations(db)
-
-	return db.Begin()
-} */
-
+// ConnectDevMode conecta ao banco de dados em modo de desenvolvimento
 func ConnectDevMode() *gorm.DB {
-	// URL de conexão fornecida
-	databaseURL := "postgres://neondb_owner:PXCF03zfNpGi@ep-mute-bonus-a5gap40d-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+	hostname := os.Getenv("DB_HOST_DEV")
+	username := os.Getenv("DB_USER_DEV")
+	databaseName := os.Getenv("DB_NAME_DEV")
+	password := os.Getenv("DB_PASSWORD_DEV")
+	port := os.Getenv("DB_PORT_DEV")
 
-	// Abrindo a conexão com o banco de dados usando GORM
-	database, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Erro ao conectar ao banco de dados: %v", err)
-		return nil
+	if hostname == "" || username == "" || databaseName == "" || password == "" || port == "" {
+		log.Fatal("Variáveis de ambiente para o banco de dados de desenvolvimento não estão configuradas corretamente")
 	}
-
-	// Rodando migrações
-	db = database
-	migrations.RunMigrations(db)
-
-	// Retorna uma nova transação iniciada
-	return db.Begin()
-}
-
-// WARNING: Only used for testing, without try add information
-func ConnectProdMode() *gorm.DB {
-	hostname := "dpg-ctncd33qf0us73afc33g-a.oregon-postgres.render.com"
-	username := "rafael"
-	databaseName := "checkpoint_6976"
-	password := "UB9N6UN1AqLqdI84tGPi3eUtcfxD3ItU"
-	port := "5432"
 
 	databaseURL := "host=" + hostname +
 		" user=" + username +
@@ -72,16 +32,40 @@ func ConnectProdMode() *gorm.DB {
 
 	database, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Erro ao conectar ao banco de dados: %v", err)
-		return nil
+		log.Fatalf("Erro ao conectar ao banco de dados de desenvolvimento: %v", err)
 	}
 
 	db = database
 	migrations.RunMigrations(db)
 
-	return db.Begin()
+	log.Println("Conexão com o banco de dados de desenvolvimento estabelecida com sucesso")
+	return db
 }
 
+// ConnectProdMode conecta ao banco de dados em modo de produção
+func ConnectProdMode() *gorm.DB {
+	databaseURL := os.Getenv("DATABASE_URL_PROD")
+
+	if databaseURL == "" {
+		log.Fatal("Variável de ambiente DATABASE_URL_PROD não está configurada")
+	}
+
+	database, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Erro ao conectar ao banco de dados de produção: %v", err)
+	}
+
+	db = database
+	migrations.RunMigrations(db)
+
+	log.Println("Conexão com o banco de dados de produção estabelecida com sucesso")
+	return db
+}
+
+// GetDatabase retorna a instância do banco de dados
 func GetDatabase() *gorm.DB {
+	if db == nil {
+		log.Fatal("Banco de dados não inicializado. Certifique-se de chamar ConnectDevMode ou ConnectProdMode primeiro.")
+	}
 	return db
 }

@@ -23,6 +23,12 @@ export class GameService {
     });
   }
 
+  updateGames(data: any[]) {
+    return this.http.put(`${API_CONFIG.BASE_URL}/api/v1/update_missing_data_list`, data, {
+        headers: this.headers,
+    });
+}
+
   getGames() {
     return this.http.get(`${this.BASE_URL}/list_beaten`, {
       headers: this.headers,

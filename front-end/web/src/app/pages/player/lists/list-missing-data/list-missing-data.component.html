@@ -1,0 +1,108 @@
+<div class="container-fluid">
+  <h2 class="mb-4">Jogos com Informações Faltando</h2>
+
+  <div *ngIf="isLoading" class="text-center">
+    <p>Carregando jogos...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>#</th>
+          <th>Nome do Jogo</th>
+          <th>Gênero</th>
+          <th>Desenvolvedor</th>
+          <th>Ano de Lançamento</th>
+          <th>Plataforma</th>
+          <th>Tempo de Conclusão</th>
+          <th>Data de Conclusão</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let game of filteredGames; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="game.name_game"
+              placeholder="Nome do Jogo"
+              required
+            />
+          </td>
+          <td>
+            <select
+              class="form-control"
+              [(ngModel)]="selectedGenreId[game.id_game]"
+              (change)="updateGameGenre(game, selectedGenreId[game.id_game])"
+              required
+            >
+              <option value="">Selecione um gênero</option>
+              <option *ngFor="let genre of genres" [value]="genre.id_genre">
+                {{ genre.name_genre }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="game.developer"
+              placeholder="Desenvolvedor"
+              required
+            />
+          </td>
+          <td>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="game.release_year"
+              placeholder="Ano de Lançamento"
+              required
+            />
+          </td>
+          <td>
+            <select
+              class="form-control"
+              [(ngModel)]="selectedConsoleId[game.id_game]"
+              (change)="updateGameConsole(game, selectedConsoleId[game.id_game])"
+              required
+            >
+              <option value="">Selecione uma plataforma</option>
+              <option *ngFor="let console of consoles" [value]="console.id_console">
+                {{ console.name_console }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="game.time_beating"
+              placeholder="Tempo de Conclusão (em horas)"
+              required
+            />
+          </td>
+          <td>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="game.date_beating"
+              required
+            />
+          </td>
+        </tr>
+        <tr *ngIf="filteredGames.length === 0">
+          <td colspan="8" class="text-center">Nenhum jogo com informações faltando encontrado.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="text-end mt-3">
+      <button class="btn btn-success" (click)="saveAllChanges()">
+        Salvar Alterações
+      </button>
+    </div>
+  </div>
+</div>

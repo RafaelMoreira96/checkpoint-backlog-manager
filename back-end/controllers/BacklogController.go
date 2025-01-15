@@ -1,52 +1,72 @@
 package controllers
 
 import (
-	"github.com/RafaelMoreira96/game-beating-project/controllers/utils"
-	"github.com/RafaelMoreira96/game-beating-project/database"
+	"errors"
+
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
 
-func AddBacklogGame(c *fiber.Ctx) error {
-	playerID, _ := utils.GetPlayerTokenInfos(c)
-
-	db := database.GetDatabase()
-	var game models.Game
-
-	if err := c.BodyParser(&game); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error parsing game " + err.Error(),
-		})
-	}
-
-	if game.NameGame == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "insert a game name",
-		})
-	}
-
-	game.PlayerID = playerID
-	game.Status = 1
-	if err := db.Create(&game).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error creating game",
-		})
-	}
-
-	return c.Status(fiber.StatusCreated).JSON(game)
+type BacklogController struct {
+	backlogService *services.BacklogService
 }
 
-func ListBacklogGames(c *fiber.Ctx) error {
-	playerID, _ := utils.GetPlayerTokenInfos(c)
+func NewBacklogController() *BacklogController {
+	return &BacklogController{
+		backlogService: services.NewBacklogService(),
+	}
+}
 
-	db := database.GetDatabase()
-	var games []models.Game
-
-	if err := db.Preload("Genre").Preload("Console").Where("player_id = ? AND status = 1", playerID).Find(&games).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error listing games",
+// AddBacklogGame adiciona um jogo ao backlog do jogador
+func (c *BacklogController) AddBacklogGame(ctx *fiber.Ctx) error {
+	playerID, err := c.getPlayerIDFromToken(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(games)
+	var game models.Game
+	if err := ctx.BodyParser(&game); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "error parsing game: " + err.Error(),
+		})
+	}
+
+	if err := c.backlogService.AddBacklogGame(playerID, &game); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusCreated).JSON(game)
+}
+
+// ListBacklogGames lista os jogos no backlog do jogador
+func (c *BacklogController) ListBacklogGames(ctx *fiber.Ctx) error {
+	playerID, err := c.getPlayerIDFromToken(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "invalid token",
+		})
+	}
+
+	games, err := c.backlogService.ListBacklogGames(playerID)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(games)
+}
+
+// getPlayerIDFromToken extrai o ID do jogador do token JWT
+func (c *BacklogController) getPlayerIDFromToken(ctx *fiber.Ctx) (uint, error) {
+	playerID, ok := ctx.Locals("userID").(uint)
+	if !ok {
+		return 0, errors.New("invalid token")
+	}
+	return playerID, nil
 }
