@@ -25,6 +25,11 @@ export class StatisticInfoComponent implements OnInit {
   totalYearPages: number = 1;
   totalConsolePages: number = 1;
 
+  // Variáveis para o modal de detalhes
+  selectedItemId: number | null = null;
+  selectedItemType: string | null = null;
+  selectedItemDescription: string | null = null;
+
   constructor(private service: GamisticStatisticsService) {}
 
   ngOnInit() {
@@ -88,5 +93,11 @@ export class StatisticInfoComponent implements OnInit {
       this.consolePage += direction;
     }
     this.updatePaginatedItems();
+  }
+
+  openItemDetailsModal(itemId: number, itemType: string, description: string): void {
+    this.selectedItemId = itemId;
+    this.selectedItemType = itemType;
+    this.selectedItemDescription = description;
   }
 }

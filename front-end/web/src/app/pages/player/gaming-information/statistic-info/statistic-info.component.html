@@ -1,4 +1,3 @@
-<!-- Modo Card -->
 <div class="container-fluid">
   <!-- Por Gênero -->
   <h2 class="mt-4">Por gênero</h2>
@@ -8,7 +7,14 @@
       class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
       *ngFor="let genre of paginatedGenres"
     >
-      <div class="card card-warning bg-warning-gradient">
+      <!-- Card clicável -->
+      <div
+        class="card card-warning bg-warning-gradient"
+        style="cursor: pointer"
+        (click)="openItemDetailsModal(genre.genre_id, 'genre', genre.name_genre)"
+        data-bs-toggle="modal"
+        data-bs-target="#itemDetailsModal"
+      >
         <div class="card-body bubble-shadow">
           <h1>{{ genre.genre_count }}</h1>
           <h5 class="op-8">{{ genre.name_genre }}</h5>
@@ -46,7 +52,13 @@
       class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
       *ngFor="let year of paginatedYears"
     >
-      <div class="card card-primary bg-primary-gradient">
+      <div
+        class="card card-primary bg-primary-gradient"
+        style="cursor: pointer"
+        (click)="openItemDetailsModal(year.year, 'year', year.year.toString())"
+        data-bs-toggle="modal"
+        data-bs-target="#itemDetailsModal"
+      >
         <div class="card-body bubble-shadow">
           <h1>{{ year.year_count }}</h1>
           <h5 class="op-8">{{ year.year }}</h5>
@@ -84,7 +96,13 @@
       class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
       *ngFor="let console of paginatedConsoles"
     >
-      <div class="card card-secondary bg-secondary-gradient">
+      <div
+        class="card card-secondary bg-secondary-gradient"
+        style="cursor: pointer"
+        (click)="openItemDetailsModal(console.console_id, 'console', console.name_console)"
+        data-bs-toggle="modal"
+        data-bs-target="#itemDetailsModal"
+      >
         <div class="card-body bubble-shadow">
           <h1>{{ console.game_count }}</h1>
           <h5 class="op-8">{{ console.name_console }}</h5>
@@ -112,5 +130,38 @@
     >
       Próximo
     </button>
+  </div>
+</div>
+
+<!-- Modal para exibir detalhes do item -->
+<div
+  class="modal fade"
+  id="itemDetailsModal"
+  tabindex="-1"
+  aria-labelledby="itemDetailsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemDetailsModalLabel">
+          Detalhes do Item
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <app-item-details
+          *ngIf="selectedItemId && selectedItemType && selectedItemDescription"
+          [itemId]="selectedItemId"
+          [itemType]="selectedItemType"
+          [descriptionItem]="selectedItemDescription"
+        ></app-item-details>
+      </div>
+    </div>
   </div>
 </div>

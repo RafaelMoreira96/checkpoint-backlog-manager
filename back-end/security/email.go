@@ -34,13 +34,13 @@ func SendPasswordResetEmail(email, token string) error {
 
 	// Construção do e-mail
 	subject := "Recuperação de Senha"
-	body := fmt.Sprintf("Clique no link para redefinir sua senha: http://seusite.com/reset-password?token=%s", token)
+	body := fmt.Sprintf("Clique no link para redefinir sua senha: http://localhost:4200/reset-password?token=%s", token)
 	msg := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", to, subject, body))
 
 	// Envio do e-mail
 	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, msg)
 	if err != nil {
-		return fmt.Errorf("error sending email: %w", err)
+		return fmt.Errorf("error sending email: %s", msg)
 	}
 
 	return nil

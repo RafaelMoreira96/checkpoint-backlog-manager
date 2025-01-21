@@ -6,26 +6,26 @@ Super Mario World;Plataforma;Nintendo;Super Nintendo;;5;1990
 Donkey Kong Country;Plataforma;RARE ;Super Nintendo;;4;1994
 Donkey Kong Country 2;Plataforma;RARE ;Super Nintendo;;5;1995
 Donkey Kong Country 3;Plataforma;RARE ;Super Nintendo;;4,5;1996
-Wild Guns;A��o;Natsume;Super Nintendo;;2;1994
+Wild Guns;Ação;Natsume;Super Nintendo;;2;1994
 Disney's Aladdin;Plataforma;Disney Interactive/Capcom;Super Nintendo;;3;1993
 Disney's Magical Quest 3 starring Mickey & Donald;Plataforma;Capcom;Super Nintendo;;3;1995
 F-Zero;Corrida;Nintendo;Super Nintendo;;3;1990
 International Superstar Soccer Deluxe;Futebol;KONAMI;Super Nintendo;;9.5;1995
 Street Fighter II;Luta;Capcom;Super Nintendo;;2;1992
 Killer Instinct;Luta;RARE ;Super Nintendo;;1;1994
-Super Bomberman;A��o;Hudson Soft;Super Nintendo;;3;1993
-Super Bomberman 2;A��o;Hudson Soft;Super Nintendo;;3;1994
-Sonic Advance ;Plataforma;SEGA;Gameboy Advanced;;3;2001
-Sonic Advance 2;Plataforma;SEGA;Gameboy Advanced;;3,5;2002
-Sonic Advance 3;Plataforma;SEGA;Gameboy Advanced;;4,5;2004
-Mega Man Zero;A��o;Capcom;Gameboy Advanced;;4;2002
-Mega Man Zero 2;A��o;Capcom;Gameboy Advanced;;3,5;2003
-Mega Man Zero 3;A��o;Capcom;Gameboy Advanced;;3;2004
-Mega Man Zero 4;A��o;Capcom;Gameboy Advanced;;3;2005
-Crash Bandicoot: The Huge Adventure;Plataforma;Activision;Gameboy Advanced;;3;2002
-Crash Bandicoot 2: N-Tranced;Plataforma;Activision;Gameboy Advanced;;4;2003
-Dragon Ball Z: Supersonic Warriors;Luta;Bandai Games;Gameboy Advanced;;3;2004
-Tekken Advance;Luta;Namco Bandai;Gameboy Advanced;;0,18;2001
+Super Bomberman;Ação;Hudson Soft;Super Nintendo;;3;1993
+Super Bomberman 2;Ação;Hudson Soft;Super Nintendo;;3;1994
+Sonic Advance ;Plataforma;SEGA;Game Boy Advance;;3;2001
+Sonic Advance 2;Plataforma;SEGA;Game Boy Advance;;3,5;2002
+Sonic Advance 3;Plataforma;SEGA;Game Boy Advance;;4,5;2004
+Mega Man Zero;Ação;Capcom;Game Boy Advance;;4;2002
+Mega Man Zero 2;Ação;Capcom;Game Boy Advance;;3,5;2003
+Mega Man Zero 3;Ação;Capcom;Game Boy Advance;;3;2004
+Mega Man Zero 4;Ação;Capcom;Game Boy Advance;;3;2005
+Crash Bandicoot: The Huge Adventure;Plataforma;Activision;Game Boy Advance;;3;2002
+Crash Bandicoot 2: N-Tranced;Plataforma;Activision;Game Boy Advance;;4;2003
+Dragon Ball Z: Supersonic Warriors;Luta;Bandai Games;Game Boy Advance;;3;2004
+Tekken Advance;Luta;Namco Bandai;Game Boy Advance;;0,18;2001
 Micro Machines ;Corrida;Codemasters;Sega MegaDrive;;3;1991
 Super Smash Bros.;Luta;Nintendo HAL;Nintendo 64;;4;1999
 Tom and Jerry: Fists of Fury;Luta;NewKidCo/ VIS Entertainment;Nintendo 64;;5;2000
@@ -62,7 +62,7 @@ Tekken 4;Luta;Namco Bandai;PlayStation 2;;1,5;2001
 Tekken 5;Luta;Namco Bandai;PlayStation 2;;2;2005
 Batman: Arkham City;Aventura;Rocksteady;PlayStation 3;;13,5;2009
 Batman: Arkham Origins;Aventura;Rocksteady;PlayStation 3;;12,5;2013
-Grand Theft Auto IV;A��o;Rockstar Games;PlayStation 3;;28;2008
+Grand Theft Auto IV;Ação;Rockstar Games;PlayStation 3;;28;2008
 The Darkness II;Tiro em Primeira Pessoa;Digital Extremes;Xbox 360;;6;2012
 Resident Evil 4;Survival Horror;Capcom;PC;;16;2005
 Resident Evil 5;Survival Horror;Capcom;PC;;12;2009
@@ -71,17 +71,17 @@ Resident Evil Revelations;Survival Horror;Capcom;PC;;10;2012
 Resident Evil: Operation Raccoon City;Survival Horror;Slant Six Games/ Capcom;PC;;6;2012
 Tomb Raider (2013);Aventura;Square Enix;PC;;11,5;2013
 Tomb Raider: Legend;Aventura;Eidos Interactive;PC;;7;2006
-Mega Man X8;A��o;Capcom;PC;;5;2004
+Mega Man X8;Ação;Capcom;PC;;5;2004
 Street Fighter IV;Luta;Capcom;PC;;2,5;2008
 Street Fighter X Tekken;Luta;Capcom;PC;;2;2012
 Driver: San Francisco;Corrida;Ubisoft;PC;;12;2011
 Wanted: Weapons of Fate;Tiro em Terceira Pessoa;Warner Bros. Interactive;PC;;5;2009
 Ninja Blade;Hack and Slash;Team Ninja;PC;;8,5;2009
 Tom Clancy's Splinter Cell: Conviction;Tiro em Terceira Pessoa;Ubisoft;PC;;7,5;2010
-Assassin's Creed;A��o;Ubisoft;PC;;15;2007
-Assassin's Creed II;A��o;Ubisoft;PC;;19;2009
-Assassin's Creed: Brotherhood;A��o;Ubisoft;PC;;15;2010
-Assassin's Creed: Revelations;A��o;Ubisoft;PC;;12,5;2011
+Assassin's Creed;Ação;Ubisoft;PC;;15;2007
+Assassin's Creed II;Ação;Ubisoft;PC;;19;2009
+Assassin's Creed: Brotherhood;Ação;Ubisoft;PC;;15;2010
+Assassin's Creed: Revelations;Ação;Ubisoft;PC;;12,5;2011
 Need For Speed: Most Wanted (2005);Corrida;EA Games;PC;;20,5;2005
 Need For Speed: Carbon;Corrida;EA Games;PC;;12;2006
 Call of Duty 4: Modern Warfare;Tiro em Primeira Pessoa;Infinity Yard/ Activision;PC;;7;2007
@@ -97,7 +97,7 @@ Devil May Cry 4;Hack and Slash;Capcom;PC;;13;2008
 DMC: Devil May Cry;Hack and Slash;Capcom;PC;;12;2013
 Batman: Arkham Asylum;Aventura;Rocksteady;PC;;11;2009
 Braid;Plataforma;Jogo Indie;PC;;5;2008
-Minecraft;Explora��o;Mojang;PC;;80;2011
+Minecraft;ExplorAção;Mojang;PC;;80;2011
 Onimusha 3: Demon Siege;Hack and Slash;Capcom;PC;;12;2005
 Remember Me;Hack and Slash;Capcom;PC;;10;2013
 Burnout: Paradise;Corrida;EA Games;PC;;13;2008
@@ -113,7 +113,7 @@ Metal Gear Solid: Peace Walker;Tiro em Terceira Pessoa;Kojima Productions/KONAMI
 Disney's The Lion King;Plataforma;Disney Interactive;Super Nintendo;;2,5;1994
 Contra III - The Alien Wars;Run and Gun;KONAMI;Super Nintendo;;2;1992
 Driver 2: The Whellman is Back;Corrida;Reflections Game;PlayStation;;16;2000
-Dragon Ball: Advanced Adventure;Plataforma;Bandai Games;Gameboy Advanced;;4;2004
+Dragon Ball: Advanced Adventure;Plataforma;Bandai Games;Game Boy Advance;;4;2004
 Frogger;Plataforma;Hasbro Interactive;PlayStation;;8;1997
 Portal;Tiro em Primeira Pessoa;Valve;PC;;3;2007
 Shovel Knight: Shovel of Hope;Plataforma;Yacht Club Games;PC;;7;2014
@@ -129,8 +129,8 @@ Resident Evil 7: Biohazard;Survival Horror;Capcom;PC;;12;2017
 Monument Valley;Puzzle;Ustwo;Mobile;;2;2014
 Dissidia 012 Final Fantasy;Luta;Square Enix;PlayStation Portable;;28;2011
 The 3rd Birthday;Tiro em Terceira Pessoa;Square Enix;PlayStation Portable;;10,5;2010
-Kingdom Hearts: Birth of Sleep;RPG de A��o;Square Enix;PlayStation Portable;;26;2010
-Assassin's Creed: Rogue;A��o;Ubisoft;PlayStation 3;;10,5;2014
+Kingdom Hearts: Birth of Sleep;RPG de Ação;Square Enix;PlayStation Portable;;26;2010
+Assassin's Creed: Rogue;Ação;Ubisoft;PlayStation 3;;10,5;2014
 Call of Duty: Modern Warfare 3;Tiro em Primeira Pessoa;Infinity Yard/ Activision;PC;;6;2011
 Crash Bandicoot (N Sane Trilogy);Plataforma;Activision;PC;;5;2017
 Injustice 2: Every Battle Defines You;Luta;Netherrealm Games;PC;;5,5;2017
@@ -155,26 +155,26 @@ Super Mario 3D World;Plataforma;Nintendo;Nintendo Wii U;;10,5;2013
 Superhot;Tiro em Primeira Pessoa;SUPERHOT Team;PC;;5;2016
 Detroit: Become Human;Point and Click;Quantic Dream;PC;;15;2018
 Alan Wake: American Nightmare;Survival Horror;Remedy Interactive;PC;;4;2012
-Love Hina Advance: Shukufuku no Kane wa Harukana;Visual Novel;Marvelous;Gameboy Advanced;;2;2001
+Love Hina Advance: Shukufuku no Kane wa Harukana;Visual Novel;Marvelous;Game Boy Advance;;2;2001
 Limbo;Plataforma;Playdead;PC;;3,5;2010
-The Legend of Zelda: Ocarina of Time;RPG de A��o;Nintendo;Nintendo 64;15/06/12;28,3;1998
+The Legend of Zelda: Ocarina of Time;RPG de Ação;Nintendo;Nintendo 64;15/06/12;28,3;1998
 Crysis 3;Tiro em Primeira Pessoa;EA Games;PlayStation 3;16/08/14;7;2013
 Mortal Kombat 9 (2011);Luta;Netherrealm Games;PlayStation 3;09/11/14;8;2011
 Tekken Tag Tournament 2;Luta;Namco Bandai;PlayStation 3;18/12/14;1,5;2012
-Metal Gear Rising: Revengeance;Hack and Slash;Platinium Games/KONAMI;PlayStation 3;07/01/15;7;2013
+Metal Gear Rising: Revengeance;Hack and Slash;Platinum Games/KONAMI;PlayStation 3;07/01/15;7;2013
 Metal Gear Solid 4: Guns of the Patriots;Tiro em Terceira Pessoa;Kojima Productions/KONAMI;PlayStation 3;23/01/15;26;2008
 God of War: Ascencion;Hack and Slash;Santa Monica Studios;PlayStation 3;30/01/15;9;2013
-Assassin's Creed IV: Black Flag;A��o;Ubisoft;PlayStation 3;06/02/15;23;2013
+Assassin's Creed IV: Black Flag;Ação;Ubisoft;PlayStation 3;06/02/15;23;2013
 Call of Duty: Ghosts;Tiro em Primeira Pessoa;Infinity Yard/ Activision;PlayStation 3;07/02/15;6;2013
 Injustice: Gods Amoug Us;Luta;Netherrealm Games;PlayStation 3;11/03/15;5,5;2013
 Tom Clancy's Splinter Cell: Blacklist;Tiro em Terceira Pessoa;Ubisoft;PlayStation 3;29/03/15;11;2013
-Watch_Dogs;A��o;Ubisoft;PlayStation 3;08/04/15;19,5;2014
+Watch_Dogs;Ação;Ubisoft;PlayStation 3;08/04/15;19,5;2014
 Naruto Shippuuden Ultimate Ninja Storm 3;Luta;Bandai Games;PlayStation 3;14/08/15;13;2013
 Gran Turismo 6;Corrida;Polyphony Digital;PlayStation 3;23/08/15;44,5;2013
 Battlefield 3;Tiro em Primeira Pessoa;DICE/ EA Games;PlayStation 3;28/08/15;6;2011
 Metal Gear Solid 3: Snake Eater;Tiro em Terceira Pessoa;Kojima Productions/KONAMI;PlayStation 3;01/10/15;16;2004
 Uncharted 3: Drake's Deception ;Tiro em Terceira Pessoa;Naughty Dog;PlayStation 3;12/10/15;9;2011
-Assassin's Creed III;A��o;Ubisoft;PlayStation 3;05/11/15;16;2012
+Assassin's Creed III;Ação;Ubisoft;PlayStation 3;05/11/15;16;2012
 Killzone 3;Tiro em Primeira Pessoa;Guerrila Games;PlayStation 3;17/11/15;7;2011
 Far Cry 3;Tiro em Primeira Pessoa;Ubisoft;PlayStation 3;13/01/16;25;2012
 Call of Duty: Black Ops II;Tiro em Primeira Pessoa;Infinity Yard/ Activision;PlayStation 3;02/02/16;7;2012
@@ -184,7 +184,7 @@ inFamous;Aventura;Sucker Punch Productions;PlayStation 3;04/08/16;15;2009
 God of War;Hack and Slash;Santa Monica Studios;PlayStation 3;07/08/16;9;2005
 God of War II;Hack and Slash;Santa Monica Studios;PlayStation 3;25/08/16;12;2007
 Metal Gear Solid V: Ground Zeroes;Tiro em Terceira Pessoa;Kojima Productions/KONAMI;PlayStation 3;01/12/16;2;2015
-Grand Theft Auto V;A��o;Rockstar Games;PlayStation 3;05/12/16;35;2013
+Grand Theft Auto V;Ação;Rockstar Games;PlayStation 3;05/12/16;35;2013
 Ratchet & Clank: Full Frontal Assault;Tiro em Terceira Pessoa;Insomniac Games;PlayStation 3;12/12/16;5;2012
 Kingdom: Classic;Aventura;Raw Fury Games;PC;07/01/18;10;2015
 UFC Undisputed 2010;Luta;THQ Nordic;PlayStation 3;01/06/18;24;2010
@@ -260,7 +260,7 @@ Streets of Kamurocho;Beat 'em Up;SEGA;PC;26/10/22;0,17;2020
 Disney's The Little Mermaid;Plataforma;Capcom;Nintendo 8-bits;26/10/22;0,53;1991
 Chiki Chiki Boys;Plataforma;Capcom;Sega MegaDrive;01/11/22;1;1990
 Katana ZERO;Plataforma;Askiisoft;PC;09/11/22;4,33;2019
-Naruto: Ninja Council;Plataforma;TOMY;Gameboy Advanced;11/11/22;1,5;2010
+Naruto: Ninja Council;Plataforma;TOMY;Game Boy Advance;11/11/22;1,5;2010
 The Outfoxies;Luta;Namco Bandai;Arcade;12/11/22;1,33;1995
 Dungeons & Dragons: Shadow Over Mystara;Beat 'em Up;Capcom;Arcade;16/11/22;1;1996
 Dungeons & Dragons: Tower of Doom;Beat 'em Up;Capcom;Arcade;16/11/22;1;1994
@@ -294,9 +294,9 @@ Golden Axe (SEGA Classics);Beat 'em Up;SEGA;Sega MegaDrive;17/12/22;1;1989
 Golden Axe 2 (SEGA Classics);Beat 'em Up;SEGA;Sega MegaDrive;17/12/22;1;1991
 Golden Axe 3 (SEGA Classics);Beat 'em Up;SEGA;Sega MegaDrive;17/12/22;1;1993
 Ristar (SEGA Classics);Plataforma;SEGA;Sega MegaDrive;18/12/22;1;1995
-Super Bomberman 3;A��o;Hudson Soft;Super Nintendo;21/12/22;1,5;1995
+Super Bomberman 3;Ação;Hudson Soft;Super Nintendo;21/12/22;1,5;1995
 Carrier Air Wing (Capcom Arcade Stadium);Shmup;Capcom;Arcade;23/12/22;1;1990
-The Legend of Zelda;RPG de A��o;Nintendo;Nintendo 8-bits;24/12/22;8,28;1986
+The Legend of Zelda;RPG de Ação;Nintendo;Nintendo 8-bits;24/12/22;8,28;1986
 19XX: The War Against Destiny (Capcom Arcade Stadium);Shmup;Capcom;Arcade;24/12/22;1;1996
 1944: The Loop Master (Capcom Arcade Stadium);Shmup;Capcom;Arcade;25/12/22;1,5;2000
 Teenage Mutant Ninja Turtles (The Cowabunga Collection);Beat 'em Up;KONAMI;Arcade;26/12/22;1;1989
@@ -322,7 +322,7 @@ Super Smash Bros. For Wii U;Luta;Nintendo HAL;Nintendo Wii U;12/01/23;0,25;2014
 Super Bomberman 4;Plataforma;Hudson Soft;Super Nintendo;14/01/23;1,08;1996
 Super Bomberman 5;Plataforma;Hudson Soft;Super Nintendo;16/01/23;1,4;1997
 SectionZ;Shmup;Capcom;Arcade;17/01/23;0,21;1985
-The Legend of Zelda: Ocarina of Time 3D;RPG de A��o;Nintendo;Nintendo 3DS;20/01/23;22,6;2011
+The Legend of Zelda: Ocarina of Time 3D;RPG de Ação;Nintendo;Nintendo 3DS;20/01/23;22,6;2011
 Teenage Mutant Ninja Turtles: Turtles in Time (The Cowabunga Collection);Beat 'em Up;KONAMI;Arcade;21/01/23;0,85;1991
 Teenage Mutant Ninja Turtles IV: Turtles in Time (The Cowabunga Collection);Beat 'em Up;KONAMI;Super Nintendo;21/01/23;0,55;1992
 Pirate Ship Higemaru (Capcom Arcade Stadium);Plataforma;Capcom;Arcade;24/01/23;0,8;1984
@@ -333,8 +333,8 @@ Hi-Fi Rush;Plataforma;Tango Gameworks;PC;28/01/23;9,28;2023
 Ghouls'n Ghosts (Capcom Arcade Stadium);Plataforma;Capcom;Arcade;29/01/23;1;1988
 Teenage Mutant Ninja Turtles: The Hyperstone Heist (The Cowabunga Collection);Beat 'em Up;KONAMI;Sega MegaDrive;29/01/23;1;1992
 Teenage Mutant Ninja Turtles II: The Arcade Game;Beat 'em Up;KONAMI;Nintendo 8-bits;30/01/23;1,5;1990
-Teenage Mutant Ninja Turtles: Fall of the Foot Clan;Plataforma;KONAMI;Gameboy;31/01/23;0,6;1990
-Teenage Mutant Ninja Turtles II: Back from the Sewers;Plataforma;KONAMI;Gameboy;31/01/23;0,8;1991
+Teenage Mutant Ninja Turtles: Fall of the Foot Clan;Plataforma;KONAMI;Game Boy;31/01/23;0,6;1990
+Teenage Mutant Ninja Turtles II: Back from the Sewers;Plataforma;KONAMI;Game Boy;31/01/23;0,8;1991
 High on Life;Tiro em Primeira Pessoa;Squanch Games;PC;05/02/23;11,52;2022
 Ori and the Blind Forest;Metroidvania;Microsoft Studios;PC;11/02/23;6,03;2015
 Atomic Heart;Tiro em Primeira Pessoa;Mundfish;PC;04/03/23;21;2023
@@ -376,8 +376,8 @@ Castlevania;Plataforma;KONAMI;Nintendo 8-bits;02/09/23;2,7;1987
 Castlevania II: Simon's Quest;Plataforma;KONAMI;Nintendo 8-bits;05/09/23;6;1988
 Castlevania III: Dracula's Curse;Plataforma;KONAMI;Nintendo 8-bits;06/09/23;2;1990
 Super Castlevania IV;Plataforma;KONAMI;Super Nintendo;06/09/23;6;1991
-Castlevania: The Adventure;Plataforma;KONAMI;Gameboy;06/09/23;1;1989
-Castlevania II: Belmont's Revenge;Plataforma;KONAMI;Gameboy;07/09/23;2;1991
+Castlevania: The Adventure;Plataforma;KONAMI;Game Boy;06/09/23;1;1989
+Castlevania II: Belmont's Revenge;Plataforma;KONAMI;Game Boy;07/09/23;2;1991
 Castlevania: Bloodlines;Plataforma;KONAMI;Sega MegaDrive;14/09/23;3;1994
 Kid Dracula;Plataforma;KONAMI;Nintendo 8-bits;15/09/23;2;1990
 Mass Effect;RPG;EA Games;PC;21/09/23;17;2007
@@ -400,7 +400,7 @@ Alien Soldier (SEGA Classics);Plataforma;SEGA;Sega MegaDrive;01/01/24;2,52;1995
 Wonder Boy III: Monster Lair (SEGA Classics);Plataforma;SEGA;Sega MegaDrive;01/01/24;1,9;1988
 Flicky (SEGA Classics);Plataforma;SEGA;Sega MegaDrive;01/01/24;1,88;1991
 Bio-hazard Battle (SEGA Classics);Shmup;SEGA;Sega MegaDrive;01/01/24;1,25;1992
-Hellblade: Senua's Sacrifice;A��o;Ninja Theory;PC;05/01/24;8,85;2017
+Hellblade: Senua's Sacrifice;Ação;Ninja Theory;PC;05/01/24;8,85;2017
 Star Wars: The Force Unleashed;Hack and Slash;Lucasfilm Games;PC;06/01/24;9,55;2008
 Star Wars: The Force Unleashed 2;Hack and Slash;Lucasfilm Games;PC;10/01/24;5,55;2010
 Spyro: Ripto's Rage (Reignited Trilogy);Plataforma;Activision;PC;13/01/24;6;2018
@@ -456,7 +456,7 @@ Street Fighter EX Plus Alpha;Luta;Capcom;PlayStation;26/06/24;1;1997
 Double Dragon;Beat 'em Up;Technos Japan;Nintendo 8-bits;14/07/24;1,25;1987
 Double Dragon II: The Revenge;Beat 'em Up;Technos Japan;Nintendo 8-bits;16/07/24;2;1988
 Double Dragon III: The Sacred Stones;Beat 'em Up;Technos Japan;Nintendo 8-bits;17/07/24;1,57;1990
-Double Dragon Advance;Beat 'em Up;Atlus;Gameboy Advanced;18/07/24;1,35;2003
+Double Dragon Advance;Beat 'em Up;Atlus;Game Boy Advance;18/07/24;1,35;2003
 Double Dragon V: The Shadow Falls;Luta;Leland Interactive Media;Super Nintendo;18/07/24;0,33;1994
 Wild Guns Reloaded;Shmup;Natsumi Atari Inc.;PC;20/07/24;2;2018
 Alex Kidd in Miracle World DX;Plataforma;Merge Games;PC;21/07/24;3,12;2021
@@ -467,7 +467,7 @@ Metal Slug 4 (Metal Slug Anthology);Run and Gun;SNK;Arcade;21/07/24;1;2002
 Metal Slug 5 (Metal Slug Anthology);Run and Gun;SNK;Arcade;21/07/24;1;2003
 Metal Slug 6 (Metal Slug Anthology);Run and Gun;SNK;Arcade;21/07/24;1;2006
 Metal Slug XX;Run and Gun;SNK;PlayStation Portable;21/07/24;1;2010
-Metal Slug Advance;Run and Gun;SNK;Gameboy Advanced;22/07/24;1;2004
+Metal Slug Advance;Run and Gun;SNK;Game Boy Advance;22/07/24;1;2004
 Mighty Morphin Power Rangers;Beat 'em Up;Namco Bandai;Super Nintendo;27/07/24;1,3;1994
 Mighty Morphin Power Rangers - The Movie;Beat 'em Up;Namco Bandai;Super Nintendo;27/07/24;1,67;1995
 Gunstar Heroes;Plataforma;Treasure;Sega MegaDrive;27/07/24;2,25;1993
@@ -476,7 +476,7 @@ Gran Turismo Concept 2002 Tokyo-Geneva;Corrida;Polyphony Digital;PlayStation 2;0
 Gran Turismo 4 Prologue;Corrida;Polyphony Digital;PlayStation 2;04/08/24;5,56;2003
 Super Mario World 2: Yoshi's Island;Plataforma;Nintendo;Super Nintendo;06/08/24;9;1995
 Gran Turismo 4;Corrida;Polyphony Digital;PlayStation 2;24/08/24;62,45;2004
-Hogwarts Legacy;RPG de A��o;Avalanche Studios;PC;28/08/24;24;2023
+Hogwarts Legacy;RPG de Ação;Avalanche Studios;PC;28/08/24;24;2023
 Prodeus;FPS;Bounding Box Software;PC;01/09/24;11;2020
 Gotham Knights;Aventura;Warner Bros. Interactive;PC;04/09/24;24;2022
 Dirge of Cerberus: Final Fantasy VII;Aventura;Square Enix;PlayStation 2;10/09/24;10;2006
@@ -486,11 +486,11 @@ God of War: Ragnarok ;Hack and Slash;Santa Monica Studios;PC;20/10/24;27;2022
 Dragon Ball: FighterZ;Luta;Arc System Works;PC;28/10/24;10,45;2018
 Shotgun King: The Final Checkmate;Puzzle;Punkcake Delicieux;PC;14/11/24;1,25;2022
 Barbie: Super Model;Plataforma;Hi-Tech Expressions;Super Nintendo;21/11/24;0,58;1993
-Super Mario Land;Plataforma;Nintendo;GameBoy;21/11/24;1;1989
+Super Mario Land;Plataforma;Nintendo;Game Boy;21/11/24;1;1989
 Tekken: Dark Ressurection;Luta;Namco Bandai;PlayStation Portable;24/11/24;30;2006
 Senua's Saga: Hellblade II;Aventura;Ninja Theory;PC;30/11/24;10,5;2024
 Balloon Fight;Plataforma;Nintendo;Nintendo 8-bits;02/12/24;16;1984
-Super Mario Land 2 - 6 Golden Coins;Plataforma;Nintendo;Gameboy;05/12/24;2,5;1992
+Super Mario Land 2 - 6 Golden Coins;Plataforma;Nintendo;Game Boy;05/12/24;2,5;1992
 World's Scariest Police Chases;Combate Veicular;Unique Studios;PlayStation;07/12/24;6;2001
 007 Racing;Combate Veicular;Electronic Arts;PlayStation;09/12/24;5;2000
 Fatal Fury: Wild Ambition;Luta;SNK;PlayStation;09/12/24;0,5;1999

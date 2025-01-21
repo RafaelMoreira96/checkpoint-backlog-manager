@@ -12,9 +12,33 @@ export class GamisticStatisticsService {
 
   constructor(private http: HttpClient) {}
 
-  getBeatenStats(){
+  getBeatenStats() {
     return this.http.get(`${this.BASE_URL}/beaten-statistics`, {
       headers: this.headers,
     });
+  }
+
+  getBeatenStatsByItem(itemId: number, type: string) {
+    switch (type) {
+      case 'console':
+        return this.http.get(`${this.BASE_URL}/beaten-by-console/${itemId}`, {
+          headers: this.headers,
+        });
+      case 'genre':
+        return this.http.get(`${this.BASE_URL}/beaten-by-genre/${itemId}`, {
+          headers: this.headers,
+        });
+      case 'year':
+        return this.http.get(
+          `${this.BASE_URL}/beaten-by-release-year/${itemId}`,
+          {
+            headers: this.headers,
+          }
+        );
+      default:
+        return this.http.get(`${this.BASE_URL}/beaten-by-console/${itemId}`, {
+          headers: this.headers,
+        });
+    }
   }
 }

@@ -44,6 +44,7 @@ import { PageTestComponent } from './pages/player/page-test/page-test.component'
 import { GamingInformationComponent } from './pages/player/gaming-information/gaming-information.component';
 import { StatisticInfoComponent } from './pages/player/gaming-information/statistic-info/statistic-info.component';
 import { ListMissingDataComponent } from './pages/player/lists/list-missing-data/list-missing-data.component';
+import { ItemDetailsComponent } from './pages/player/gaming-information/item-details/item-details.component';
 
 
 @NgModule({
@@ -83,7 +84,8 @@ import { ListMissingDataComponent } from './pages/player/lists/list-missing-data
     PageTestComponent,
     GamingInformationComponent,
     StatisticInfoComponent,
-    ListMissingDataComponent
+    ListMissingDataComponent,
+    ItemDetailsComponent
   ],
   imports: [
     FormsModule,
