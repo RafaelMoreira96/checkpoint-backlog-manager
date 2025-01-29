@@ -43,7 +43,7 @@ func ProtectedMethods(app *fiber.App) {
 	app.Put("/api/v1/manufacturer/:id", manufacturerController.UpdateManufacturer)
 	app.Delete("/api/v1/manufacturer/:id", manufacturerController.DeleteManufacturer)
 	app.Put("/api/v1/manufacturer/activate/:id", manufacturerController.ReactivateManufacturer)
-	app.Post("/api/v1/admin/csv/add_list_manufacturers", manufacturerController.ImportManufacturersFromCSV)
+	app.Post("/api/v1/manufacturer/import_csv", manufacturerController.ImportManufacturersFromCSV)
 
 	/* Console routes methods */
 	consoleController := controllers.NewConsoleController()
@@ -65,7 +65,7 @@ func ProtectedMethods(app *fiber.App) {
 	app.Put("/api/v1/genre/:id", genreController.UpdateGenre)
 	app.Put("/api/v1/genre/activate/:id", genreController.ReactivateGenre)
 	app.Delete("/api/v1/genre/:id", genreController.DeleteGenre)
-	app.Post("/api/v1/admin/csv/add_list_genres", genreController.ImportGenresFromCSV)
+	app.Post("/api/v1/genre/import_csv", genreController.ImportGenresFromCSV)
 
 	/* Player routes methods */
 	playerController := controllers.NewPlayerController()

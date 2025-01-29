@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AdminCsvFunctionsService {
-  BASE_URL = API_CONFIG.BASE_URL + '/api/v1/admin/csv';
+  BASE_URL = API_CONFIG.BASE_URL + '/api/v1';
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +24,7 @@ export class AdminCsvFunctionsService {
     const formData = new FormData();
     formData.append('file', file);
     const headers = this.getHeaders();
-    return this.http.post(`${this.BASE_URL}/add_list_genres`, formData, {
+    return this.http.post(`${this.BASE_URL}/genre/import_csv`, formData, {
       headers,
     });
   }
@@ -33,7 +33,7 @@ export class AdminCsvFunctionsService {
     const formData = new FormData();
     formData.append('file', file);
     const headers = this.getHeaders();
-    return this.http.post(`${this.BASE_URL}/add_list_manufacturers`, formData, {
+    return this.http.post(`${this.BASE_URL}/manufacturer/import_csv`, formData, {
       headers,
     });
   }
@@ -42,7 +42,7 @@ export class AdminCsvFunctionsService {
     const formData = new FormData();
     formData.append('file', file);
     const headers = this.getHeaders();
-    return this.http.post(`${this.BASE_URL}/add_list_consoles`, formData, {
+    return this.http.post(`${this.BASE_URL}/console/import_csv`, formData, {
       headers,
     });
   }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/RafaelMoreira96/game-beating-project/server"
@@ -10,6 +9,26 @@ import (
 )
 
 func main() {
+	// Carrega o .env (opcional para ambiente local)
+	_ = godotenv.Load()
+
+	// Obtém o modo do ambiente
+	arg := os.Getenv("APP_MODE")
+	if arg == "" {
+		arg = "production" // Padrão caso a variável não esteja definida
+	}
+
+	if arg == "production" {
+		server.RunServer(2)
+	} else if arg == "development" {
+		server.RunServer(1)
+	} else {
+		fmt.Printf("Invalid mode '%s'. Contact the developers for more information.\n", arg)
+		return
+	}
+}
+
+/* func main() {
 	// Carrega as variáveis de ambiente do arquivo .env
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
@@ -29,4 +48,4 @@ func main() {
 		fmt.Printf("Invalid mode '%s'. Contact the developers for more information'.\n", arg)
 		return
 	}
-}
+} */

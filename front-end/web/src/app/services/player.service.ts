@@ -13,7 +13,7 @@ export class PlayerService {
   constructor(private http: HttpClient) {}
 
   registerPlayer(data: any) {
-    return this.http.post(`${this.BASE_URL}`, data);
+    return this.http.post(`${this.BASE_URL}/register`, data);
   }
 
   viewPlayer() {

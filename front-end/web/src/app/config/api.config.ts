@@ -1,8 +1,8 @@
 import { HttpHeaders } from '@angular/common/http';
 
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:8000',
-  //BASE_URL: 'https://game-beating.onrender.com',
+  //BASE_URL: 'http://localhost:8000',
+  BASE_URL: 'https://checkpoint-backlog-manager.onrender.com',
 
   get token() {
     return typeof window !== 'undefined' ? localStorage.getItem('token') : null;
