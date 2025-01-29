@@ -1,0 +1,18 @@
+.bg-primary-gradient {
+  background: linear-gradient(135deg, #007bff, #00bfff);
+}
+.bg-success-gradient {
+  background: linear-gradient(135deg, #28a745, #00ff7f);
+}
+.bg-warning-gradient {
+  background: linear-gradient(135deg, #ffc107, #ff8c00);
+}
+.bg-info-gradient {
+  background: linear-gradient(135deg, #17a2b8, #00ced1);
+}
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.03);
+}

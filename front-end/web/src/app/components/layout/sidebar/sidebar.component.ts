@@ -17,11 +17,6 @@ export class SidebarComponent {
       { link: 'gaming-information', name: 'Informações Gamísticas', icon: 'fas fa-bars' },
     ],
 
-    registersItem: [
-      { link: 'register-game', name: 'Registrar jogo', icon: 'fas fa-save' },
-      { link: 'register-backlog', name: 'Registrar backlog', icon: 'far fa-save' },
-    ],
-
     listItems: [
       { link: 'game-beaten-list', name: 'Jogos zerados', icon: 'fas fa-table' },
       { link: 'backlog-list', name: 'Backlog', icon: 'fas fa-tasks' },

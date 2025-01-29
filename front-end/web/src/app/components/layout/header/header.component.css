@@ -21,3 +21,15 @@
 .navbar-dark .navbar-nav .nav-link:hover {
   color: #3498db; 
 }
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Fundo claro ao passar o mouse */
+  border-radius: 5px; /* Bordas arredondadas */
+  transition: background-color 0.3s ease; /* Transição suave */
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Fundo claro ao passar o mouse */
+  border-color: transparent; /* Remove a borda ao passar o mouse */
+  transition: background-color 0.3s ease; /* Transição suave */
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnChanges, OnInit } from '@angular/core';
 import { GameService } from '../../../../services/game.service';
 import { Game } from '../../../../models/game';
 import { Router } from '@angular/router';
@@ -23,7 +23,8 @@ export class GameBeatenListComponent implements OnInit {
   constructor(
     private service: GameService,
     private router: Router,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -31,17 +32,19 @@ export class GameBeatenListComponent implements OnInit {
   }
 
   toggleViewMode(): void {
-    this.isCardView = !this.isCardView; // Alterna entre tabela e card
+    this.isCardView = !this.isCardView;
   }
 
   getGames(): void {
     this.isLoading = true;
+    const timestamp = new Date().getTime(); 
     this.service.getGames().subscribe(
       (result: any) => {
         this.games = result;
-        this.filteredGames = result; // Inicializa a lista filtrada com todos os jogos
+        this.filteredGames = result; 
         this.totalGames = this.filteredGames.length;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         this.toast.error('Erro ao carregar os jogos', 'Erro');

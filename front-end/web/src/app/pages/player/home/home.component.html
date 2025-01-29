@@ -1,9 +1,9 @@
 <div class="row">
   <!-- Coluna da lista de jogos -->
   <div class="col">
-    <!-- Item 1 da Coluna -->
-    <div class="card card-round">
-      <div class="card-header">
+    <!-- Últimos jogos zerados -->
+    <div class="card card-round shadow-sm mb-4">
+      <div class="card-header bg-primary text-white">
         <div class="card-head-row card-tools-still-right">
           <div class="card-title">Últimos jogos zerados</div>
         </div>
@@ -20,7 +20,6 @@
                 <th scope="col" class="text-end">Data do zeramento</th>
               </tr>
             </thead>
-
             <tbody *ngIf="beating_list && beating_list.length > 0; else noGames">
               <tr *ngFor="let item of beating_list">
                 <th scope="row">{{ item.name_game }}</th>
@@ -30,12 +29,12 @@
                 <td class="text-end">{{ item.date_beating }}</td>
               </tr>
             </tbody>
-
             <ng-template #noGames>
               <tbody>
                 <tr>
-                  <td colspan="5" class="text-center">
-                    Nenhum jogo zerado encontrado.
+                  <td colspan="5" class="text-center py-4">
+                    <i class="fas fa-gamepad fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum jogo zerado encontrado.</p>
                   </td>
                 </tr>
               </tbody>
@@ -44,11 +43,12 @@
         </div>
       </div>
     </div>
-    <!-- Item 1 da Coluna -->
-    <div class="card card-round">
-      <div class="card-header">
+
+    <!-- Últimos jogos cadastrados no backlog -->
+    <div class="card card-round shadow-sm">
+      <div class="card-header bg-info text-white">
         <div class="card-head-row card-tools-still-right">
-          <div class="card-title">Últimos jogos cadastrados da backlog</div>
+          <div class="card-title">Últimos jogos cadastrados no backlog</div>
         </div>
       </div>
       <div class="card-body p-0">
@@ -61,27 +61,24 @@
                 <th scope="col" class="text-end">Console</th>
               </tr>
             </thead>
-            <tbody *ngIf="
-                backlog_list && backlog_list.length > 0;
-                else noGamesBacklog
-              ">
+            <tbody *ngIf="backlog_list && backlog_list.length > 0; else noGamesBacklog">
               <tr *ngFor="let item of backlog_list">
                 <th scope="row">{{ item.name_game }}</th>
                 <td class="text-end">{{ item.genre }}</td>
                 <td class="text-end">{{ item.console }}</td>
               </tr>
             </tbody>
+            <ng-template #noGamesBacklog>
+              <tbody>
+                <tr>
+                  <td colspan="3" class="text-center py-4">
+                    <i class="fas fa-list fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum jogo no backlog encontrado.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </ng-template>
           </table>
-
-          <ng-template #noGamesBacklog>
-            <tbody>
-              <tr>
-                <td colspan="3" class="text-center">
-                  Nenhum jogo no backlog encontrado.
-                </td>
-              </tr>
-            </tbody>
-          </ng-template>
         </div>
       </div>
     </div>
@@ -89,8 +86,8 @@
 
   <!-- Coluna dos cards -->
   <div class="col-md-4">
-    <div *ngFor="let item of cardsInfo" class="col-md-12">
-      <div class="card card-stats card-round">
+    <div *ngFor="let item of cardsInfo" class="col-md-12 mb-4">
+      <div class="card card-stats card-round shadow-sm">
         <div class="card-body">
           <div class="row align-items-center">
             <div class="col-icon">
@@ -100,10 +97,8 @@
             </div>
             <div class="col col-stats ms-3 ms-sm-0">
               <div class="numbers">
-                <p class="card-category"> {{ item.title }} </p>
-                <h4 class="card-title">
-                  {{ item.data }}
-                </h4>
+                <p class="card-category">{{ item.title }}</p>
+                <h4 class="card-title">{{ item.data }}</h4>
               </div>
             </div>
           </div>

@@ -3,8 +3,8 @@ package controllers
 import (
 	"strconv"
 
-	"github.com/RafaelMoreira96/game-beating-project/controllers/controllers_functions"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/security"
 	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +21,7 @@ func NewGameController() *GameController {
 
 // AddGame adiciona um novo jogo
 func (c *GameController) AddGame(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 
 	var game models.Game
 	if err := ctx.BodyParser(&game); err != nil {
@@ -42,7 +42,7 @@ func (c *GameController) AddGame(ctx *fiber.Ctx) error {
 
 // GetBeatenList retorna a lista de jogos finalizados
 func (c *GameController) GetBeatenList(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 
 	games, err := c.gameService.GetBeatenList(playerID)
 	if err != nil {
@@ -56,7 +56,7 @@ func (c *GameController) GetBeatenList(ctx *fiber.Ctx) error {
 
 // DeleteGame remove um jogo
 func (c *GameController) DeleteGame(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 	gameID, err := strconv.ParseUint(ctx.Params("id_game"), 10, 0)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -77,7 +77,7 @@ func (c *GameController) DeleteGame(ctx *fiber.Ctx) error {
 
 // UpdateGame atualiza um jogo
 func (c *GameController) UpdateGame(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 	gameID, err := strconv.ParseUint(ctx.Params("id_game"), 10, 0)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -103,7 +103,7 @@ func (c *GameController) UpdateGame(ctx *fiber.Ctx) error {
 
 // GetGame retorna um jogo pelo ID
 func (c *GameController) GetGame(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 	gameID, err := strconv.ParseUint(ctx.Params("id_game"), 10, 0)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -123,7 +123,7 @@ func (c *GameController) GetGame(ctx *fiber.Ctx) error {
 
 // ImportGamesFromCSV importa jogos a partir de um arquivo CSV
 func (c *GameController) ImportGamesFromCSV(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 
 	file, err := ctx.FormFile("file")
 	if err != nil {

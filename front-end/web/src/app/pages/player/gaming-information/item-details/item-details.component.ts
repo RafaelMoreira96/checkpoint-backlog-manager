@@ -16,12 +16,18 @@ export class ItemDetailsComponent implements OnChanges {
   currentPage: number = 1;
   itemsPerPage: number = 12;
   paginatedGames: any[] = [];
+  filteredGames: any[] = []; // Lista filtrada de jogos
   totalPages: number = 1;
+  searchTerm: string = ''; // Termo de busca
 
   constructor(private statsService: GamisticStatisticsService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ((changes['itemId'] && this.itemId) || (changes['itemType'] && this.itemType) || (changes['descriptionItem'] && this.descriptionItem)){
+    if (
+      (changes['itemId'] && this.itemId) ||
+      (changes['itemType'] && this.itemType) ||
+      (changes['descriptionItem'] && this.descriptionItem)
+    ) {
       this.loadStats(this.itemId, this.itemType);
     }
   }
@@ -31,7 +37,8 @@ export class ItemDetailsComponent implements OnChanges {
     this.statsService.getBeatenStatsByItem(itemId, itemType).subscribe({
       next: (data) => {
         this.statsData = data;
-        this.updatePaginatedGames(); 
+        this.filteredGames = this.statsData.listGame; // Inicializa a lista filtrada com todos os jogos
+        this.updatePaginatedGames();
         this.isLoading = false;
       },
       error: (err) => {
@@ -41,25 +48,41 @@ export class ItemDetailsComponent implements OnChanges {
     });
   }
 
-  updatePaginatedGames(): void {
-    if (this.statsData && this.statsData.listGame) {
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      this.paginatedGames = this.statsData.listGame.slice(startIndex, endIndex);
-      this.totalPages = Math.ceil(this.statsData.listGame.length / this.itemsPerPage);
+  // Método para filtrar os jogos com base no termo de busca
+  filterGames(): void {
+    if (!this.searchTerm) {
+      this.filteredGames = this.statsData.listGame; // Se não houver termo de busca, mostra todos os jogos
+    } else {
+      const lowerCaseSearch = this.searchTerm.toLowerCase();
+      this.filteredGames = this.statsData.listGame.filter((game: { NameGame: string; }) =>
+        game.NameGame.toLowerCase().includes(lowerCaseSearch)
+      );
     }
+    this.currentPage = 1; // Reseta a paginação para a primeira página
+    this.updatePaginatedGames(); // Atualiza a lista paginada
   }
 
+  // Método para atualizar a lista paginada
+  updatePaginatedGames(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedGames = this.filteredGames.slice(startIndex, endIndex);
+    this.totalPages = Math.ceil(this.filteredGames.length / this.itemsPerPage);
+  }
+
+  // Método para mudar de página
   changePage(direction: number): void {
     this.currentPage += direction;
     this.updatePaginatedGames();
   }
 
+  // Método para ir para uma página específica
   goToPage(page: number): void {
     this.currentPage = page;
     this.updatePaginatedGames();
   }
 
+  // Método para obter as páginas disponíveis
   getPages(): number[] {
     const pages = [];
     for (let i = 1; i <= this.totalPages; i++) {

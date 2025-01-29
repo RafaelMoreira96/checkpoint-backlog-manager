@@ -3,8 +3,8 @@ package controllers
 import (
 	"strconv"
 
-	"github.com/RafaelMoreira96/game-beating-project/controllers/controllers_functions"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/security"
 	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +21,7 @@ func NewManufacturerController() *ManufacturerController {
 
 // AddManufacturer adiciona um novo fabricante
 func (c *ManufacturerController) AddManufacturer(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	var manufacturer models.Manufacturer
 	if err := ctx.BodyParser(&manufacturer); err != nil {
@@ -53,7 +53,7 @@ func (c *ManufacturerController) ListAllManufacturers(ctx *fiber.Ctx) error {
 
 // ListDeactivateManufacturers retorna todos os fabricantes inativos
 func (c *ManufacturerController) ListDeactivateManufacturers(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	manufacturers, err := c.manufacturerService.ListDeactivateManufacturers()
 	if err != nil {
@@ -86,7 +86,7 @@ func (c *ManufacturerController) ViewManufacturer(ctx *fiber.Ctx) error {
 
 // UpdateManufacturer atualiza um fabricante pelo ID
 func (c *ManufacturerController) UpdateManufacturer(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {
@@ -113,7 +113,7 @@ func (c *ManufacturerController) UpdateManufacturer(ctx *fiber.Ctx) error {
 
 // DeleteManufacturer desativa um fabricante pelo ID
 func (c *ManufacturerController) DeleteManufacturer(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {
@@ -135,7 +135,7 @@ func (c *ManufacturerController) DeleteManufacturer(ctx *fiber.Ctx) error {
 
 // ReactivateManufacturer reativa um fabricante pelo ID
 func (c *ManufacturerController) ReactivateManufacturer(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {
@@ -157,7 +157,7 @@ func (c *ManufacturerController) ReactivateManufacturer(ctx *fiber.Ctx) error {
 
 // ImportManufacturersFromCSV importa fabricantes a partir de um arquivo CSV
 func (c *ManufacturerController) ImportManufacturersFromCSV(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	file, err := ctx.FormFile("file")
 	if err != nil {

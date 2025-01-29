@@ -9,8 +9,8 @@
     >
       <!-- Card clicável -->
       <div
-        class="card card-warning bg-warning-gradient"
-        style="cursor: pointer"
+        class="card card-warning bg-warning-gradient hover-scale"
+        style="cursor: pointer; border-radius: 10px;"
         (click)="openItemDetailsModal(genre.genre_id, 'genre', genre.name_genre)"
         data-bs-toggle="modal"
         data-bs-target="#itemDetailsModal"
@@ -27,20 +27,20 @@
       </div>
     </div>
   </div>
-  <div class="d-flex justify-content-center">
+  <div class="d-flex justify-content-center mt-3">
     <button
-      class="btn btn-secondary me-2"
+      class="btn btn-outline-primary me-2"
       [disabled]="genrePage === 1"
       (click)="changePage('genre', -1)"
     >
-      Anterior
+      <i class="fas fa-chevron-left me-2"></i> Anterior
     </button>
     <button
-      class="btn btn-secondary"
+      class="btn btn-outline-primary"
       [disabled]="genrePage === totalGenrePages"
       (click)="changePage('genre', 1)"
     >
-      Próximo
+      Próximo <i class="fas fa-chevron-right ms-2"></i>
     </button>
   </div>
 
@@ -53,8 +53,8 @@
       *ngFor="let year of paginatedYears"
     >
       <div
-        class="card card-primary bg-primary-gradient"
-        style="cursor: pointer"
+        class="card card-primary bg-primary-gradient hover-scale"
+        style="cursor: pointer; border-radius: 10px;"
         (click)="openItemDetailsModal(year.year, 'year', year.year.toString())"
         data-bs-toggle="modal"
         data-bs-target="#itemDetailsModal"
@@ -71,20 +71,20 @@
       </div>
     </div>
   </div>
-  <div class="d-flex justify-content-center">
+  <div class="d-flex justify-content-center mt-3">
     <button
-      class="btn btn-secondary me-2"
+      class="btn btn-outline-primary me-2"
       [disabled]="yearPage === 1"
       (click)="changePage('year', -1)"
     >
-      Anterior
+      <i class="fas fa-chevron-left me-2"></i> Anterior
     </button>
     <button
-      class="btn btn-secondary"
+      class="btn btn-outline-primary"
       [disabled]="yearPage === totalYearPages"
       (click)="changePage('year', 1)"
     >
-      Próximo
+      Próximo <i class="fas fa-chevron-right ms-2"></i>
     </button>
   </div>
 
@@ -97,8 +97,8 @@
       *ngFor="let console of paginatedConsoles"
     >
       <div
-        class="card card-secondary bg-secondary-gradient"
-        style="cursor: pointer"
+        class="card card-secondary bg-secondary-gradient hover-scale"
+        style="cursor: pointer; border-radius: 10px;"
         (click)="openItemDetailsModal(console.console_id, 'console', console.name_console)"
         data-bs-toggle="modal"
         data-bs-target="#itemDetailsModal"
@@ -115,20 +115,20 @@
       </div>
     </div>
   </div>
-  <div class="d-flex justify-content-center">
+  <div class="d-flex justify-content-center mt-3">
     <button
-      class="btn btn-secondary me-2"
+      class="btn btn-outline-primary me-2"
       [disabled]="consolePage === 1"
       (click)="changePage('console', -1)"
     >
-      Anterior
+      <i class="fas fa-chevron-left me-2"></i> Anterior
     </button>
     <button
-      class="btn btn-secondary"
+      class="btn btn-outline-primary"
       [disabled]="consolePage === totalConsolePages"
       (click)="changePage('console', 1)"
     >
-      Próximo
+      Próximo <i class="fas fa-chevron-right ms-2"></i>
     </button>
   </div>
 </div>

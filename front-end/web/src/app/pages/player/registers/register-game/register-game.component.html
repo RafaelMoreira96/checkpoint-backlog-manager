@@ -1,7 +1,8 @@
 <div class="container-fluid d-flex justify-content-center align-items-center">
-  <div class="card p-4 shadow-lg" style="width: 800px">
+  <div class="card p-4 shadow-lg" style="width: 800px; border-radius: 15px;">
+    <!-- Título do Formulário -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="mb-0">
+      <h3 class="mb-0 text-primary">
         {{ isEditing ? "Atualizar Jogo" : "Cadastrar Jogo" }}
       </h3>
       <button
@@ -11,26 +12,33 @@
         data-bs-target="#searchModal"
         (click)="getNameGameForSearchIGDB()"
       >
-        Buscar na IGDB
+        <i class="fas fa-search me-2"></i> Buscar na IGDB
       </button>
     </div>
 
+    <!-- Formulário -->
     <form (ngSubmit)="registerGame()" #gameForm="ngForm">
       <div class="row mb-4">
+        <!-- Imagem do Jogo -->
         <div class="col-md-4 d-flex justify-content-center align-items-center">
-          <img
-            [src]="
-              url_image || 'https://via.placeholder.com/150?text=Sem+Imagem'
-            "
-            alt="Capa do Jogo"
-            class="img-fluid rounded"
-            style="max-height: 200px"
-          />
+          <div class="image-container">
+            <img
+              [src]="url_image || 'https://via.placeholder.com/150?text=Sem+Imagem'"
+              alt="Capa do Jogo"
+              class="img-fluid rounded shadow"
+              style="max-height: 200px; width: 100%; object-fit: cover;"
+            />
+            <div *ngIf="!url_image" class="placeholder-text text-muted">
+              Sem Imagem
+            </div>
+          </div>
         </div>
+
+        <!-- Campos do Formulário -->
         <div class="col-md-8">
           <!-- Nome do Jogo -->
-          <div class="form-group">
-            <label for="name_game">Nome do Jogo</label>
+          <div class="form-group mb-3">
+            <label for="name_game" class="form-label">Nome do Jogo</label>
             <input
               type="text"
               class="form-control"
@@ -53,8 +61,8 @@
           </div>
 
           <!-- URL da Imagem -->
-          <div class="form-group">
-            <label for="url_image">URL da Imagem</label>
+          <div class="form-group mb-3">
+            <label for="url_image" class="form-label">URL da Imagem</label>
             <input
               type="text"
               class="form-control"
@@ -66,8 +74,8 @@
           </div>
 
           <!-- Desenvolvedor -->
-          <div class="form-group">
-            <label for="developer">Desenvolvedor</label>
+          <div class="form-group mb-3">
+            <label for="developer" class="form-label">Desenvolvedor</label>
             <input
               type="text"
               class="form-control"
@@ -90,8 +98,8 @@
           </div>
 
           <!-- Ano de Lançamento -->
-          <div class="form-group">
-            <label for="releaseYear">Ano de Lançamento</label>
+          <div class="form-group mb-3">
+            <label for="releaseYear" class="form-label">Ano de Lançamento</label>
             <input
               type="text"
               class="form-control"
@@ -116,8 +124,8 @@
       </div>
 
       <!-- Console -->
-      <div class="form-group">
-        <label for="console">Console</label>
+      <div class="form-group mb-4">
+        <label for="console" class="form-label">Console</label>
         <select
           class="form-control"
           id="console"
@@ -140,8 +148,8 @@
       </div>
 
       <!-- Gênero -->
-      <div class="form-group">
-        <label for="genre">Gênero</label>
+      <div class="form-group mb-4">
+        <label for="genre" class="form-label">Gênero</label>
         <select
           class="form-control"
           id="genre"
@@ -164,8 +172,8 @@
       </div>
 
       <!-- Data de Conclusão -->
-      <div class="form-group">
-        <label for="dateBeating">Data de Conclusão</label>
+      <div class="form-group mb-4">
+        <label for="dateBeating" class="form-label">Data de Conclusão</label>
         <input
           type="date"
           class="form-control"
@@ -177,8 +185,8 @@
       </div>
 
       <!-- Tempo de Conclusão -->
-      <div class="form-group mb-3">
-        <label for="timeBeating">Tempo de Conclusão (em horas)</label>
+      <div class="form-group mb-4">
+        <label for="timeBeating" class="form-label">Tempo de Conclusão (em horas)</label>
         <input
           type="number"
           class="form-control"
@@ -192,18 +200,21 @@
       </div>
 
       <!-- Botão de Submissão -->
-      <button
-        type="submit"
-        class="btn btn-primary btn-block"
-        [disabled]="gameForm.invalid || !isFormValid()"
-      >
-        {{ isEditing ? "Atualizar Jogo" : "Cadastrar Jogo" }}
-      </button>
+      <div class="d-grid">
+        <button
+          type="submit"
+          class="btn btn-primary btn-lg"
+          [disabled]="gameForm.invalid || !isFormValid()"
+        >
+          <i class="fas fa-save me-2"></i>
+          {{ isEditing ? "Atualizar Jogo" : "Cadastrar Jogo" }}
+        </button>
+      </div>
     </form>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal de Busca na IGDB -->
 <div
   class="modal fade"
   id="searchModal"
@@ -226,9 +237,7 @@
       </div>
       <div class="modal-body">
         <div class="form-group mb-4">
-          <label for="searchGame" class="form-label"
-            >Digite o nome do jogo</label
-          >
+          <label for="searchGame" class="form-label">Digite o nome do jogo</label>
           <div class="input-group">
             <input
               type="text"
@@ -238,11 +247,11 @@
               placeholder="Digite o nome do jogo"
             />
             <button
-              class="btn btn-outline-primary"
+              class="btn btn-primary"
               type="button"
               (click)="searchGameFromIGDB()"
             >
-              Buscar
+              <i class="fas fa-search me-2"></i> Buscar
             </button>
           </div>
           <div class="search-results mt-3">
@@ -262,7 +271,7 @@
                   <img
                     [src]="result.url_image"
                     alt="{{ result.name }}"
-                    class="me-3"
+                    class="me-3 rounded"
                     style="width: 50px; height: auto"
                   />
                   <div>

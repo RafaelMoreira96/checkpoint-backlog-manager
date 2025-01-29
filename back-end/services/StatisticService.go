@@ -3,9 +3,11 @@ package services
 import (
 	"fmt"
 	"math"
+	"sort"
 
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/utils"
 	"gorm.io/gorm"
 )
 
@@ -446,5 +448,83 @@ func (s *StatsService) GetBeatedStatsByReleaseYear(playerID uint, releaseYear in
 		"totalGamesFinished": totalGamesFinished,
 		"totalHoursPlayed":   totalHoursPlayed,
 	}
+	return response, nil
+}
+
+func (s *StatsService) GetBeatedStatsByYear(playerID uint, year int) (map[string]interface{}, error) {
+	var totalHoursPlayed float64
+	var totalGamesFinished int
+
+	var listGames []models.Game
+
+	type ShortGameInfo struct {
+		NameGame    string     `json:"name_game"`
+		TimeBeating float64    `json:"time_beating"`
+		DateBeating utils.Date `json:"date_beating"`
+		Console     string     `json:"console"`
+		Genre       string     `json:"genre"`
+	}
+
+	var fiveMostPlayedBeaten []ShortGameInfo
+
+	if err := s.db.Model(&models.Game{}).
+		Select("games.name_game, games.time_beating, games.date_beating, consoles.name_console AS console, genres.name_genre AS genre").
+		Joins("LEFT JOIN consoles ON consoles.id_console = games.console_id").
+		Joins("LEFT JOIN genres ON genres.id_genre = games.genre_id").
+		Where("games.player_id = ? AND games.status = ? AND EXTRACT(YEAR FROM games.date_beating) = ?", playerID, models.Beaten, year).
+		Order("games.time_beating DESC").
+		Limit(5).
+		Find(&fiveMostPlayedBeaten).Error; err != nil {
+		return nil, fmt.Errorf("error fetching short time beating games by year: %w", err)
+	}
+
+	if err := s.db.Preload("Genre").Preload("Console").
+		Where("player_id = ? AND status = ? AND EXTRACT(YEAR FROM date_beating) = ?", playerID, models.Beaten, year).
+		Order("date_beating DESC").
+		Find(&listGames).Error; err != nil {
+		return nil, fmt.Errorf("error fetching short time beating games by year: %w", err)
+	}
+
+	var listGame []struct {
+		NameGame    string
+		TimeBeating float64
+		DateBeating utils.Date
+		Console     string
+		Genre       string
+		ReleaseYear int
+	}
+
+	for _, game := range listGames {
+		totalHoursPlayed += game.TimeBeating
+		totalGamesFinished++
+
+		listGame = append(listGame, struct {
+			NameGame    string
+			TimeBeating float64
+			DateBeating utils.Date
+			Console     string
+			Genre       string
+			ReleaseYear int
+		}{
+			NameGame:    game.NameGame,
+			TimeBeating: game.TimeBeating,
+			DateBeating: game.DateBeating,
+			Console:     game.Console.NameConsole,
+			Genre:       game.Genre.NameGenre,
+			ReleaseYear: game.ReleaseYear,
+		})
+	}
+
+	sort.Slice(listGame, func(i, j int) bool {
+		return listGame[i].NameGame < listGame[j].NameGame
+	})
+
+	response := map[string]interface{}{
+		"listGame":             listGame,
+		"totalHoursPlayed":     totalHoursPlayed,
+		"totalGamesFinished":   totalGamesFinished,
+		"fiveMostPlayedBeaten": fiveMostPlayedBeaten,
+	}
+
 	return response, nil
 }

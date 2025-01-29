@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnChanges, OnInit } from '@angular/core';
 import { BacklogService } from '../../../../services/backlog.service';
 import { Game } from '../../../../models/game';
 import { Router } from '@angular/router';
@@ -24,21 +24,24 @@ export class BacklogListComponent implements OnInit {
   constructor(
     private service: BacklogService,
     private router: Router,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.getGames();
   }
-
+  
   getGames(): void {
     this.isLoading = true;
+    const timestamp = new Date().getTime();
     this.service.getBacklog().subscribe(
       (result: any) => {
         this.games = result;
         this.filteredGames = [...this.games]; 
         this.updatePagination();
         this.isLoading = false; 
+        this.cdr.detectChanges();  
       },
       (error) => {
         this.toast.error('Erro ao carregar os jogos', 'Erro');

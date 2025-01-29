@@ -38,7 +38,7 @@ func (s *BacklogService) AddBacklogGame(playerID uint, game *models.Game) error 
 // ListBacklogGames lista os jogos no backlog do jogador
 func (s *BacklogService) ListBacklogGames(playerID uint) ([]models.Game, error) {
 	var games []models.Game
-	if err := s.db.Preload("Genre").Preload("Console").Where("player_id = ? AND status = 1", playerID).Find(&games).Error; err != nil {
+	if err := s.db.Preload("Genre").Preload("Console").Order("name_game ASC").Where("player_id = ? AND status = 1", playerID).Find(&games).Error; err != nil {
 		return nil, fmt.Errorf("error listing games: %w", err)
 	}
 

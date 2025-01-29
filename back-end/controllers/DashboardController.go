@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/RafaelMoreira96/game-beating-project/controllers/controllers_functions"
+	"github.com/RafaelMoreira96/game-beating-project/security"
 	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,7 +18,7 @@ func NewDashboardController() *DashboardController {
 
 // LastGamesBeatingAdded retorna os últimos jogos finalizados por um jogador
 func (c *DashboardController) LastGamesBeatingAdded(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 
 	games, err := c.dashboardService.GetLastGamesBeatingAdded(playerID)
 	if err != nil {
@@ -32,7 +32,7 @@ func (c *DashboardController) LastGamesBeatingAdded(ctx *fiber.Ctx) error {
 
 // LastGamesBacklogAdded retorna os últimos jogos adicionados ao backlog por um jogador
 func (c *DashboardController) LastGamesBacklogAdded(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 
 	games, err := c.dashboardService.GetLastGamesBacklogAdded(playerID)
 	if err != nil {
@@ -46,7 +46,7 @@ func (c *DashboardController) LastGamesBacklogAdded(ctx *fiber.Ctx) error {
 
 // CardsInfo retorna as estatísticas do jogador
 func (c *DashboardController) CardsInfo(ctx *fiber.Ctx) error {
-	playerID, _ := controllers_functions.GetPlayerTokenInfos(ctx)
+	playerID, _ := security.GetPlayerTokenInfos(ctx)
 
 	stats, err := c.dashboardService.GetCardsInfo(playerID)
 	if err != nil {

@@ -117,6 +117,7 @@ func ProtectedMethods(app *fiber.App) {
 	app.Get("/api/v1/statistics/beaten-by-genre/:genre_id", statsController.BeatedStatsByGenre)
 	app.Get("/api/v1/statistics/beaten-by-console/:console_id", statsController.BeatedStatsByConsole)
 	app.Get("/api/v1/statistics/beaten-by-release-year/:release_year", statsController.BeatedStatsByReleaseYear)
+	app.Get("/api/v1/statistics/beaten-by-year/:year", statsController.BeatedStatsByYear)
 
 	//app.Post("/reset-password", ResetPassword)
 }

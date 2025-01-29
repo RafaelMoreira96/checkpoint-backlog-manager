@@ -1,16 +1,10 @@
 <!-- Sidebar -->
-<div class="sidebar" [ngClass]="{ 'd-none' : !isSidebarVisible }" data-background-color="dark">
+<div class="sidebar" [ngClass]="{ 'd-none': !isSidebarVisible }" data-background-color="dark">
   <div class="sidebar-logo">
     <!-- Logo Header -->
     <div class="logo-header" data-background-color="dark">
-      <a routerLink="home" class="logo gap-2">
-        <img
-          src="/icon_page_login.svg"
-          alt="CheckPOINT"
-          class="img-fluid img-white"
-          style="max-width: 40px"
-        />
-        <h2 class="fs-3 text-white" style="max-width: 30px;">Check<b>POINT</b></h2>
+      <a routerLink="home" class="logo gap-2 d-flex align-items-right">
+        <h2 class="fs-3 text-white mb-0">Check<b>POINT</b></h2>
       </a>
       <div class="nav-toggle">
         <button class="btn btn-toggle toggle-sidebar">
@@ -31,28 +25,9 @@
       <ul class="nav nav-secondary">
         <!-- Items da área do jogador -->
         <ng-container *ngIf="role === 'player'">
-          <li
-            *ngFor="let item of menuItemsPlayer.dashboardItem"
-            class="nav-item"
-          >
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
-              <p>{{ item.name }}</p>
-            </a>
-          </li>
-
-          <li class="nav-section">
-            <span class="sidebar-mini-icon">
-              <i class="fa fa-ellipsis-h"></i>
-            </span>
-            <h4 class="text-section">Registros</h4>
-          </li>
-          <li
-            *ngFor="let item of menuItemsPlayer.registersItem"
-            class="nav-item"
-          >
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+          <li *ngFor="let item of menuItemsPlayer.dashboardItem" class="nav-item">
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -64,8 +39,8 @@
             <h4 class="text-section">Listagens</h4>
           </li>
           <li *ngFor="let item of menuItemsPlayer.listItems" class="nav-item">
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -77,8 +52,8 @@
             <h4 class="text-section">Sobre o projeto</h4>
           </li>
           <li *ngFor="let item of menuItemsPlayer.infoProject" class="nav-item">
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -90,8 +65,8 @@
             <h4 class="text-section">Configurações</h4>
           </li>
           <li *ngFor="let item of menuItemsPlayer.configs" class="nav-item">
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -99,12 +74,9 @@
 
         <!-- Items da área do administrador -->
         <ng-container *ngIf="role === 'admin'">
-          <li
-            *ngFor="let item of menuItemsAdmin.dashboardItem"
-            class="nav-item"
-          >
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+          <li *ngFor="let item of menuItemsAdmin.dashboardItem" class="nav-item">
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -115,12 +87,9 @@
             </span>
             <h4 class="text-section">Registros</h4>
           </li>
-          <li
-            *ngFor="let item of menuItemsAdmin.registersItems"
-            class="nav-item"
-          >
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+          <li *ngFor="let item of menuItemsAdmin.registersItems" class="nav-item">
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -132,8 +101,8 @@
             <h4 class="text-section">Listagens</h4>
           </li>
           <li *ngFor="let item of menuItemsAdmin.listsItems" class="nav-item">
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -145,8 +114,8 @@
             <h4 class="text-section">Configurações</h4>
           </li>
           <li *ngFor="let item of menuItemsAdmin.othersItems" class="nav-item">
-            <a routerLink="{{ item.link }}">
-              <i class="{{ item.icon }}"></i>
+            <a routerLink="{{ item.link }}" class="nav-link">
+              <i class="{{ item.icon }} me-2"></i>
               <p>{{ item.name }}</p>
             </a>
           </li>
@@ -167,4 +136,3 @@
     </div>
   </div>
 </div>
-

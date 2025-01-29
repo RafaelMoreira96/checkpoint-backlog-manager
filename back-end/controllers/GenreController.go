@@ -3,8 +3,8 @@ package controllers
 import (
 	"strconv"
 
-	"github.com/RafaelMoreira96/game-beating-project/controllers/controllers_functions"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/security"
 	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +21,7 @@ func NewGenreController() *GenreController {
 
 // AddGenre adiciona um novo gênero
 func (c *GenreController) AddGenre(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	var genre models.Genre
 	if err := ctx.BodyParser(&genre); err != nil {
@@ -41,7 +41,7 @@ func (c *GenreController) AddGenre(ctx *fiber.Ctx) error {
 
 // ListAllGenres retorna todos os gêneros ativos
 func (c *GenreController) ListAllGenres(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	genres, err := c.genreService.ListAllGenres()
 	if err != nil {
@@ -55,7 +55,7 @@ func (c *GenreController) ListAllGenres(ctx *fiber.Ctx) error {
 
 // ListDeactivateGenres retorna todos os gêneros inativos
 func (c *GenreController) ListDeactivateGenres(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	genres, err := c.genreService.ListDeactivateGenres()
 	if err != nil {
@@ -69,7 +69,7 @@ func (c *GenreController) ListDeactivateGenres(ctx *fiber.Ctx) error {
 
 // ViewGenre retorna um gênero pelo ID
 func (c *GenreController) ViewGenre(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {
@@ -90,7 +90,7 @@ func (c *GenreController) ViewGenre(ctx *fiber.Ctx) error {
 
 // UpdateGenre atualiza um gênero pelo ID
 func (c *GenreController) UpdateGenre(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {
@@ -117,7 +117,7 @@ func (c *GenreController) UpdateGenre(ctx *fiber.Ctx) error {
 
 // ReactivateGenre reativa um gênero pelo ID
 func (c *GenreController) ReactivateGenre(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {
@@ -139,7 +139,7 @@ func (c *GenreController) ReactivateGenre(ctx *fiber.Ctx) error {
 
 // DeleteGenre desativa um gênero pelo ID
 func (c *GenreController) DeleteGenre(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {
@@ -161,7 +161,7 @@ func (c *GenreController) DeleteGenre(ctx *fiber.Ctx) error {
 
 // ImportGenresFromCSV importa gêneros a partir de um arquivo CSV
 func (c *GenreController) ImportGenresFromCSV(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	file, err := ctx.FormFile("file")
 	if err != nil {

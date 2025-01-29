@@ -1,15 +1,15 @@
 <div class="container-fluid d-flex justify-content-center align-items-center">
-  <div class="card p-4 shadow-lg" style="width: 900px">
+  <div class="card p-4 shadow-lg" style="width: 900px; border-radius: 15px;">
     <!-- Título do Formulário -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="text-center">Registar Jogo em seu Backlog</h3>
+      <h3 class="text-center text-primary">Registrar Jogo em seu Backlog</h3>
       <button
         type="button"
-        class="btn btn-outline-primary"
+        class="btn btn-primary"
         data-bs-toggle="modal"
         data-bs-target="#searchModal"
       >
-        Buscar na IGDB
+        <i class="fas fa-search me-2"></i> Buscar na IGDB
       </button>
     </div>
 
@@ -19,22 +19,26 @@
       <div class="col-md-12">
         <form (ngSubmit)="registerGame()" #gameForm="ngForm">
           <div class="row mb-4">
-            <div
-              class="col-md-4 d-flex justify-content-center align-items-center"
-            >
-              <img
-                [src]="
-                  url_image || 'https://via.placeholder.com/150?text=Sem+Imagem'
-                "
-                alt="Capa do Jogo"
-                class="img-fluid rounded"
-                style="max-height: 200px"
-              />
+            <!-- Imagem do Jogo -->
+            <div class="col-md-4 d-flex justify-content-center align-items-center">
+              <div class="image-container">
+                <img
+                  [src]="url_image || 'https://via.placeholder.com/150?text=Sem+Imagem'"
+                  alt="Capa do Jogo"
+                  class="img-fluid rounded shadow"
+                  style="max-height: 200px; width: 100%; object-fit: cover;"
+                />
+                <div *ngIf="!url_image" class="placeholder-text text-muted">
+                  Sem Imagem
+                </div>
+              </div>
             </div>
+
+            <!-- Campos do Formulário -->
             <div class="col-md-8">
               <!-- Nome do Jogo -->
-              <div class="form-group mb-2">
-                <label for="nameGame">Nome do Jogo</label>
+              <div class="form-group mb-3">
+                <label for="nameGame" class="form-label">Nome do Jogo</label>
                 <input
                   type="text"
                   class="form-control"
@@ -58,8 +62,8 @@
               </div>
 
               <!-- URL da Imagem -->
-              <div class="form-group mb-2">
-                <label for="url_image">URL da Imagem</label>
+              <div class="form-group mb-3">
+                <label for="url_image" class="form-label">URL da Imagem</label>
                 <input
                   type="text"
                   class="form-control"
@@ -71,8 +75,8 @@
               </div>
 
               <!-- Desenvolvedor -->
-              <div class="form-group mb-2">
-                <label for="developer">Desenvolvedor</label>
+              <div class="form-group mb-3">
+                <label for="developer" class="form-label">Desenvolvedor</label>
                 <input
                   type="text"
                   class="form-control"
@@ -96,8 +100,8 @@
               </div>
 
               <!-- Ano de Lançamento -->
-              <div class="form-group mb-2">
-                <label for="releaseYear">Ano de Lançamento</label>
+              <div class="form-group mb-3">
+                <label for="releaseYear" class="form-label">Ano de Lançamento</label>
                 <input
                   type="text"
                   class="form-control"
@@ -123,13 +127,18 @@
           </div>
 
           <!-- Console -->
-          <div class="form-group mb-3">
-            <label for="console">Console</label>
+          <div class="form-group mb-4">
+            <label for="console" class="form-label">Console</label>
             <select
               class="form-control"
               id="console"
               [(ngModel)]="selectedConsole"
               name="console"
+              required
+              [ngClass]="{
+                'is-invalid':
+                  gameForm.submitted && !selectedConsole
+              }"
             >
               <option value="" disabled selected>Selecione o console</option>
               <option
@@ -148,13 +157,18 @@
           </div>
 
           <!-- Gênero -->
-          <div class="form-group mb-3">
-            <label for="genre">Gênero</label>
+          <div class="form-group mb-4">
+            <label for="genre" class="form-label">Gênero</label>
             <select
               class="form-control"
               id="genre"
               [(ngModel)]="selectedGenre"
               name="genre"
+              required
+              [ngClass]="{
+                'is-invalid':
+                  gameForm.submitted && !selectedGenre
+              }"
             >
               <option value="" disabled selected>Selecione o gênero</option>
               <option *ngFor="let genre of genres" [value]="genre.id_genre">
@@ -170,13 +184,16 @@
           </div>
 
           <!-- Botão de Submissão -->
-          <button
-            type="submit"
-            class="btn btn-primary btn-block"
-            [disabled]="gameForm.invalid || !isFormValid()"
-          >
-            {{ isEditing ? "Atualizar Jogo" : "Cadastrar Jogo" }}
-          </button>
+          <div class="d-grid">
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg"
+              [disabled]="gameForm.invalid || !isFormValid()"
+            >
+              <i class="fas fa-save me-2"></i>
+              {{ isEditing ? "Atualizar Jogo" : "Cadastrar Jogo" }}
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -206,9 +223,7 @@
       </div>
       <div class="modal-body">
         <div class="form-group mb-4">
-          <label for="searchGame" class="form-label"
-            >Digite o nome do jogo</label
-          >
+          <label for="searchGame" class="form-label">Digite o nome do jogo</label>
           <div class="input-group">
             <input
               type="text"
@@ -218,11 +233,11 @@
               placeholder="Digite o nome do jogo"
             />
             <button
-              class="btn btn-outline-primary"
+              class="btn btn-primary"
               type="button"
               (click)="searchGameFromIGDB()"
             >
-              Buscar
+              <i class="fas fa-search me-2"></i> Buscar
             </button>
           </div>
           <div class="search-results mt-3">
@@ -242,7 +257,7 @@
                   <img
                     [src]="result.url_image"
                     alt="{{ result.name }}"
-                    class="me-3"
+                    class="me-3 rounded"
                     style="width: 50px; height: auto"
                   />
                   <div>

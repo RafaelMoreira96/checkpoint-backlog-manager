@@ -3,8 +3,8 @@ package controllers
 import (
 	"strconv"
 
-	"github.com/RafaelMoreira96/game-beating-project/controllers/controllers_functions"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/security"
 	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +21,7 @@ func NewLogController() *LogController {
 
 // AddLog adiciona um novo log de atualização do projeto
 func (c *LogController) AddLog(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	var log models.ProjectUpdateLog
 	if err := ctx.BodyParser(&log); err != nil {
@@ -42,7 +42,7 @@ func (c *LogController) AddLog(ctx *fiber.Ctx) error {
 
 // DeleteLog remove um log de atualização do projeto pelo ID
 func (c *LogController) DeleteLog(ctx *fiber.Ctx) error {
-	controllers_functions.GetAdminTokenInfos(ctx)
+	security.GetAdminTokenInfos(ctx)
 
 	id, err := strconv.ParseUint(ctx.Params("id"), 10, 0)
 	if err != nil {

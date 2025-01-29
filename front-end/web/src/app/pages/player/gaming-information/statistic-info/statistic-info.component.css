@@ -1,5 +1,22 @@
 .chart-container canvas {
-    width: 100% !important;
-    height: 400px !important;
-  }
-  
+  width: 100% !important;
+  height: 400px !important;
+}
+
+.divider {
+  border: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 123, 255, 0),
+    rgba(0, 123, 255, 1),
+    rgba(0, 123, 255, 0)
+  );
+  margin: 20px 0;
+}
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
+}

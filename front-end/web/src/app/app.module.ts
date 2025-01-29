@@ -45,6 +45,7 @@ import { GamingInformationComponent } from './pages/player/gaming-information/ga
 import { StatisticInfoComponent } from './pages/player/gaming-information/statistic-info/statistic-info.component';
 import { ListMissingDataComponent } from './pages/player/lists/list-missing-data/list-missing-data.component';
 import { ItemDetailsComponent } from './pages/player/gaming-information/item-details/item-details.component';
+import { StatsByYearComponent } from './pages/player/gaming-information/stats-by-year/stats-by-year.component';
 
 
 @NgModule({
@@ -85,7 +86,8 @@ import { ItemDetailsComponent } from './pages/player/gaming-information/item-det
     GamingInformationComponent,
     StatisticInfoComponent,
     ListMissingDataComponent,
-    ItemDetailsComponent
+    ItemDetailsComponent,
+    StatsByYearComponent
   ],
   imports: [
     FormsModule,

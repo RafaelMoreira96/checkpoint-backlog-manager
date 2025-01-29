@@ -1,9 +1,6 @@
-package controllers_functions
+package security
 
-import (
-	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
-)
+import "github.com/gofiber/fiber/v2"
 
 func GetAdminTokenInfos(c *fiber.Ctx) (uint, error) {
 	userID, ok := c.Locals("userID").(uint)
@@ -31,13 +28,4 @@ func GetPlayerTokenInfos(c *fiber.Ctx) (uint, error) {
 	}
 
 	return userID, nil
-}
-
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
-}
-
-func CheckPasswordHash(password string) (string, error) {
-	return "", bcrypt.ErrMismatchedHashAndPassword
 }

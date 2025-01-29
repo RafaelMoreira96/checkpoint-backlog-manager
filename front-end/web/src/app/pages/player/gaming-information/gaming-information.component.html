@@ -1,11 +1,12 @@
 <div class="col-md-12">
-  <div class="card">
-    <div class="card-header">
-      <h4 class="card-title">Informações Gamísticas</h4>
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="card-title mb-0">Informações Gamísticas</h4>
     </div>
     <div class="card-body">
+      <!-- Navegação por Abas -->
       <ul
-        class="nav nav-pills nav-secondary nav-pills-no-bd"
+        class="nav nav-pills nav-primary nav-pills-no-bd mb-4"
         id="pills-tab-without-border"
         role="tablist"
       >
@@ -19,11 +20,28 @@
             aria-controls="pills-home-nobd"
             aria-selected="true"
           >
-            Estatísticas gerais
+            <i class="fas fa-chart-bar me-2"></i> Estatísticas Gerais
           </a>
         </li>
+        <!-- <li class="nav-item" role="presentation" >
+          <a
+            class="nav-link"
+            id="pills-home-tab-nobd"
+            data-bs-toggle="pill"
+            href="#stats-by-year"
+            role="tab"
+            aria-controls="stats-by-year"
+            aria-selected="false"
+          >
+            <i class="fas fa-chart-bar me-2"></i> Estatísticas por ano
+          </a>
+        </li> -->
+        <!-- Adicione mais abas aqui, se necessário -->
       </ul>
-      <div class="tab-content mt-2 mb-3" id="pills-without-border-tabContent">
+
+      <!-- Conteúdo das Abas -->
+      <div class="tab-content" id="pills-without-border-tabContent">
+        <!-- Aba de Estatísticas Gerais -->
         <div
           class="tab-pane fade active show"
           id="general-statistics"
@@ -32,6 +50,16 @@
         >
           <app-statistic-info />
         </div>
+        <!-- Aba de Estatísticas por Ano -->
+        <div
+          class="tab-pane fade show"
+          id="stats-by-year"
+          role="tabpanel"
+          aria-labelledby="stats-by-year"
+        >
+          <app-stats-by-year />
+        </div>
+        <!-- Adicione mais conteúdos de abas aqui, se necessário -->
       </div>
     </div>
   </div>
