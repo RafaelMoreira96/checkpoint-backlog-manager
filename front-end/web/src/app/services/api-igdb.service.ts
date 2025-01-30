@@ -1,58 +1,44 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiIgdbService {
-  private BASE_URL = '/api';
-  private CLIENT_ID = 'zlv00a8uei2v4b7a7nhyqe484c9t1v';
-  private TOKEN = '09hbmqhrs9y8zggelpoq7qqv6r3nna';
+  private BASE_URL = environment.BASE_URL;
+  private CLIENT_ID = environment.CLIENT_ID;
+  private TOKEN = environment.TOKEN;
 
   constructor(private http: HttpClient) {}
 
-  getGames(query: string): Observable<any> {
-    const headers = new HttpHeaders({
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
       'Client-ID': this.CLIENT_ID,
       Authorization: `Bearer ${this.TOKEN}`,
     });
+  }
 
-    return this.http.post(`${this.BASE_URL}/games`, query, { headers }).pipe(
-      catchError((error) => {
-        console.error('Error fetching games:', error);
-        return throwError(() => error);
-      })
-    );
+  getGames(query: string): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/games`, query, { headers: this.getHeaders() })
+      .pipe(this.handleError('Error fetching games'));
   }
 
   getCoverById(query: string): Observable<any> {
-    const headers = new HttpHeaders({
-      'Client-ID': this.CLIENT_ID,
-      Authorization: `Bearer ${this.TOKEN}`,
-    });
-
-    return this.http.post(`${this.BASE_URL}/covers`, query, { headers }).pipe(
-      catchError((error) => {
-        console.error('Error fetching cover:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http.post(`${this.BASE_URL}/covers`, query, { headers: this.getHeaders() })
+      .pipe(this.handleError('Error fetching cover'));
   }
 
   getInvolvedCompanyById(query: string): Observable<any> {
-    const headers = new HttpHeaders({
-      'Client-ID': this.CLIENT_ID,
-      Authorization: `Bearer ${this.TOKEN}`,
-    });
+    return this.http.post(`${this.BASE_URL}/involved_companies`, query, { headers: this.getHeaders() })
+      .pipe(this.handleError('Error fetching involved companies'));
+  }
 
-    return this.http
-      .post(`${this.BASE_URL}/involved_companies`, query, { headers })
-      .pipe(
-        catchError((error) => {
-          console.error('Error fetching involved companies:', error);
-          return throwError(() => error);
-        })
-      );
+  private handleError(errorMessage: string) {
+    return catchError((error) => {
+      console.error(errorMessage, error);
+      return throwError(() => new Error(errorMessage));
+    });
   }
 }

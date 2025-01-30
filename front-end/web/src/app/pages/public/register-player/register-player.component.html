@@ -1,11 +1,10 @@
 <div
-  class="container-fluid"
+  class="container-fluid d-flex justify-content-center align-items-center"
   style="
     background-image: url('assets/img/landing-page/image_1.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    position: relative;
     height: 100vh;
   "
 >
@@ -18,135 +17,135 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.7); /* Aumenta a opacidade */
+      background-color: rgba(0, 0, 0, 0.7);
       z-index: 1;
     "
   ></div>
 
   <!-- Conteúdo principal -->
   <div
-    class="pt-4 container container-login animated fadeIn"
+    class="container card-form animated fadeIn p-4"
     style="
       position: relative;
       z-index: 2;
       opacity: 1;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
     "
   >
-    <div class="container card-form animated fadeIn">
-      <h3 class="text-center">Registre-se</h3>
-      <div class="login-form">
-        <!-- Campo Nome do Jogador -->
-        <div class="form-group">
-          <label for="nome-jogador"><b>Nome do Jogador</b></label>
+    <h3 class="text-center mb-4">Registre-se</h3>
+    <form (ngSubmit)="registerPlayer()" #registrationForm="ngForm">
+      <!-- Campo Nome do Jogador -->
+      <div class="form-group mb-3">
+        <label for="nome-jogador"><b>Nome do Jogador</b></label>
+        <input
+          id="nome-jogador"
+          name="nome-jogador"
+          type="text"
+          class="form-control"
+          [(ngModel)]="player.name_player"
+          required
+          aria-label="Nome do Jogador"
+        />
+      </div>
+
+      <!-- Campo Email -->
+      <div class="form-group mb-3">
+        <label for="email"><b>Email</b></label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          class="form-control"
+          [(ngModel)]="player.email"
+          required
+          aria-label="Email"
+        />
+      </div>
+
+      <!-- Campo Nickname -->
+      <div class="form-group mb-3">
+        <label for="nickname"><b>Nickname</b></label>
+        <input
+          id="nickname"
+          name="nickname"
+          type="text"
+          class="form-control"
+          [(ngModel)]="player.nickname"
+          required
+          aria-label="Nickname"
+        />
+      </div>
+
+      <!-- Campo Senha -->
+      <div class="form-group mb-3">
+        <label for="password"><b>Senha</b></label>
+        <div class="position-relative">
           <input
-            id="nome-jogador"
-            name="nome-jogador"
-            type="text"
+            id="password"
+            name="password"
+            type="password"
             class="form-control"
-            [(ngModel)]="player.name_player"
+            [(ngModel)]="player.password"
             required
+            aria-label="Senha"
           />
-        </div>
-
-        <!-- Campo Email -->
-        <div class="form-group">
-          <label for="email"><b>Email</b></label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            class="form-control"
-            [(ngModel)]="player.email"
-            required
-          />
-        </div>
-
-        <!-- Campo Nickname -->
-        <div class="form-group">
-          <label for="nickname"><b>Nickname</b></label>
-          <input
-            id="nickname"
-            name="nickname"
-            type="text"
-            class="form-control"
-            [(ngModel)]="player.nickname"
-            required
-          />
-        </div>
-
-        <!-- Campo Senha -->
-        <div class="form-group">
-          <label for="password"><b>Password</b></label>
-          <div class="position-relative">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              class="form-control"
-              [(ngModel)]="player.password"
-              required
-            />
-            <div class="show-password">
-              <i class="icon-eye"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Campo Confirmação de Senha -->
-        <div class="form-group">
-          <label for="confirmpassword"><b>Confirm Password</b></label>
-          <div class="position-relative">
-            <input
-              id="confirmpassword"
-              name="confirmpassword"
-              type="password"
-              class="form-control"
-              [(ngModel)]="confirmPassword"
-              required
-            />
-            <div class="show-password">
-              <i class="icon-eye"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Aceitação de Termos -->
-        <div class="row form-sub m-0">
-          <div class="form-check">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              name="agree"
-              id="agree"
-            />
-            <label class="form-check-label" for="agree">
-              Eu aceito os termos e condições.
-            </label>
-          </div>
-        </div>
-
-        <!-- Botões de Ação -->
-        <div class="row form-action">
-          <div class="col-md-6">
-            <button
-              type="button"
-              (click)="backToIndex()"
-              class="btn btn-danger btn-link w-100 fw-bold"
-            >
-              Cancelar
-            </button>
-          </div>
-          <div class="col-md-6">
-            <button
-              type="button"
-              (click)="registerPlayer()"
-              class="btn btn-primary w-100 fw-bold"
-            >
-              Registrar
-            </button>
-          </div>
+          <button
+            type="button"
+            class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+            aria-label="Mostrar/Ocultar Senha"
+          >
+            <i class="icon-eye"></i>
+          </button>
         </div>
       </div>
-    </div>
+
+      <!-- Campo Confirmação de Senha -->
+      <div class="form-group mb-3">
+        <label for="confirmpassword"><b>Confirmar Senha</b></label>
+        <div class="position-relative">
+          <input
+            id="confirmpassword"
+            name="confirmpassword"
+            type="password"
+            class="form-control"
+            [(ngModel)]="confirmPassword"
+            required
+            aria-label="Confirmar Senha"
+          />
+          <button
+            type="button"
+            class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+            aria-label="Mostrar/Ocultar Confirmar Senha"
+          >
+            <i class="icon-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Botões de Ação -->
+      <div class="row form-action">
+        <div class="col-md-6 mb-2">
+          <button
+            type="button"
+            (click)="backToIndex()"
+            class="btn btn-danger btn-link w-100 fw-bold"
+          >
+            Cancelar
+          </button>
+        </div>
+        <div class="col-md-6">
+          <button
+            type="submit"
+            class="btn btn-primary w-100 fw-bold"
+            [disabled]="!registrationForm.form.valid"
+          >
+            Registrar
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
