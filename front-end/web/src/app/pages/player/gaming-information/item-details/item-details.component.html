@@ -101,7 +101,12 @@
             <tr *ngFor="let game of filteredGames">
               <td>{{ game.NameGame }}</td>
               <td>{{ game.TimeBeating }}</td>
-              <td *ngIf="game.Console">{{ game.Console }}</td>
+              <td>
+                <span *ngIf="game.Console; else naoDisponivel">
+                  {{ game.Console }}
+                </span>
+                <ng-template #naoDisponivel>N/A</ng-template>
+              </td>
               <td *ngIf="game.ReleaseYear">{{ game.ReleaseYear }}</td>
               <td *ngIf="game.Genre">{{ game.Genre }}</td>
             </tr>

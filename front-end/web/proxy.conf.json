@@ -1,6 +1,6 @@
 {
     "/api": {
-      "target": "https://api.igdb.com/v4",
+      "target": "https://api.igdb.com/v4/games",
       "secure": true,
       "changeOrigin": true,
       "pathRewrite": {
