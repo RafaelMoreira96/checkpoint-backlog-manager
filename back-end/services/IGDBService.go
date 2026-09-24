@@ -18,6 +18,7 @@ type IGDBGameDTO struct {
 	ID          uint   `json:"id"`
 	Name        string `json:"name"`
 	UrlImage    string `json:"url_image"`
+	CoverURL    string `json:"cover_url"`
 	Developer   string `json:"developer"`
 	ReleaseYear int    `json:"release_year"`
 }
@@ -201,6 +202,7 @@ func (s *IGDBService) SearchGames(query string) ([]IGDBGameDTO, error) {
 			ID:          raw.ID,
 			Name:        raw.Name,
 			UrlImage:    coverURL,
+			CoverURL:    coverURL,
 			Developer:   developer,
 			ReleaseYear: releaseYear,
 		})

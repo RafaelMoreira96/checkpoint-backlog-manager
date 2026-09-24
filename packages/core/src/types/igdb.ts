@@ -2,6 +2,7 @@ export interface IGDBGameResult {
   id: number;
   name: string;
   cover_url?: string;
+  url_image?: string;
   first_release_date?: number;
   release_year?: number;
   summary?: string;

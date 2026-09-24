@@ -35,8 +35,8 @@ services:
       DB_PASSWORD_DEV: ${POSTGRES_PASSWORD:-postgres}
       DB_NAME_DEV: ${POSTGRES_DB:-checkpoint_db}
       DB_SSLMODE_DEV: disable
-      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID:-}
-      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET:-}
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID:-zlv00a8uei2v4b7a7nhyqe484c9t1v}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET:-1omcqufibxh4igw2ar14qbgndaau7i}
     ports:
       - "8080:8080"
     depends_on:
