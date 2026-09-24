@@ -14,7 +14,8 @@ export const BeatenGamesPage: React.FC<BeatenGamesPageProps> = ({
   onOpenNewGame,
   onEditGame,
 }) => {
-  const { data: games = [], isLoading } = useGamesList(api);
+  const { data: rawGames, isLoading } = useGamesList(api);
+  const games = useMemo(() => (Array.isArray(rawGames) ? rawGames : []), [rawGames]);
   const deleteMutation = useDeleteGame(api);
 
   const [searchTerm, setSearchTerm] = useState('');

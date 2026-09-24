@@ -16,7 +16,8 @@ export const BacklogPage: React.FC<BacklogPageProps> = ({
   onEditBacklog,
   onCompleteBacklog,
 }) => {
-  const { data: backlog = [], isLoading } = useBacklogList(api);
+  const { data: rawBacklog, isLoading } = useBacklogList(api);
+  const backlog = useMemo(() => (Array.isArray(rawBacklog) ? rawBacklog : []), [rawBacklog]);
   const deleteMutation = useDeleteBacklog(api);
 
   const [searchTerm, setSearchTerm] = useState('');

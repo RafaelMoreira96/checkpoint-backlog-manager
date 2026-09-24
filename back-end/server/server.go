@@ -18,7 +18,7 @@ func RunServer(mode uint) {
 
 	app.Use(helmet.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:4200, https://checkpoint-dusky.vercel.app, http://checkpoint-dusky.vercel.app",
+		AllowOrigins: "http://localhost:4200, http://localhost:3000, http://localhost:8081, https://checkpoint-dusky.vercel.app, http://checkpoint-dusky.vercel.app",
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))

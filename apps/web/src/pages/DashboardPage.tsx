@@ -29,8 +29,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   onCompleteBacklog,
 }) => {
   const { data: stats } = useDashboardStats(api);
-  const { data: lastBeaten = [] } = useLastGamesBeaten(api);
-  const { data: lastBacklog = [] } = useLastBacklog(api);
+  const { data: rawLastBeaten } = useLastGamesBeaten(api);
+  const { data: rawLastBacklog } = useLastBacklog(api);
+
+  const lastBeaten = Array.isArray(rawLastBeaten) ? rawLastBeaten : [];
+  const lastBacklog = Array.isArray(rawLastBacklog) ? rawLastBacklog : [];
 
   const metricCards = [
     {
