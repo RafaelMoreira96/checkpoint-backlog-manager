@@ -8,8 +8,8 @@ func GetAdminTokenInfos(c *fiber.Ctx) (uint, error) {
 		return 0, fiber.NewError(fiber.StatusBadRequest, "error getting user id")
 	}
 
-	role := c.Locals("role").(string)
-	if role != "admin" {
+	role, ok := c.Locals("role").(string)
+	if !ok || role != "admin" {
 		return 0, fiber.NewError(fiber.StatusForbidden, "Access denied")
 	}
 
@@ -22,8 +22,8 @@ func GetPlayerTokenInfos(c *fiber.Ctx) (uint, error) {
 		return 0, fiber.NewError(fiber.StatusBadRequest, "error getting user id")
 	}
 
-	role := c.Locals("role").(string)
-	if role != "player" {
+	role, ok := c.Locals("role").(string)
+	if !ok || role != "player" {
 		return 0, fiber.NewError(fiber.StatusForbidden, "Access denied")
 	}
 

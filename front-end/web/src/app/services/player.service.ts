@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_CONFIG } from '../config/api.config';
 
@@ -7,8 +7,6 @@ import { API_CONFIG } from '../config/api.config';
 })
 export class PlayerService {
   BASE_URL = API_CONFIG.BASE_URL + '/api/v1/player';
-  token = localStorage.getItem('token');
-  headers = new HttpHeaders().set('Authorization', `Bearer ${this.token}`);
 
   constructor(private http: HttpClient) {}
 
@@ -17,18 +15,14 @@ export class PlayerService {
   }
 
   viewPlayer() {
-    return this.http.get(`${this.BASE_URL}/view`, { headers: this.headers });
+    return this.http.get(`${this.BASE_URL}/view`);
   }
 
   deletePlayer() {
-    return this.http.delete(`${this.BASE_URL}/delete`, {
-      headers: this.headers,
-    });
+    return this.http.delete(`${this.BASE_URL}/delete`);
   }
 
   updatePlayer(data: any) {
-    return this.http.put(`${this.BASE_URL}/update`, data, {
-      headers: this.headers,
-    });
+    return this.http.put(`${this.BASE_URL}/update`, data);
   }
 }

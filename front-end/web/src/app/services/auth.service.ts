@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -12,7 +13,10 @@ export class AuthService {
   private readonly TOKEN_KEY = 'token';
   private jwtService: JwtHelperService = new JwtHelperService();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   authenticate(nickname: string, password: string): Observable<any> {
     const loginPayload = { nickname, password };
@@ -53,7 +57,9 @@ export class AuthService {
   }
 
   successfulLogin(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.TOKEN_KEY, token);
+    }
   }
 
   isAuthenticated(): boolean {
@@ -61,19 +67,28 @@ export class AuthService {
     return token != null && !this.jwtService.isTokenExpired(token);
   }
 
-  private getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+  getToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.TOKEN_KEY);
+    }
+    return null;
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(this.TOKEN_KEY);
+    }
   }
 
   getUserRole(): string | null {
-    const token = localStorage.getItem('token');
+    const token = this.getToken();
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1])); 
-      return payload.role; 
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role;
+      } catch (e) {
+        return null;
+      }
     }
     return null;
   }

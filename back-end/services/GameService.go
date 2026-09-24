@@ -48,16 +48,34 @@ func (s *GameService) AddGame(game *models.Game) error {
 	return nil
 }
 
-// GetBeatenList retorna a lista de jogos finalizados
-func (s *GameService) GetBeatenList(playerID uint) ([]models.Game, error) {
+// GetBeatenList retorna a lista de jogos finalizados (suporta paginação opcional e busca)
+func (s *GameService) GetBeatenList(playerID uint, page, limit int, search string) ([]models.Game, int64, error) {
 	var games []models.Game
-	if err := s.db.Preload("Genre").Preload("Console").
-		Where("player_id = ? AND status = 0", playerID).
-		Order("date_beating DESC").
-		Find(&games).Error; err != nil {
-		return nil, fmt.Errorf("error fetching games: %w", err)
+	var total int64
+
+	query := s.db.Model(&models.Game{}).
+		Where("player_id = ? AND status = ?", playerID, models.Beaten)
+
+	if search != "" {
+		query = query.Where("name_game ILIKE ?", "%"+search+"%")
 	}
-	return games, nil
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, fmt.Errorf("error counting games: %w", err)
+	}
+
+	query = query.Preload("Genre").Preload("Console").Order("date_beating DESC")
+
+	if page > 0 && limit > 0 {
+		offset := (page - 1) * limit
+		query = query.Offset(offset).Limit(limit)
+	}
+
+	if err := query.Find(&games).Error; err != nil {
+		return nil, 0, fmt.Errorf("error fetching games: %w", err)
+	}
+
+	return games, total, nil
 }
 
 // DeleteGame remove um jogo
@@ -123,11 +141,27 @@ func (s *GameService) GetGame(playerID uint, gameID uint) (*models.Game, error) 
 	return &game, nil
 }
 
-// ImportGamesFromCSV importa jogos a partir de um arquivo CSV
+// ImportGamesFromCSV importa jogos a partir de um arquivo CSV de forma otimizada
 func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 	reader := csv.NewReader(file)
 	reader.Comma = ';'
 	reader.LazyQuotes = true
+
+	// 1. Pré-carregar consoles ativos uma única vez para lookup e cálculo Levenshtein
+	var consoles []models.Console
+	if err := s.db.Select("id_console, name_console").Where("is_active = true").Find(&consoles).Error; err != nil {
+		return fmt.Errorf("error fetching active consoles: %w", err)
+	}
+
+	// 2. Pré-carregar gêneros ativos em mapa chave-valor para busca instantânea O(1)
+	var genres []models.Genre
+	if err := s.db.Select("id_genre, name_genre").Where("is_active = true").Find(&genres).Error; err != nil {
+		return fmt.Errorf("error fetching active genres: %w", err)
+	}
+	genreMap := make(map[string]uint, len(genres))
+	for _, g := range genres {
+		genreMap[strings.ToLower(strings.TrimSpace(g.NameGenre))] = g.IdGenre
+	}
 
 	tx := s.db.Begin()
 	if tx.Error != nil {
@@ -139,7 +173,9 @@ func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 		}
 	}()
 
+	var gamesToInsert []models.Game
 	recordIndex := 0
+
 	for {
 		record, err := reader.Read()
 		if err == io.EOF {
@@ -188,7 +224,7 @@ func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 
 		var consoleID *uint
 		if consoleName != "" {
-			closestConsoleID, _ := findClosestConsoleName(tx, consoleName)
+			closestConsoleID, _ := findClosestConsoleNamePreloaded(consoles, consoleName)
 			if closestConsoleID > 0 {
 				consoleID = &closestConsoleID
 			}
@@ -196,9 +232,8 @@ func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 
 		var genreID *uint
 		if genreName != "" {
-			var genre models.Genre
-			if err := tx.Where("name_genre = ?", genreName).First(&genre).Error; err == nil {
-				genreID = &genre.IdGenre
+			if id, exists := genreMap[strings.ToLower(genreName)]; exists {
+				genreID = &id
 			}
 		}
 
@@ -219,12 +254,16 @@ func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 			return fmt.Errorf("validation error at line %d: %w", recordIndex+1, err)
 		}
 
-		if err := tx.Create(&game).Error; err != nil {
-			tx.Rollback()
-			return fmt.Errorf("error inserting record at line %d: %w", recordIndex+1, err)
-		}
-
+		gamesToInsert = append(gamesToInsert, game)
 		recordIndex++
+	}
+
+	// Inserção em batch de 100 registros por query
+	if len(gamesToInsert) > 0 {
+		if err := tx.CreateInBatches(gamesToInsert, 100).Error; err != nil {
+			tx.Rollback()
+			return fmt.Errorf("error inserting records in batches: %w", err)
+		}
 	}
 
 	if err := tx.Commit().Error; err != nil {
@@ -234,19 +273,15 @@ func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 	return nil
 }
 
-// findClosestConsoleName encontra o console mais próximo pelo nome
-func findClosestConsoleName(tx *gorm.DB, inputName string) (uint, string) {
-	var consoles []models.Console
-	tx.Select("id_console, name_console").Find(&consoles)
-
+// findClosestConsoleNamePreloaded encontra o console mais próximo em memória sem queries
+func findClosestConsoleNamePreloaded(consoles []models.Console, inputName string) (uint, string) {
 	closestConsoleID := uint(0)
 	closestConsoleName := ""
 	highestSimilarity := 0.8
 
+	cleanedInput := strings.ToLower(strings.TrimSpace(inputName))
 	for _, console := range consoles {
-		cleanedInput := strings.ToLower(strings.TrimSpace(inputName))
 		cleanedConsole := strings.ToLower(strings.TrimSpace(console.NameConsole))
-
 		similarity := levenshtein.RatioForStrings([]rune(cleanedInput), []rune(cleanedConsole), levenshtein.DefaultOptions)
 		if similarity > highestSimilarity {
 			highestSimilarity = similarity

@@ -28,20 +28,40 @@ func (d *Date) Scan(value interface{}) error {
 }
 
 func (d Date) Value() (driver.Value, error) {
+	if d.IsZero() {
+		return nil, nil
+	}
 	return d.Time, nil
 }
 
 func (d Date) MarshalJSON() ([]byte, error) {
+	if d.IsZero() {
+		return []byte("null"), nil
+	}
 	return json.Marshal(d.Format(DateFormat))
 }
 
 func (d *Date) UnmarshalJSON(data []byte) error {
-	dateStr := string(data)
-	dateStr = dateStr[1 : len(dateStr)-1]
+	str := string(data)
+	if str == "null" || str == `""` || str == "" {
+		*d = Date{Time: time.Time{}}
+		return nil
+	}
+
+	dateStr := str
+	if len(dateStr) >= 2 && dateStr[0] == '"' && dateStr[len(dateStr)-1] == '"' {
+		dateStr = dateStr[1 : len(dateStr)-1]
+	}
+
+	if dateStr == "" || dateStr == "null" {
+		*d = Date{Time: time.Time{}}
+		return nil
+	}
 
 	formats := []string{
 		"02/01/2006",
 		"2006-01-02",
+		"2006-01-02T15:04:05Z07:00",
 	}
 
 	var parsedTime time.Time

@@ -67,7 +67,7 @@
           </td>
           <td>
             {{
-              game.date_beating == "01/01/0001"
+              !game.date_beating || game.date_beating == "01/01/0001"
                 ? "Sem data registrada"
                 : game.date_beating
             }}

@@ -20,7 +20,12 @@ func NewStatsController() *StatsController {
 
 // BeatedStats retorna as estatísticas de jogos finalizados
 func (c *StatsController) BeatedStats(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
 
 	stats, err := c.statsService.GetBeatedStats(playerID)
 	if err != nil {
@@ -33,9 +38,14 @@ func (c *StatsController) BeatedStats(ctx *fiber.Ctx) error {
 }
 
 func (c *StatsController) BeatedStatsByGenre(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
-	genreIDStr := ctx.Params("genre_id")
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
 
+	genreIDStr := ctx.Params("genre_id")
 	genreID, err := strconv.Atoi(genreIDStr)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -54,9 +64,14 @@ func (c *StatsController) BeatedStatsByGenre(ctx *fiber.Ctx) error {
 }
 
 func (c *StatsController) BeatedStatsByConsole(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
-	consoleIDStr := ctx.Params("console_id")
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
 
+	consoleIDStr := ctx.Params("console_id")
 	consoleID, err := strconv.Atoi(consoleIDStr)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -75,9 +90,14 @@ func (c *StatsController) BeatedStatsByConsole(ctx *fiber.Ctx) error {
 }
 
 func (c *StatsController) BeatedStatsByReleaseYear(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
-	releaseYearStr := ctx.Params("release_year")
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
 
+	releaseYearStr := ctx.Params("release_year")
 	releaseYear, err := strconv.Atoi(releaseYearStr)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -96,9 +116,14 @@ func (c *StatsController) BeatedStatsByReleaseYear(ctx *fiber.Ctx) error {
 }
 
 func (c *StatsController) BeatedStatsByYear(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
-	yearStr := ctx.Params("year")
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
 
+	yearStr := ctx.Params("year")
 	year, err := strconv.Atoi(yearStr)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{

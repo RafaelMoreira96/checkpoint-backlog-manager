@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"math"
 	"strconv"
 
 	"github.com/RafaelMoreira96/game-beating-project/models"
@@ -21,7 +22,12 @@ func NewGameController() *GameController {
 
 // AddGame adiciona um novo jogo
 func (c *GameController) AddGame(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "unauthorized player",
+		})
+	}
 
 	var game models.Game
 	if err := ctx.BodyParser(&game); err != nil {
@@ -40,14 +46,36 @@ func (c *GameController) AddGame(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(game)
 }
 
-// GetBeatenList retorna a lista de jogos finalizados
+// GetBeatenList retorna a lista de jogos finalizados (com paginação opcional)
 func (c *GameController) GetBeatenList(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "unauthorized player",
+		})
+	}
 
-	games, err := c.gameService.GetBeatenList(playerID)
+	page, _ := strconv.Atoi(ctx.Query("page", "0"))
+	limit, _ := strconv.Atoi(ctx.Query("limit", "0"))
+	search := ctx.Query("search", "")
+
+	games, total, err := c.gameService.GetBeatenList(playerID, page, limit, search)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
+		})
+	}
+
+	if page > 0 && limit > 0 {
+		totalPages := int(math.Ceil(float64(total) / float64(limit)))
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"data": games,
+			"pagination": fiber.Map{
+				"current_page":  page,
+				"per_page":      limit,
+				"total_records": total,
+				"total_pages":   totalPages,
+			},
 		})
 	}
 
@@ -56,7 +84,12 @@ func (c *GameController) GetBeatenList(ctx *fiber.Ctx) error {
 
 // DeleteGame remove um jogo
 func (c *GameController) DeleteGame(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "unauthorized player",
+		})
+	}
 	gameID, err := strconv.ParseUint(ctx.Params("id_game"), 10, 0)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -77,7 +110,12 @@ func (c *GameController) DeleteGame(ctx *fiber.Ctx) error {
 
 // UpdateGame atualiza um jogo
 func (c *GameController) UpdateGame(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "unauthorized player",
+		})
+	}
 	gameID, err := strconv.ParseUint(ctx.Params("id_game"), 10, 0)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -103,7 +141,12 @@ func (c *GameController) UpdateGame(ctx *fiber.Ctx) error {
 
 // GetGame retorna um jogo pelo ID
 func (c *GameController) GetGame(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "unauthorized player",
+		})
+	}
 	gameID, err := strconv.ParseUint(ctx.Params("id_game"), 10, 0)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -123,7 +166,12 @@ func (c *GameController) GetGame(ctx *fiber.Ctx) error {
 
 // ImportGamesFromCSV importa jogos a partir de um arquivo CSV
 func (c *GameController) ImportGamesFromCSV(ctx *fiber.Ctx) error {
-	playerID, _ := security.GetPlayerTokenInfos(ctx)
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "unauthorized player",
+		})
+	}
 
 	file, err := ctx.FormFile("file")
 	if err != nil {

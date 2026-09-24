@@ -35,12 +35,32 @@ func (s *BacklogService) AddBacklogGame(playerID uint, game *models.Game) error 
 	return nil
 }
 
-// ListBacklogGames lista os jogos no backlog do jogador
-func (s *BacklogService) ListBacklogGames(playerID uint) ([]models.Game, error) {
+// ListBacklogGames lista os jogos no backlog do jogador (com suporte opcional a paginação)
+func (s *BacklogService) ListBacklogGames(playerID uint, page, limit int, search string) ([]models.Game, int64, error) {
 	var games []models.Game
-	if err := s.db.Preload("Genre").Preload("Console").Order("name_game ASC").Where("player_id = ? AND status = 1", playerID).Find(&games).Error; err != nil {
-		return nil, fmt.Errorf("error listing games: %w", err)
+	var total int64
+
+	query := s.db.Model(&models.Game{}).
+		Where("player_id = ? AND status = ?", playerID, models.Backlog)
+
+	if search != "" {
+		query = query.Where("name_game ILIKE ?", "%"+search+"%")
 	}
 
-	return games, nil
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, fmt.Errorf("error counting backlog games: %w", err)
+	}
+
+	query = query.Preload("Genre").Preload("Console").Order("name_game ASC")
+
+	if page > 0 && limit > 0 {
+		offset := (page - 1) * limit
+		query = query.Offset(offset).Limit(limit)
+	}
+
+	if err := query.Find(&games).Error; err != nil {
+		return nil, 0, fmt.Errorf("error listing backlog games: %w", err)
+	}
+
+	return games, total, nil
 }

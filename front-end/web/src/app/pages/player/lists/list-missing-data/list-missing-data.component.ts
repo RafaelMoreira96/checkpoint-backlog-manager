@@ -93,6 +93,7 @@ export class ListMissingDataComponent implements OnInit {
             !game.developer ||
             !game.release_year ||
             !game.time_beating ||
+            !game.date_beating ||
             game.date_beating === '01/01/0001'
         );
 

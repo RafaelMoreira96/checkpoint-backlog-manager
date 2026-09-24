@@ -7,27 +7,14 @@ import { HomeComponent } from './pages/player/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { AuthInterceptor } from './auth/auth.interceptor';
 import { RegisterGameComponent } from './pages/player/registers/register-game/register-game.component';
 import { AboutProjectComponent } from './pages/player/about-project/about-project.component';
 import { ProjectUpdatesLogComponent } from './pages/player/project-updates-log/project-updates-log.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { RegisterGenreComponent } from './pages/admin/genre/register-genre/register-genre.component';
-import { RegisterConsoleComponent } from './pages/admin/console/register-console/register-console.component';
-import { RegisterManufacturerComponent } from './pages/admin/manufacturer/register-manufacturer/register-manufacturer.component';
-import { RegisterLogComponent } from './pages/admin/log/register-log/register-log.component';
-import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
 import { PlayerLoginComponent } from './pages/login/player-login/player-login.component';
 import { AdminLoginComponent } from './pages/login/admin-login/admin-login.component';
-import { RegisterUserComponent } from './pages/admin/user/register-user/register-user.component';
-import { ListConsoleComponent } from './pages/admin/console/list-console/list-console.component';
-import { ListGenreComponent } from './pages/admin/genre/list-genre/list-genre.component';
-import { ListManufacturerComponent } from './pages/admin/manufacturer/list-manufacturer/list-manufacturer.component';
-import { ListUserComponent } from './pages/admin/user/list-user/list-user.component';
-
-import { ListLogComponent } from './pages/admin/log/list-log/list-log.component';
-import { ProfileComponent } from './pages/admin/profile/profile.component';
-import { CsvModeComponent } from './pages/admin/csv-mode/csv-mode.component';
 import { HeaderComponent } from './components/layout/header/header.component';
 import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
 import { SidebarItemComponent } from './components/layout/sidebar/sidebar-item/sidebar-item.component';
@@ -60,20 +47,7 @@ import { StatsByYearComponent } from './pages/player/gaming-information/stats-by
     RegisterGameComponent,
     AboutProjectComponent,
     ProjectUpdatesLogComponent,
-    RegisterGenreComponent,
-    RegisterConsoleComponent,
-    RegisterManufacturerComponent,
-    RegisterLogComponent,
-    DashboardComponent,
     AdminLoginComponent,
-    RegisterUserComponent,
-    ListConsoleComponent,
-    ListGenreComponent,
-    ListManufacturerComponent,
-    ListUserComponent,
-    ListLogComponent,
-    ProfileComponent,
-    CsvModeComponent,
     BacklogFormComponent,
     BacklogListComponent,
     PlayerProfileComponent,
@@ -100,7 +74,12 @@ import { StatsByYearComponent } from './pages/player/gaming-information/stats-by
   ],
   providers: [
     provideClientHydration(),
-    provideHttpClient(withFetch())
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent]
 })

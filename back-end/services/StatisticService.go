@@ -2,8 +2,6 @@ package services
 
 import (
 	"fmt"
-	"math"
-	"sort"
 
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
@@ -29,6 +27,39 @@ type YearGameCount struct {
 	Year           int     `json:"year"`
 	YearCount      int     `json:"year_count"`
 	PercentageYear float64 `json:"percentage_year"`
+}
+
+type AggregatedStats struct {
+	TotalHours   float64 `gorm:"column:total_hours"`
+	AverageHours float64 `gorm:"column:average_hours"`
+	TotalGames   int64   `gorm:"column:total_games"`
+}
+
+type HighlightGame struct {
+	NameGame    string  `json:"NameGame"`
+	TimeBeating float64 `json:"TimeBeating"`
+	TypeItem    string  `json:"TypeItem"`
+}
+
+type ResumedGenreGame struct {
+	NameGame    string  `json:"NameGame" gorm:"column:name_game"`
+	TimeBeating float64 `json:"TimeBeating" gorm:"column:time_beating"`
+	Console     string  `json:"Console" gorm:"column:console"`
+	ReleaseYear int     `json:"ReleaseYear" gorm:"column:release_year"`
+}
+
+type ResumedConsoleGame struct {
+	NameGame    string  `json:"NameGame" gorm:"column:name_game"`
+	TimeBeating float64 `json:"TimeBeating" gorm:"column:time_beating"`
+	Genre       string  `json:"Genre" gorm:"column:genre"`
+	ReleaseYear int     `json:"ReleaseYear" gorm:"column:release_year"`
+}
+
+type ResumedReleaseYearGame struct {
+	NameGame    string  `json:"NameGame" gorm:"column:name_game"`
+	TimeBeating float64 `json:"TimeBeating" gorm:"column:time_beating"`
+	Console     string  `json:"Console" gorm:"column:console"`
+	Genre       string  `json:"Genre" gorm:"column:genre"`
 }
 
 type StatsService struct {
@@ -58,11 +89,11 @@ func (s *StatsService) GetBeatedStats(playerID uint) (map[string]interface{}, er
 			c.name_console, 
 			COUNT(g.id_game) AS game_count
 		FROM consoles c
-		LEFT JOIN games g ON g.console_id = c.id_console AND g.player_id = ? AND g.status = 0
+		LEFT JOIN games g ON g.console_id = c.id_console AND g.player_id = ? AND g.status = ?
 		WHERE c.is_active = true
 		GROUP BY c.id_console, c.name_console
 		ORDER BY game_count DESC
-	`, playerID).Scan(&consoleStats).Error; err != nil {
+	`, playerID, models.Beaten).Scan(&consoleStats).Error; err != nil {
 		return nil, fmt.Errorf("error fetching console stats: %w", err)
 	}
 
@@ -94,11 +125,11 @@ func (s *StatsService) GetBeatedStats(playerID uint) (map[string]interface{}, er
 			g.name_genre, 
 			COUNT(game.id_game) AS game_count
 		FROM genres g
-		LEFT JOIN games game ON game.genre_id = g.id_genre AND game.player_id = ? AND game.status = 0
+		LEFT JOIN games game ON game.genre_id = g.id_genre AND game.player_id = ? AND game.status = ?
 		WHERE g.is_active = true
 		GROUP BY g.id_genre, g.name_genre
 		ORDER BY game_count DESC
-	`, playerID).Scan(&genreStats).Error; err != nil {
+	`, playerID, models.Beaten).Scan(&genreStats).Error; err != nil {
 		return nil, fmt.Errorf("error fetching genre stats: %w", err)
 	}
 
@@ -128,10 +159,10 @@ func (s *StatsService) GetBeatedStats(playerID uint) (map[string]interface{}, er
 			game.release_year, 
 			COUNT(game.id_game) AS game_count
 		FROM games game
-		WHERE game.player_id = ? AND game.status = 0
+		WHERE game.player_id = ? AND game.status = ?
 		GROUP BY game.release_year
 		ORDER BY game_count DESC
-	`, playerID).Scan(&yearStats).Error; err != nil {
+	`, playerID, models.Beaten).Scan(&yearStats).Error; err != nil {
 		return nil, fmt.Errorf("error fetching year stats: %w", err)
 	}
 
@@ -161,308 +192,232 @@ func (s *StatsService) GetBeatedStats(playerID uint) (map[string]interface{}, er
 }
 
 func (s *StatsService) GetBeatedStatsByGenre(playerID uint, genreID int) (map[string]interface{}, error) {
-	var highlightGames []struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
+	var stats AggregatedStats
+	if err := s.db.Model(&models.Game{}).
+		Select("COALESCE(SUM(time_beating), 0) as total_hours, COALESCE(AVG(time_beating), 0) as average_hours, COUNT(id_game) as total_games").
+		Where("player_id = ? AND status = ? AND genre_id = ?", playerID, models.Beaten, genreID).
+		Scan(&stats).Error; err != nil {
+		return nil, fmt.Errorf("error fetching aggregated stats by genre: %w", err)
 	}
 
-	var resumedListGames []struct {
-		NameGame    string
-		TimeBeating float64
-		Console     string
-		ReleaseYear int
-	}
-
-	var listGame []models.Game
-
-	if err := s.db.Preload("Console").Where("player_id = ? AND status = 0 AND genre_id = ?", playerID, genreID).Order("time_beating DESC").Find(&listGame).Error; err != nil {
-		return nil, fmt.Errorf("error fetching short time beating games by genre: %w", err)
-	}
-
-	if len(listGame) == 0 {
+	if stats.TotalGames == 0 {
 		return map[string]interface{}{
-			"highlightGames":     highlightGames,
+			"highlightGames":     []HighlightGame{},
 			"averageTimeBeating": 0.0,
-			"listGame":           listGame,
+			"listGame":           []ResumedGenreGame{},
+			"totalGamesFinished": 0,
+			"totalHoursPlayed":   0.0,
 		}, nil
 	}
 
-	for _, game := range listGame {
-		resumedListGames = append(resumedListGames, struct {
-			NameGame    string
-			TimeBeating float64
-			Console     string
-			ReleaseYear int
-		}{
-			NameGame:    game.NameGame,
-			TimeBeating: game.TimeBeating,
-			Console:     game.Console.NameConsole,
-			ReleaseYear: game.ReleaseYear,
-		})
+	var longestGame, shortestGame, medianGame models.Game
+	if err := s.db.Where("player_id = ? AND status = ? AND genre_id = ?", playerID, models.Beaten, genreID).
+		Order("time_beating DESC").First(&longestGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching longest game: %w", err)
 	}
 
-	longestGame := listGame[0]
-	shortestGame := listGame[len(listGame)-1]
-	var totalHoursPlayed float64
-	for _, game := range listGame {
-		totalHoursPlayed += game.TimeBeating
-	}
-	averageTimeBeating := totalHoursPlayed / float64(len(listGame))
-
-	var medianGame models.Game
-	smallestDiff := math.MaxFloat64
-	for _, game := range listGame {
-		diff := math.Abs(game.TimeBeating - averageTimeBeating)
-		if diff < smallestDiff {
-			smallestDiff = diff
-			medianGame = game
-		}
+	if err := s.db.Where("player_id = ? AND status = ? AND genre_id = ?", playerID, models.Beaten, genreID).
+		Order("time_beating ASC").First(&shortestGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching shortest game: %w", err)
 	}
 
-	highlightGames = append(highlightGames, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    longestGame.NameGame,
-		TimeBeating: longestGame.TimeBeating,
-		TypeItem:    "Maior duração",
-	}, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    shortestGame.NameGame,
-		TimeBeating: shortestGame.TimeBeating,
-		TypeItem:    "Menor duração",
-	}, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    medianGame.NameGame,
-		TimeBeating: medianGame.TimeBeating,
-		TypeItem:    "Média do gênero",
-	})
+	medianOffset := int(stats.TotalGames / 2)
+	if err := s.db.Where("player_id = ? AND status = ? AND genre_id = ?", playerID, models.Beaten, genreID).
+		Order("time_beating ASC").Offset(medianOffset).First(&medianGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching median game: %w", err)
+	}
 
-	totalGamesFinished := len(listGame)
+	highlightGames := []HighlightGame{
+		{
+			NameGame:    longestGame.NameGame,
+			TimeBeating: longestGame.TimeBeating,
+			TypeItem:    "Maior duração",
+		},
+		{
+			NameGame:    shortestGame.NameGame,
+			TimeBeating: shortestGame.TimeBeating,
+			TypeItem:    "Menor duração",
+		},
+		{
+			NameGame:    medianGame.NameGame,
+			TimeBeating: medianGame.TimeBeating,
+			TypeItem:    "Mediana do gênero",
+		},
+	}
 
-	response := map[string]interface{}{
+	var resumedListGames []ResumedGenreGame
+	if err := s.db.Table("games").
+		Select("games.name_game, games.time_beating, consoles.name_console AS console, games.release_year").
+		Joins("LEFT JOIN consoles ON consoles.id_console = games.console_id").
+		Where("games.player_id = ? AND games.status = ? AND games.genre_id = ?", playerID, models.Beaten, genreID).
+		Order("games.time_beating DESC").
+		Scan(&resumedListGames).Error; err != nil {
+		return nil, fmt.Errorf("error fetching resumed games list: %w", err)
+	}
+
+	return map[string]interface{}{
 		"highlightGames":     highlightGames,
-		"averageTimeBeating": averageTimeBeating,
+		"averageTimeBeating": stats.AverageHours,
 		"listGame":           resumedListGames,
-		"totalGamesFinished": totalGamesFinished,
-		"totalHoursPlayed":   totalHoursPlayed,
-	}
-
-	return response, nil
+		"totalGamesFinished": stats.TotalGames,
+		"totalHoursPlayed":   stats.TotalHours,
+	}, nil
 }
 
 func (s *StatsService) GetBeatedStatsByConsole(playerID uint, consoleID int) (map[string]interface{}, error) {
-	var highlightGames []struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
+	var stats AggregatedStats
+	if err := s.db.Model(&models.Game{}).
+		Select("COALESCE(SUM(time_beating), 0) as total_hours, COALESCE(AVG(time_beating), 0) as average_hours, COUNT(id_game) as total_games").
+		Where("player_id = ? AND status = ? AND console_id = ?", playerID, models.Beaten, consoleID).
+		Scan(&stats).Error; err != nil {
+		return nil, fmt.Errorf("error fetching aggregated stats by console: %w", err)
 	}
 
-	var resumedListGames []struct {
-		NameGame    string
-		TimeBeating float64
-		Genre       string
-		ReleaseYear int
-	}
-
-	var listGame []models.Game
-
-	if err := s.db.Preload("Genre").Where("player_id = ? AND status = 0 AND console_id = ?", playerID, consoleID).Order("time_beating DESC").Find(&listGame).Error; err != nil {
-		return nil, fmt.Errorf("error fetching short time beating games by genre: %w", err)
-	}
-
-	if len(listGame) == 0 {
+	if stats.TotalGames == 0 {
 		return map[string]interface{}{
-			"highlightGames":     highlightGames,
+			"highlightGames":     []HighlightGame{},
 			"averageTimeBeating": 0.0,
-			"listGame":           listGame,
+			"listGame":           []ResumedConsoleGame{},
+			"totalGamesFinished": 0,
+			"totalHoursPlayed":   0.0,
 		}, nil
 	}
 
-	for _, game := range listGame {
-		resumedListGames = append(resumedListGames, struct {
-			NameGame    string
-			TimeBeating float64
-			Genre       string
-			ReleaseYear int
-		}{
-			NameGame:    game.NameGame,
-			TimeBeating: game.TimeBeating,
-			Genre:       game.Genre.NameGenre,
-			ReleaseYear: game.ReleaseYear,
-		})
+	var longestGame, shortestGame, medianGame models.Game
+	if err := s.db.Where("player_id = ? AND status = ? AND console_id = ?", playerID, models.Beaten, consoleID).
+		Order("time_beating DESC").First(&longestGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching longest game: %w", err)
 	}
 
-	longestGame := listGame[0]
-	shortestGame := listGame[len(listGame)-1]
-	var totalHoursPlayed float64
-	for _, game := range listGame {
-		totalHoursPlayed += game.TimeBeating
-	}
-	averageTimeBeating := totalHoursPlayed / float64(len(listGame))
-
-	var medianGame models.Game
-	smallestDiff := math.MaxFloat64
-	for _, game := range listGame {
-		diff := math.Abs(game.TimeBeating - averageTimeBeating)
-		if diff < smallestDiff {
-			smallestDiff = diff
-			medianGame = game
-		}
+	if err := s.db.Where("player_id = ? AND status = ? AND console_id = ?", playerID, models.Beaten, consoleID).
+		Order("time_beating ASC").First(&shortestGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching shortest game: %w", err)
 	}
 
-	highlightGames = append(highlightGames, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    longestGame.NameGame,
-		TimeBeating: longestGame.TimeBeating,
-		TypeItem:    "Maior duração",
-	}, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    shortestGame.NameGame,
-		TimeBeating: shortestGame.TimeBeating,
-		TypeItem:    "Menor duração",
-	}, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    medianGame.NameGame,
-		TimeBeating: medianGame.TimeBeating,
-		TypeItem:    "Média do gênero",
-	})
+	medianOffset := int(stats.TotalGames / 2)
+	if err := s.db.Where("player_id = ? AND status = ? AND console_id = ?", playerID, models.Beaten, consoleID).
+		Order("time_beating ASC").Offset(medianOffset).First(&medianGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching median game: %w", err)
+	}
 
-	totalGamesFinished := len(listGame)
+	highlightGames := []HighlightGame{
+		{
+			NameGame:    longestGame.NameGame,
+			TimeBeating: longestGame.TimeBeating,
+			TypeItem:    "Maior duração",
+		},
+		{
+			NameGame:    shortestGame.NameGame,
+			TimeBeating: shortestGame.TimeBeating,
+			TypeItem:    "Menor duração",
+		},
+		{
+			NameGame:    medianGame.NameGame,
+			TimeBeating: medianGame.TimeBeating,
+			TypeItem:    "Mediana da plataforma",
+		},
+	}
 
-	response := map[string]interface{}{
+	var resumedListGames []ResumedConsoleGame
+	if err := s.db.Table("games").
+		Select("games.name_game, games.time_beating, genres.name_genre AS genre, games.release_year").
+		Joins("LEFT JOIN genres ON genres.id_genre = games.genre_id").
+		Where("games.player_id = ? AND games.status = ? AND games.console_id = ?", playerID, models.Beaten, consoleID).
+		Order("games.time_beating DESC").
+		Scan(&resumedListGames).Error; err != nil {
+		return nil, fmt.Errorf("error fetching resumed games list: %w", err)
+	}
+
+	return map[string]interface{}{
 		"highlightGames":     highlightGames,
-		"averageTimeBeating": averageTimeBeating,
+		"averageTimeBeating": stats.AverageHours,
 		"listGame":           resumedListGames,
-		"totalGamesFinished": totalGamesFinished,
-		"totalHoursPlayed":   totalHoursPlayed,
-	}
-
-	return response, nil
+		"totalGamesFinished": stats.TotalGames,
+		"totalHoursPlayed":   stats.TotalHours,
+	}, nil
 }
 
 func (s *StatsService) GetBeatedStatsByReleaseYear(playerID uint, releaseYear int) (map[string]interface{}, error) {
-	var highlightGames []struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
+	var stats AggregatedStats
+	if err := s.db.Model(&models.Game{}).
+		Select("COALESCE(SUM(time_beating), 0) as total_hours, COALESCE(AVG(time_beating), 0) as average_hours, COUNT(id_game) as total_games").
+		Where("player_id = ? AND status = ? AND release_year = ?", playerID, models.Beaten, releaseYear).
+		Scan(&stats).Error; err != nil {
+		return nil, fmt.Errorf("error fetching aggregated stats by release year: %w", err)
 	}
 
-	var resumedListGames []struct {
-		NameGame    string
-		TimeBeating float64
-		Console     string
-		Genre       string
-	}
-
-	var listGame []models.Game
-
-	if err := s.db.Preload("Console").Preload("Genre").Where("player_id =? AND status = 0 AND release_year =?", playerID, releaseYear).Order("time_beating DESC").Find(&listGame).Error; err != nil {
-		return nil, fmt.Errorf("error fetching short time beating games by genre: %w", err)
-	}
-	if len(listGame) == 0 {
+	if stats.TotalGames == 0 {
 		return map[string]interface{}{
-			"highlightGames":     highlightGames,
+			"highlightGames":     []HighlightGame{},
 			"averageTimeBeating": 0.0,
-			"listGame":           listGame,
+			"listGame":           []ResumedReleaseYearGame{},
+			"totalGamesFinished": 0,
+			"totalHoursPlayed":   0.0,
 		}, nil
 	}
 
-	for _, game := range listGame {
-		resumedListGames = append(resumedListGames, struct {
-			NameGame    string
-			TimeBeating float64
-			Console     string
-			Genre       string
-		}{
-			NameGame:    game.NameGame,
-			TimeBeating: game.TimeBeating,
-			Console:     game.Console.NameConsole,
-			Genre:       game.Genre.NameGenre,
-		})
+	var longestGame, shortestGame, medianGame models.Game
+	if err := s.db.Where("player_id = ? AND status = ? AND release_year = ?", playerID, models.Beaten, releaseYear).
+		Order("time_beating DESC").First(&longestGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching longest game: %w", err)
 	}
-	longestGame := listGame[0]
-	shortestGame := listGame[len(listGame)-1]
-	var totalHoursPlayed float64
-	for _, game := range listGame {
-		totalHoursPlayed += game.TimeBeating
-	}
-	averageTimeBeating := totalHoursPlayed / float64(len(listGame))
 
-	var medianGame models.Game
-	smallestDiff := math.MaxFloat64
-	for _, game := range listGame {
-		diff := math.Abs(game.TimeBeating - averageTimeBeating)
-		if diff < smallestDiff {
-			smallestDiff = diff
-			medianGame = game
-		}
+	if err := s.db.Where("player_id = ? AND status = ? AND release_year = ?", playerID, models.Beaten, releaseYear).
+		Order("time_beating ASC").First(&shortestGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching shortest game: %w", err)
 	}
-	highlightGames = append(highlightGames, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    longestGame.NameGame,
-		TimeBeating: longestGame.TimeBeating,
-		TypeItem:    "Maior duração",
-	}, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    shortestGame.NameGame,
-		TimeBeating: shortestGame.TimeBeating,
-		TypeItem:    "Menor duração",
-	}, struct {
-		NameGame    string
-		TimeBeating float64
-		TypeItem    string
-	}{
-		NameGame:    medianGame.NameGame,
-		TimeBeating: medianGame.TimeBeating,
-		TypeItem:    "Média do gênero",
-	})
-	totalGamesFinished := len(listGame)
-	response := map[string]interface{}{
+
+	medianOffset := int(stats.TotalGames / 2)
+	if err := s.db.Where("player_id = ? AND status = ? AND release_year = ?", playerID, models.Beaten, releaseYear).
+		Order("time_beating ASC").Offset(medianOffset).First(&medianGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching median game: %w", err)
+	}
+
+	highlightGames := []HighlightGame{
+		{
+			NameGame:    longestGame.NameGame,
+			TimeBeating: longestGame.TimeBeating,
+			TypeItem:    "Maior duração",
+		},
+		{
+			NameGame:    shortestGame.NameGame,
+			TimeBeating: shortestGame.TimeBeating,
+			TypeItem:    "Menor duração",
+		},
+		{
+			NameGame:    medianGame.NameGame,
+			TimeBeating: medianGame.TimeBeating,
+			TypeItem:    "Mediana do ano",
+		},
+	}
+
+	var resumedListGames []ResumedReleaseYearGame
+	if err := s.db.Table("games").
+		Select("games.name_game, games.time_beating, consoles.name_console AS console, genres.name_genre AS genre").
+		Joins("LEFT JOIN consoles ON consoles.id_console = games.console_id").
+		Joins("LEFT JOIN genres ON genres.id_genre = games.genre_id").
+		Where("games.player_id = ? AND games.status = ? AND games.release_year = ?", playerID, models.Beaten, releaseYear).
+		Order("games.time_beating DESC").
+		Scan(&resumedListGames).Error; err != nil {
+		return nil, fmt.Errorf("error fetching resumed games list: %w", err)
+	}
+
+	return map[string]interface{}{
 		"highlightGames":     highlightGames,
-		"averageTimeBeating": averageTimeBeating,
+		"averageTimeBeating": stats.AverageHours,
 		"listGame":           resumedListGames,
-		"totalGamesFinished": totalGamesFinished,
-		"totalHoursPlayed":   totalHoursPlayed,
-	}
-	return response, nil
+		"totalGamesFinished": stats.TotalGames,
+		"totalHoursPlayed":   stats.TotalHours,
+	}, nil
 }
 
 func (s *StatsService) GetBeatedStatsByYear(playerID uint, year int) (map[string]interface{}, error) {
-	var totalHoursPlayed float64
-	var totalGamesFinished int
-
-	var listGames []models.Game
-
 	type ShortGameInfo struct {
-		NameGame    string     `json:"name_game"`
-		TimeBeating float64    `json:"time_beating"`
-		DateBeating utils.Date `json:"date_beating"`
-		Console     string     `json:"console"`
-		Genre       string     `json:"genre"`
+		NameGame    string     `json:"name_game" gorm:"column:name_game"`
+		TimeBeating float64    `json:"time_beating" gorm:"column:time_beating"`
+		DateBeating utils.Date `json:"date_beating" gorm:"column:date_beating"`
+		Console     string     `json:"console" gorm:"column:console"`
+		Genre       string     `json:"genre" gorm:"column:genre"`
 	}
 
 	var fiveMostPlayedBeaten []ShortGameInfo
@@ -478,53 +433,44 @@ func (s *StatsService) GetBeatedStatsByYear(playerID uint, year int) (map[string
 		return nil, fmt.Errorf("error fetching short time beating games by year: %w", err)
 	}
 
-	if err := s.db.Preload("Genre").Preload("Console").
+	var agg struct {
+		TotalHours float64 `gorm:"column:total_hours"`
+		TotalGames int     `gorm:"column:total_games"`
+	}
+	if err := s.db.Model(&models.Game{}).
+		Select("COALESCE(SUM(time_beating), 0) as total_hours, COUNT(id_game) as total_games").
 		Where("player_id = ? AND status = ? AND EXTRACT(YEAR FROM date_beating) = ?", playerID, models.Beaten, year).
-		Order("date_beating DESC").
-		Find(&listGames).Error; err != nil {
-		return nil, fmt.Errorf("error fetching short time beating games by year: %w", err)
+		Scan(&agg).Error; err != nil {
+		return nil, fmt.Errorf("error fetching year aggregated stats: %w", err)
 	}
 
-	var listGame []struct {
-		NameGame    string
-		TimeBeating float64
-		DateBeating utils.Date
-		Console     string
-		Genre       string
-		ReleaseYear int
+	type YearDetailGame struct {
+		NameGame    string     `json:"NameGame" gorm:"column:name_game"`
+		TimeBeating float64    `json:"TimeBeating" gorm:"column:time_beating"`
+		DateBeating utils.Date `json:"DateBeating" gorm:"column:date_beating"`
+		Console     string     `json:"Console" gorm:"column:console"`
+		Genre       string     `json:"Genre" gorm:"column:genre"`
+		ReleaseYear int        `json:"ReleaseYear" gorm:"column:release_year"`
 	}
 
-	for _, game := range listGames {
-		totalHoursPlayed += game.TimeBeating
-		totalGamesFinished++
-
-		listGame = append(listGame, struct {
-			NameGame    string
-			TimeBeating float64
-			DateBeating utils.Date
-			Console     string
-			Genre       string
-			ReleaseYear int
-		}{
-			NameGame:    game.NameGame,
-			TimeBeating: game.TimeBeating,
-			DateBeating: game.DateBeating,
-			Console:     game.Console.NameConsole,
-			Genre:       game.Genre.NameGenre,
-			ReleaseYear: game.ReleaseYear,
-		})
+	var listGame []YearDetailGame
+	if err := s.db.Table("games").
+		Select("games.name_game, games.time_beating, games.date_beating, consoles.name_console AS console, genres.name_genre AS genre, games.release_year").
+		Joins("LEFT JOIN consoles ON consoles.id_console = games.console_id").
+		Joins("LEFT JOIN genres ON genres.id_genre = games.genre_id").
+		Where("games.player_id = ? AND games.status = ? AND EXTRACT(YEAR FROM games.date_beating) = ?", playerID, models.Beaten, year).
+		Order("games.name_game ASC").
+		Scan(&listGame).Error; err != nil {
+		return nil, fmt.Errorf("error fetching detailed games list by year: %w", err)
 	}
-
-	sort.Slice(listGame, func(i, j int) bool {
-		return listGame[i].NameGame < listGame[j].NameGame
-	})
 
 	response := map[string]interface{}{
 		"listGame":             listGame,
-		"totalHoursPlayed":     totalHoursPlayed,
-		"totalGamesFinished":   totalGamesFinished,
+		"totalHoursPlayed":     agg.TotalHours,
+		"totalGamesFinished":   agg.TotalGames,
 		"fiveMostPlayedBeaten": fiveMostPlayedBeaten,
 	}
 
 	return response, nil
 }
+

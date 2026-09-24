@@ -2,6 +2,7 @@ package server
 
 import (
 	"log"
+	"os"
 
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/server/routes"
@@ -34,7 +35,13 @@ func RunServer(mode uint) {
 
 	routes.SetupRoutes(app)
 
-	if err := app.Listen(":8000"); err != nil {
-		log.Fatalf("Erro ao iniciar o servidor: %v", err)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+
+	log.Printf("Servidor iniciando na porta :%s\n", port)
+	if err := app.Listen(":" + port); err != nil {
+		log.Fatalf("Erro ao iniciar o servidor na porta :%s: %v", port, err)
 	}
 }

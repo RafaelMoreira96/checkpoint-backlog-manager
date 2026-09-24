@@ -2,6 +2,8 @@ package security
 
 import (
 	"errors"
+	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -9,7 +11,18 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte("game-beating-jwt")
+// GetJWTSecret retorna o segredo do JWT a partir de variável de ambiente
+func GetJWTSecret() []byte {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		if os.Getenv("APP_MODE") == "production" {
+			log.Fatal("FATAL: Variável de ambiente JWT_SECRET não está configurada em ambiente de produção")
+		}
+		log.Println("AVISO: JWT_SECRET não definido, utilizando chave fallback de desenvolvimento")
+		return []byte("dev-insecure-jwt-secret-replace-in-env")
+	}
+	return []byte(secret)
+}
 
 // GenerateJWT gera um token JWT para autenticação
 func GenerateJWT(namePlayer string, nickname string, isActive bool, userID uint, role string, permission int) (string, error) {
@@ -24,7 +37,7 @@ func GenerateJWT(namePlayer string, nickname string, isActive bool, userID uint,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(secretKey)
+	return token.SignedString(GetJWTSecret())
 }
 
 // JWTMiddleware é um middleware para validar tokens JWT
@@ -40,7 +53,7 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
-		return secretKey, nil
+		return GetJWTSecret(), nil
 	})
 
 	if err != nil || !token.Valid {

@@ -15,7 +15,7 @@ func GeneratePasswordResetToken(email string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(secretKey)
+	return token.SignedString(GetJWTSecret())
 }
 
 // ValidatePasswordResetToken valida um token de recuperação de senha
@@ -24,7 +24,7 @@ func ValidatePasswordResetToken(tokenString string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return secretKey, nil
+		return GetJWTSecret(), nil
 	})
 
 	if err != nil || !token.Valid {

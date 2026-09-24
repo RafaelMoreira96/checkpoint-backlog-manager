@@ -140,6 +140,30 @@ func (c *PlayerController) RequestPasswordReset(ctx *fiber.Ctx) error {
 	})
 }
 
+// ResetPassword redefine a senha do jogador com token de recuperação
+func (c *PlayerController) ResetPassword(ctx *fiber.Ctx) error {
+	var request struct {
+		Token       string `json:"token"`
+		NewPassword string `json:"new_password"`
+	}
+
+	if err := ctx.BodyParser(&request); err != nil || request.Token == "" || request.NewPassword == "" {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "token e new_password são campos obrigatórios",
+		})
+	}
+
+	if err := c.playerService.ResetPassword(request.Token, request.NewPassword); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "senha redefinida com sucesso",
+	})
+}
+
 // getPlayerIDFromToken extrai o ID do jogador do token JWT
 func (c *PlayerController) getPlayerIDFromToken(ctx *fiber.Ctx) (uint, error) {
 	playerID, ok := ctx.Locals("userID").(uint)

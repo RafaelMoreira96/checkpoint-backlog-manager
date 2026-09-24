@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Console } from '../models/console';
 import { API_CONFIG } from '../config/api.config';
@@ -8,46 +8,34 @@ import { API_CONFIG } from '../config/api.config';
 })
 export class ConsoleService {
   BASE_URL = API_CONFIG.BASE_URL + '/api/v1/console';
-  token = localStorage.getItem('token');
-  headers = new HttpHeaders().set('Authorization', `Bearer ${this.token}`);
 
   constructor(private http: HttpClient) {}
 
   getConsoles() {
-    return this.http.get(`${this.BASE_URL}/list`, { headers: this.headers });
+    return this.http.get(`${this.BASE_URL}/list`);
   }
 
   getDeactivatedConsoles() {
-    return this.http.get(`${this.BASE_URL}/list/deactivated`, {
-      headers: this.headers,
-    });
+    return this.http.get(`${this.BASE_URL}/list/deactivated`);
   }
 
   getConsole(id: number) {
-    return this.http.get(`${this.BASE_URL}/${id}`, { headers: this.headers });
+    return this.http.get(`${this.BASE_URL}/${id}`);
   }
 
   createConsole(data: Console) {
-    return this.http.post(`${this.BASE_URL}`, data, {
-      headers: this.headers,
-    });
+    return this.http.post(`${this.BASE_URL}`, data);
   }
 
   updateConsole(id: number, data: Console) {
-    return this.http.put(`${this.BASE_URL}/${id}`, data, {
-      headers: this.headers,
-    });
+    return this.http.put(`${this.BASE_URL}/${id}`, data);
   }
 
   deleteConsole(id: number) {
-    return this.http.delete(`${this.BASE_URL}/${id}`, {
-      headers: this.headers,
-    });
+    return this.http.delete(`${this.BASE_URL}/${id}`);
   }
 
   reactivateConsole(id: number) {
-    return this.http.put(`${this.BASE_URL}/activate/${id}`, {
-      headers: this.headers,
-    });
+    return this.http.put(`${this.BASE_URL}/activate/${id}`, {});
   }
 }

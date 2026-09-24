@@ -152,3 +152,32 @@ func (s *PlayerService) RequestPasswordReset(email string) error {
 
 	return nil
 }
+
+// ResetPassword valida o token e redefine a senha do jogador
+func (s *PlayerService) ResetPassword(token, newPassword string) error {
+	email, err := security.ValidatePasswordResetToken(token)
+	if err != nil {
+		return fmt.Errorf("token inválido ou expirado: %w", err)
+	}
+
+	if len(newPassword) < 6 {
+		return errors.New("a nova senha deve possuir pelo menos 6 caracteres")
+	}
+
+	var player models.Player
+	if err := s.db.Where("email = ?", email).First(&player).Error; err != nil {
+		return fmt.Errorf("jogador não encontrado: %w", err)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("erro ao gerar hash da nova senha: %w", err)
+	}
+
+	player.Password = string(hashedPassword)
+	if err := s.db.Save(&player).Error; err != nil {
+		return fmt.Errorf("erro ao atualizar senha: %w", err)
+	}
+
+	return nil
+}

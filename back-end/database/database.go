@@ -3,6 +3,7 @@ package database
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/RafaelMoreira96/game-beating-project/database/migrations"
 	"gorm.io/driver/postgres"
@@ -10,6 +11,16 @@ import (
 )
 
 var db *gorm.DB
+
+func configurePool(database *gorm.DB) {
+	sqlDB, err := database.DB()
+	if err != nil {
+		log.Fatalf("Falha ao obter sql.DB do GORM: %v", err)
+	}
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(50)
+	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+}
 
 // ConnectDevMode conecta ao banco de dados em modo de desenvolvimento
 func ConnectDevMode() *gorm.DB {
@@ -35,6 +46,8 @@ func ConnectDevMode() *gorm.DB {
 		log.Fatalf("Erro ao conectar ao banco de dados de desenvolvimento: %v", err)
 	}
 
+	configurePool(database)
+
 	db = database
 	migrations.RunMigrations(db)
 
@@ -54,6 +67,8 @@ func ConnectProdMode() *gorm.DB {
 	if err != nil {
 		log.Fatalf("Erro ao conectar ao banco de dados de produção: %v", err)
 	}
+
+	configurePool(database)
 
 	db = database
 	migrations.RunMigrations(db)

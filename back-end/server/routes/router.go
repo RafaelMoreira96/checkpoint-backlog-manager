@@ -14,110 +14,111 @@ func SetupRoutes(app *fiber.App) {
 func PublicMethods(app *fiber.App) {
 	/* Auth routes method */
 	authController := controllers.NewAuthController()
-	app.Post("api/v1/login", authController.LoginPlayer)
-	app.Post("api/v1/admin_login", authController.LoginAdmin)
+	app.Post("/api/v1/login", authController.LoginPlayer)
+	app.Post("/api/v1/admin_login", authController.LoginAdmin)
 
 	/* Register and reset password for player methods */
 	playerController := controllers.NewPlayerController()
 	app.Post("/api/v1/player/register", playerController.AddPlayer)
 	app.Post("/api/v1/player/request_password_reset", playerController.RequestPasswordReset)
-
-	/* Register administrator method */
-	adminController := controllers.NewAdministratorController()
-	app.Post("/api/v1/admin/register", adminController.AddAdministrator) // Rota pública para adicionar administrador
+	app.Post("/api/v1/player/reset-password", playerController.ResetPassword)
 
 	/* LANDING PAGE */
 	app.Get("/api/v1/landing-page/stats", controllers.StatsInfo)
 }
 
 func ProtectedMethods(app *fiber.App) {
-	// Security JWT implements
-	app.Use(security.JWTMiddleware)
+	// Base protected group with JWT Middleware
+	api := app.Group("/api/v1", security.JWTMiddleware)
+
+	// Roles
+	adminOnly := security.RequireRole("admin")
+	playerOnly := security.RequireRole("player")
+	anyRole := security.RequireRole("player", "admin")
 
 	/* Manufacturer routes methods */
 	manufacturerController := controllers.NewManufacturerController()
-	app.Post("/api/v1/manufacturer", manufacturerController.AddManufacturer)
-	app.Get("/api/v1/manufacturer/list", manufacturerController.ListAllManufacturers)
-	app.Get("/api/v1/manufacturer/list/deactivated", manufacturerController.ListDeactivateManufacturers)
-	app.Get("/api/v1/manufacturer/:id", manufacturerController.ViewManufacturer)
-	app.Put("/api/v1/manufacturer/:id", manufacturerController.UpdateManufacturer)
-	app.Delete("/api/v1/manufacturer/:id", manufacturerController.DeleteManufacturer)
-	app.Put("/api/v1/manufacturer/activate/:id", manufacturerController.ReactivateManufacturer)
-	app.Post("/api/v1/manufacturer/import_csv", manufacturerController.ImportManufacturersFromCSV)
+	api.Post("/manufacturer", adminOnly, manufacturerController.AddManufacturer)
+	api.Get("/manufacturer/list", anyRole, manufacturerController.ListAllManufacturers)
+	api.Get("/manufacturer/list/deactivated", adminOnly, manufacturerController.ListDeactivateManufacturers)
+	api.Get("/manufacturer/:id", anyRole, manufacturerController.ViewManufacturer)
+	api.Put("/manufacturer/:id", adminOnly, manufacturerController.UpdateManufacturer)
+	api.Delete("/manufacturer/:id", adminOnly, manufacturerController.DeleteManufacturer)
+	api.Put("/manufacturer/activate/:id", adminOnly, manufacturerController.ReactivateManufacturer)
+	api.Post("/manufacturer/import_csv", adminOnly, manufacturerController.ImportManufacturersFromCSV)
 
 	/* Console routes methods */
 	consoleController := controllers.NewConsoleController()
-	app.Post("/api/v1/console", consoleController.AddConsole)
-	app.Get("/api/v1/console/list", consoleController.GetConsoles)
-	app.Get("/api/v1/console/deactivated_list", consoleController.GetInactiveConsoles)
-	app.Get("/api/v1/console/:id", consoleController.ViewConsole)
-	app.Put("/api/v1/console/:id", consoleController.UpdateConsole)
-	app.Delete("/api/v1/console/:id", consoleController.DeleteConsole)
-	app.Put("/api/v1/console/activate/:id", consoleController.ReactivateConsole)
-	app.Post("/api/v1/console/import_csv", consoleController.ImportConsolesFromCSV)
+	api.Post("/console", adminOnly, consoleController.AddConsole)
+	api.Get("/console/list", anyRole, consoleController.GetConsoles)
+	api.Get("/console/deactivated_list", adminOnly, consoleController.GetInactiveConsoles)
+	api.Get("/console/:id", anyRole, consoleController.ViewConsole)
+	api.Put("/console/:id", adminOnly, consoleController.UpdateConsole)
+	api.Delete("/console/:id", adminOnly, consoleController.DeleteConsole)
+	api.Put("/console/activate/:id", adminOnly, consoleController.ReactivateConsole)
+	api.Post("/console/import_csv", adminOnly, consoleController.ImportConsolesFromCSV)
 
 	/* Genre routes methods */
 	genreController := controllers.NewGenreController()
-	app.Post("/api/v1/genre", genreController.AddGenre)
-	app.Get("/api/v1/genre/list", genreController.ListAllGenres)
-	app.Get("/api/v1/genre/list/deactivated", genreController.ListDeactivateGenres)
-	app.Get("/api/v1/genre/:id", genreController.ViewGenre)
-	app.Put("/api/v1/genre/:id", genreController.UpdateGenre)
-	app.Put("/api/v1/genre/activate/:id", genreController.ReactivateGenre)
-	app.Delete("/api/v1/genre/:id", genreController.DeleteGenre)
-	app.Post("/api/v1/genre/import_csv", genreController.ImportGenresFromCSV)
+	api.Post("/genre", adminOnly, genreController.AddGenre)
+	api.Get("/genre/list", anyRole, genreController.ListAllGenres)
+	api.Get("/genre/list/deactivated", adminOnly, genreController.ListDeactivateGenres)
+	api.Get("/genre/:id", anyRole, genreController.ViewGenre)
+	api.Put("/genre/:id", adminOnly, genreController.UpdateGenre)
+	api.Put("/genre/activate/:id", adminOnly, genreController.ReactivateGenre)
+	api.Delete("/genre/:id", adminOnly, genreController.DeleteGenre)
+	api.Post("/genre/import_csv", adminOnly, genreController.ImportGenresFromCSV)
 
 	/* Player routes methods */
 	playerController := controllers.NewPlayerController()
-	app.Get("/api/v1/player/view", playerController.ViewPlayerProfileInfo)
-	app.Delete("/api/v1/player/delete", playerController.DeletePlayer)
-	app.Put("/api/v1/player/update", playerController.UpdatePlayer)
+	api.Get("/player/view", playerOnly, playerController.ViewPlayerProfileInfo)
+	api.Delete("/player/delete", playerOnly, playerController.DeletePlayer)
+	api.Put("/player/update", playerOnly, playerController.UpdatePlayer)
 
 	/* Administrator routes methods */
 	adminController := controllers.NewAdministratorController()
-	app.Get("/api/v1/admin/view/:id", adminController.ViewAdministratorById)
-	app.Get("/api/v1/admin/view", adminController.ViewAdministratorProfile)
-	app.Delete("/api/v1/admin/delete", adminController.CancelAdministratorInProfile)
-	app.Delete("/api/v1/admin/delete/:id", adminController.CancelAdministratorInList)
-	app.Get("/api/v1/admin/list", adminController.ListAdministrators)
-	app.Put("/api/v1/admin/update/:id", adminController.UpdateAdministratorById)
-	app.Put("/api/v1/admin/update", adminController.UpdateAdministrator)
+	api.Post("/admin/register", adminOnly, adminController.AddAdministrator)
+	api.Get("/admin/view/:id", adminOnly, adminController.ViewAdministratorById)
+	api.Get("/admin/view", adminOnly, adminController.ViewAdministratorProfile)
+	api.Delete("/admin/delete", adminOnly, adminController.CancelAdministratorInProfile)
+	api.Delete("/admin/delete/:id", adminOnly, adminController.CancelAdministratorInList)
+	api.Get("/admin/list", adminOnly, adminController.ListAdministrators)
+	api.Put("/admin/update/:id", adminOnly, adminController.UpdateAdministratorById)
+	api.Put("/admin/update", adminOnly, adminController.UpdateAdministrator)
 
 	/* Game routes methods */
 	gameController := controllers.NewGameController()
-	app.Post("/api/v1/game", gameController.AddGame)
-	app.Get("/api/v1/game/list_beaten", gameController.GetBeatenList)
-	app.Get("/api/v1/game/:id_game", gameController.GetGame)
-	app.Delete("/api/v1/game/delete_beaten/:id_game", gameController.DeleteGame)
-	app.Put("/api/v1/game/:id_game", gameController.UpdateGame)
-	app.Post("/api/v1/game/import_csv", gameController.ImportGamesFromCSV)
+	api.Post("/game", playerOnly, gameController.AddGame)
+	api.Get("/game/list_beaten", playerOnly, gameController.GetBeatenList)
+	api.Get("/game/:id_game", playerOnly, gameController.GetGame)
+	api.Delete("/game/delete_beaten/:id_game", playerOnly, gameController.DeleteGame)
+	api.Put("/game/:id_game", playerOnly, gameController.UpdateGame)
+	api.Post("/game/import_csv", playerOnly, gameController.ImportGamesFromCSV)
 
 	/* Project Update Log routes methods */
 	logController := controllers.NewLogController()
-	app.Post("/api/v1/log", logController.AddLog)
-	app.Delete("/api/v1/log/:id", logController.DeleteLog)
-	app.Get("/api/v1/log/list", logController.GetLogs)
+	api.Post("/log", adminOnly, logController.AddLog)
+	api.Delete("/log/:id", adminOnly, logController.DeleteLog)
+	api.Get("/log/list", anyRole, logController.GetLogs)
 
 	/* Frontend routes methods */
 	dashboardController := controllers.NewDashboardController()
-	app.Get("/api/v1/player/last_games", dashboardController.LastGamesBeatingAdded)
-	app.Get("/api/v1/player/last_backlog", dashboardController.LastGamesBacklogAdded)
-	app.Get("/api/v1/player/prefered_genre", dashboardController.CardsInfo)
-	app.Get("/api/v1/admin/last_players_added", dashboardController.LastPlayersRegistered)
-	app.Get("/api/v1/admin/last_admin_added", dashboardController.LastAdminsRegistered)
-	app.Get("/api/v1/admin/cards_info", dashboardController.AdminCardsInfo)
+	api.Get("/player/last_games", playerOnly, dashboardController.LastGamesBeatingAdded)
+	api.Get("/player/last_backlog", playerOnly, dashboardController.LastGamesBacklogAdded)
+	api.Get("/player/prefered_genre", playerOnly, dashboardController.CardsInfo)
+	api.Get("/admin/last_players_added", adminOnly, dashboardController.LastPlayersRegistered)
+	api.Get("/admin/last_admin_added", adminOnly, dashboardController.LastAdminsRegistered)
+	api.Get("/admin/cards_info", adminOnly, dashboardController.AdminCardsInfo)
 
 	/* Backlog routes methods */
 	backlogController := controllers.NewBacklogController()
-	app.Post("/api/v1/backlog", backlogController.AddBacklogGame)
-	app.Get("/api/v1/backlog/list", backlogController.ListBacklogGames)
+	api.Post("/backlog", playerOnly, backlogController.AddBacklogGame)
+	api.Get("/backlog/list", playerOnly, backlogController.ListBacklogGames)
 
 	statsController := controllers.NewStatsController()
-	app.Get("/api/v1/statistics/beaten-statistics", statsController.BeatedStats)
-	app.Get("/api/v1/statistics/beaten-by-genre/:genre_id", statsController.BeatedStatsByGenre)
-	app.Get("/api/v1/statistics/beaten-by-console/:console_id", statsController.BeatedStatsByConsole)
-	app.Get("/api/v1/statistics/beaten-by-release-year/:release_year", statsController.BeatedStatsByReleaseYear)
-	app.Get("/api/v1/statistics/beaten-by-year/:year", statsController.BeatedStatsByYear)
-
-	//app.Post("/reset-password", ResetPassword)
+	api.Get("/statistics/beaten-statistics", playerOnly, statsController.BeatedStats)
+	api.Get("/statistics/beaten-by-genre/:genre_id", playerOnly, statsController.BeatedStatsByGenre)
+	api.Get("/statistics/beaten-by-console/:console_id", playerOnly, statsController.BeatedStatsByConsole)
+	api.Get("/statistics/beaten-by-release-year/:release_year", playerOnly, statsController.BeatedStatsByReleaseYear)
+	api.Get("/statistics/beaten-by-year/:year", playerOnly, statsController.BeatedStatsByYear)
 }
