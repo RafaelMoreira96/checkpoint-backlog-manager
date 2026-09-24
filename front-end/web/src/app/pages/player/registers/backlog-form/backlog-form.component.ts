@@ -105,87 +105,21 @@ export class BacklogFormComponent {
 
   // Método para buscar o jogo na IGDB
   searchGameFromIGDB(): void {
-      if (!this.igdb_game_search.trim()) return;
-  
-      this.loadingSearch = true;
-      const query = `fields name, cover, first_release_date; limit 15; search "${this.igdb_game_search}";`;
-  
-      this.apiIgdbService.getGames(query).subscribe({
-        next: (result: any[]) => {
-          this.searchResults = [];
-          let requestIndex = 0;
-  
-          const processGame = (game: any) => {
-            let gameItem: GameFromIGDBService = {
-              id: 0,
-              name: '',
-              developer: '',
-              url_image: '',
-              release_year: 0,
-            };
-  
-            const cover_query = `fields image_id; where game = ${game.id};`;
-            this.apiIgdbService.getCoverById(cover_query).subscribe(
-              (cover: any) => {
-                const url_image = cover[0]?.image_id
-                  ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${cover[0].image_id}.jpg`
-                  : '';
-  
-                gameItem.id = game.id;
-                gameItem.name = game.name;
-                gameItem.url_image = url_image;
-  
-                if (game.first_release_date) {
-                  gameItem.release_year = new Date(
-                    game.first_release_date * 1000
-                  ).getFullYear();
-                } else {
-                  gameItem.release_year = 0;
-                }
-  
-                const companies_query = `fields company.name; where game = ${game.id};`;
-                this.apiIgdbService
-                  .getInvolvedCompanyById(companies_query)
-                  .subscribe(
-                    (company_result: any) => {
-                      gameItem.developer =
-                        company_result[0]?.company?.name || 'Desconhecido';
-                      this.searchResults.push(gameItem);
-                    },
-                    (error) => {
-                      console.error('Error fetching companies:', error);
-                      gameItem.developer = 'Desconhecido';
-                      this.searchResults.push(gameItem);
-                    }
-                  );
-              },
-              (error) => {
-                console.error('Error fetching cover:', error);
-              }
-            );
-  
-            this.igdb_game_search = '';
-          };
-  
-          const processGamesSequentially = () => {
-            if (requestIndex < result.length) {
-              const game = result[requestIndex];
-              processGame(game);
-              requestIndex++;
-              setTimeout(processGamesSequentially, 500);
-            } else {
-              this.loadingSearch = false;
-            }
-          };
-  
-          processGamesSequentially();
-        },
-        error: () => {
-          this.toastr.error('Erro ao buscar jogos na IGDB.', 'Erro');
-          this.loadingSearch = false;
-        },
-      });
-    }
+    if (!this.igdb_game_search.trim()) return;
+
+    this.loadingSearch = true;
+    this.apiIgdbService.searchGames(this.igdb_game_search).subscribe({
+      next: (result: GameFromIGDBService[]) => {
+        this.searchResults = result;
+        this.loadingSearch = false;
+        this.igdb_game_search = '';
+      },
+      error: () => {
+        this.toastr.error('Erro ao buscar jogos no catálogo.', 'Erro');
+        this.loadingSearch = false;
+      },
+    });
+  }
 
  selectGameFromSearch(game: GameFromIGDBService): void {
      this.nameGame = game.name;

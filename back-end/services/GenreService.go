@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/utils"
 	"gorm.io/gorm"
 )
 
@@ -37,15 +39,25 @@ func (s *GenreService) AddGenre(genre *models.Genre) error {
 		return fmt.Errorf("error creating genre: %w", err)
 	}
 
+	utils.GetCache().Delete("active_genres")
 	return nil
 }
 
-// ListAllGenres retorna todos os gêneros ativos
+// ListAllGenres retorna todos os gêneros ativos com cache em memória
 func (s *GenreService) ListAllGenres() ([]models.Genre, error) {
+	cacheKey := "active_genres"
+	if cached, ok := utils.GetCache().Get(cacheKey); ok {
+		if genres, ok := cached.([]models.Genre); ok {
+			return genres, nil
+		}
+	}
+
 	var genres []models.Genre
 	if err := s.db.Where("is_active = true").Order("name_genre ASC").Find(&genres).Error; err != nil {
 		return nil, fmt.Errorf("error fetching genres: %w", err)
 	}
+
+	utils.GetCache().Set(cacheKey, genres, 10*time.Minute)
 	return genres, nil
 }
 
@@ -83,6 +95,7 @@ func (s *GenreService) UpdateGenre(id uint, updatedGenre *models.Genre) error {
 		return fmt.Errorf("error updating genre: %w", err)
 	}
 
+	utils.GetCache().Delete("active_genres")
 	return nil
 }
 
@@ -102,6 +115,7 @@ func (s *GenreService) ReactivateGenre(id uint) error {
 		return fmt.Errorf("error reactivating genre: %w", err)
 	}
 
+	utils.GetCache().Delete("active_genres")
 	return nil
 }
 
@@ -117,6 +131,7 @@ func (s *GenreService) DeleteGenre(id uint) error {
 		return fmt.Errorf("error deactivating genre: %w", err)
 	}
 
+	utils.GetCache().Delete("active_genres")
 	return nil
 }
 
@@ -193,5 +208,6 @@ func (s *GenreService) ImportGenresFromCSV(file io.Reader) error {
 		return fmt.Errorf("error committing transaction: %w", err)
 	}
 
+	utils.GetCache().Delete("active_genres")
 	return nil
 }

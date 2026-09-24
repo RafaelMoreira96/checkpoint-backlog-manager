@@ -121,4 +121,8 @@ func ProtectedMethods(app *fiber.App) {
 	api.Get("/statistics/beaten-by-console/:console_id", playerOnly, statsController.BeatedStatsByConsole)
 	api.Get("/statistics/beaten-by-release-year/:release_year", playerOnly, statsController.BeatedStatsByReleaseYear)
 	api.Get("/statistics/beaten-by-year/:year", playerOnly, statsController.BeatedStatsByYear)
+
+	/* External Catalog (IGDB Proxy) routes methods */
+	externalGamesController := controllers.NewExternalGamesController()
+	api.Get("/external/games/search", anyRole, externalGamesController.SearchGames)
 }

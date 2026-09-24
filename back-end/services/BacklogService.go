@@ -51,7 +51,14 @@ func (s *BacklogService) ListBacklogGames(playerID uint, page, limit int, search
 		return nil, 0, fmt.Errorf("error counting backlog games: %w", err)
 	}
 
-	query = query.Preload("Genre").Preload("Console").Order("name_game ASC")
+	query = query.
+		Preload("Genre", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id_genre, name_genre")
+		}).
+		Preload("Console", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id_console, name_console")
+		}).
+		Order("name_game ASC")
 
 	if page > 0 && limit > 0 {
 		offset := (page - 1) * limit

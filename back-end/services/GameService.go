@@ -64,7 +64,14 @@ func (s *GameService) GetBeatenList(playerID uint, page, limit int, search strin
 		return nil, 0, fmt.Errorf("error counting games: %w", err)
 	}
 
-	query = query.Preload("Genre").Preload("Console").Order("date_beating DESC")
+	query = query.
+		Preload("Genre", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id_genre, name_genre")
+		}).
+		Preload("Console", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id_console, name_console")
+		}).
+		Order("date_beating DESC")
 
 	if page > 0 && limit > 0 {
 		offset := (page - 1) * limit
@@ -133,7 +140,13 @@ func (s *GameService) UpdateGame(playerID uint, gameID uint, updatedGame *models
 // GetGame retorna um jogo pelo ID
 func (s *GameService) GetGame(playerID uint, gameID uint) (*models.Game, error) {
 	var game models.Game
-	if err := s.db.Preload("Genre").Preload("Console").
+	if err := s.db.
+		Preload("Genre", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id_genre, name_genre")
+		}).
+		Preload("Console", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id_console, name_console")
+		}).
 		Where("id_game = ? AND player_id = ?", gameID, playerID).
 		First(&game).Error; err != nil {
 		return nil, fmt.Errorf("game not found: %w", err)

@@ -7,9 +7,11 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/utils"
 	"gorm.io/gorm"
 )
 
@@ -43,15 +45,25 @@ func (s *ManufacturerService) AddManufacturer(manufacturer *models.Manufacturer)
 		return fmt.Errorf("error creating manufacturer: %w", err)
 	}
 
+	utils.GetCache().Delete("active_manufacturers")
 	return nil
 }
 
-// ListAllManufacturers retorna todos os fabricantes ativos
+// ListAllManufacturers retorna todos os fabricantes ativos com cache em memória
 func (s *ManufacturerService) ListAllManufacturers() ([]models.Manufacturer, error) {
+	cacheKey := "active_manufacturers"
+	if cached, ok := utils.GetCache().Get(cacheKey); ok {
+		if manufacturers, ok := cached.([]models.Manufacturer); ok {
+			return manufacturers, nil
+		}
+	}
+
 	var manufacturers []models.Manufacturer
 	if err := s.db.Where("is_active = true").Order("name_manufacturer ASC").Find(&manufacturers).Error; err != nil {
 		return nil, fmt.Errorf("error fetching manufacturers: %w", err)
 	}
+
+	utils.GetCache().Set(cacheKey, manufacturers, 10*time.Minute)
 	return manufacturers, nil
 }
 
@@ -95,6 +107,7 @@ func (s *ManufacturerService) UpdateManufacturer(id uint, updatedManufacturer *m
 		return fmt.Errorf("error updating manufacturer: %w", err)
 	}
 
+	utils.GetCache().Delete("active_manufacturers")
 	return nil
 }
 
@@ -110,6 +123,7 @@ func (s *ManufacturerService) DeleteManufacturer(id uint) error {
 		return fmt.Errorf("error deactivating manufacturer: %w", err)
 	}
 
+	utils.GetCache().Delete("active_manufacturers")
 	return nil
 }
 
@@ -129,6 +143,7 @@ func (s *ManufacturerService) ReactivateManufacturer(id uint) error {
 		return fmt.Errorf("error reactivating manufacturer: %w", err)
 	}
 
+	utils.GetCache().Delete("active_manufacturers")
 	return nil
 }
 
@@ -212,5 +227,6 @@ func (s *ManufacturerService) ImportManufacturersFromCSV(file io.Reader) error {
 		return fmt.Errorf("error committing transaction: %w", err)
 	}
 
+	utils.GetCache().Delete("active_manufacturers")
 	return nil
 }

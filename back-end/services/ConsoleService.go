@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/utils"
 	"gorm.io/gorm"
 )
 
@@ -43,15 +45,25 @@ func (s *ConsoleService) AddConsole(console *models.Console) error {
 		return fmt.Errorf("error creating console: %w", err)
 	}
 
+	utils.GetCache().Delete("active_consoles")
 	return nil
 }
 
-// GetConsoles retorna todos os consoles ativos
+// GetConsoles retorna todos os consoles ativos com cache em memória
 func (s *ConsoleService) GetConsoles() ([]models.Console, error) {
+	cacheKey := "active_consoles"
+	if cached, ok := utils.GetCache().Get(cacheKey); ok {
+		if consoles, ok := cached.([]models.Console); ok {
+			return consoles, nil
+		}
+	}
+
 	var consoles []models.Console
 	if err := s.db.Preload("Manufacturer").Where("is_active = true").Order("name_console ASC").Find(&consoles).Error; err != nil {
 		return nil, fmt.Errorf("error fetching consoles: %w", err)
 	}
+
+	utils.GetCache().Set(cacheKey, consoles, 10*time.Minute)
 	return consoles, nil
 }
 
@@ -108,6 +120,7 @@ func (s *ConsoleService) UpdateConsole(id uint, updatedConsole *models.Console) 
 		return fmt.Errorf("error updating console: %w", err)
 	}
 
+	utils.GetCache().Delete("active_consoles")
 	return nil
 }
 
@@ -123,6 +136,7 @@ func (s *ConsoleService) DeleteConsole(id uint) error {
 		return fmt.Errorf("error deactivating console: %w", err)
 	}
 
+	utils.GetCache().Delete("active_consoles")
 	return nil
 }
 
@@ -138,6 +152,7 @@ func (s *ConsoleService) ReactivateConsole(id uint) error {
 		return fmt.Errorf("error reactivating console: %w", err)
 	}
 
+	utils.GetCache().Delete("active_consoles")
 	return nil
 }
 
@@ -224,5 +239,6 @@ func (s *ConsoleService) ImportConsolesFromCSV(file io.Reader) error {
 		return fmt.Errorf("error committing transaction: %w", err)
 	}
 
+	utils.GetCache().Delete("active_consoles")
 	return nil
 }
