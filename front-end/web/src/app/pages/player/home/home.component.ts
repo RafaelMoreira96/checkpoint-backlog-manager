@@ -1,19 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FrontendHomePlayerService } from '../../../services/frontend-home-player.service';
 
-interface InfoGame {
+export interface InfoGame {
+  id_game?: number;
   name_game: string;
   genre: string;
   console: string;
   time_beating?: string;
   date_beating?: string;
+  url_image?: string;
+  release_year?: number;
 }
 
-interface CardInfo {
+export interface CardInfo {
   icon: string;
-  colorIcon: string;
+  colorClass: string;
   title: string;
   data: string;
+  subtitle?: string;
 }
 
 @Component({
@@ -21,10 +25,11 @@ interface CardInfo {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   cardsInfo: CardInfo[] = [];
   beating_list: InfoGame[] = [];
   backlog_list: InfoGame[] = [];
+  isLoading: boolean = true;
 
   constructor(private service: FrontendHomePlayerService) {}
 
@@ -37,18 +42,26 @@ export class HomeComponent {
   lastGamesBeaten() {
     this.service.lastGamesBeaten().subscribe(
       (result: any) => {
-        for (let i = 0; i < result.length; i++) {
-          this.beating_list.push({
-            name_game: result[i].name_game,
-            genre: result[i].genre.name_genre,
-            console: result[i].console.name_console,
-            time_beating: result[i].time_beating.toFixed(2),
-            date_beating: result[i].date_beating,
-          });
+        this.beating_list = [];
+        if (Array.isArray(result)) {
+          for (let i = 0; i < result.length; i++) {
+            this.beating_list.push({
+              id_game: result[i].id_game,
+              name_game: result[i].name_game,
+              genre: result[i].genre?.name_genre || 'Gênero n/a',
+              console: result[i].console?.name_console || 'Plataforma n/a',
+              time_beating: result[i].time_beating ? Number(result[i].time_beating).toFixed(1) : undefined,
+              date_beating: result[i].date_beating,
+              url_image: result[i].url_image,
+              release_year: result[i].release_year,
+            });
+          }
         }
+        this.isLoading = false;
       },
       (ex) => {
-        console.log(ex);
+        console.error(ex);
+        this.isLoading = false;
       }
     );
   }
@@ -58,50 +71,46 @@ export class HomeComponent {
       (result: any) => {
         this.cardsInfo = [
           {
-            colorIcon: 'success',
-            icon: 'fas fa-gamepad',
-            title: 'Total de jogos zerados',
-            data:
-              result.total_games_finished?.toString() + ' jogos' || 'N/A',
+            colorClass: 'metric-icon-emerald',
+            icon: 'fas fa-trophy',
+            title: 'Total Zerados',
+            data: result.total_games_finished ? `${result.total_games_finished} jogos` : '0 jogos',
+            subtitle: 'Conquistas registradas'
           },
           {
-            colorIcon: 'success',
-            icon: 'icon-game-controller',
-            title: 'Jogos zerados neste mês',
-            data:
-              result.games_finished_this_month?.toString() + ' jogos' || 'N/A',
+            colorClass: 'metric-icon-cyan',
+            icon: 'fas fa-calendar-check',
+            title: 'Zerados este Mês',
+            data: result.games_finished_this_month ? `${result.games_finished_this_month} jogos` : '0 jogos',
+            subtitle: 'Ritmo mensal'
           },
           {
-            colorIcon: 'danger',
-            icon: 'far fa-clock',
-            title: 'Tempo total (no mês)',
-            data:
-              result.total_hours_played_this_month.toFixed(2) + ' horas' ||
-              'N/A',
-          },
-          {
-            colorIcon: 'info',
+            colorClass: 'metric-icon-violet',
             icon: 'fas fa-clock',
-            title: 'Tempo total',
-            data: result.total_hours_played?.toFixed(2) + ' horas' || 'N/A',
+            title: 'Horas no Mês',
+            data: result.total_hours_played_this_month ? `${Number(result.total_hours_played_this_month).toFixed(1)}h` : '0h',
+            subtitle: 'Tempo dedicado no mês'
           },
           {
-            colorIcon: 'warning',
-            icon: 'fas fa-star',
-            title: 'Gênero preferido',
+            colorClass: 'metric-icon-amber',
+            icon: 'fas fa-stopwatch',
+            title: 'Tempo Total Jogado',
+            data: result.total_hours_played ? `${Number(result.total_hours_played).toFixed(1)}h` : '0h',
+            subtitle: 'Horas totais registradas'
+          },
+          {
+            colorClass: 'metric-icon-violet',
+            icon: 'fas fa-crown',
+            title: 'Gênero Favorito',
             data: result.most_used || 'N/A',
+            subtitle: 'Mais jogado na carreira'
           },
           {
-            colorIcon: 'secondary',
-            icon: 'fas fa-star-half-alt',
-            title: '2º Gênero preferido',
+            colorClass: 'metric-icon-rose',
+            icon: 'fas fa-compass',
+            title: '2º Favorito',
             data: result.second_most_used || 'N/A',
-          },
-          {
-            colorIcon: 'primary',
-            icon: 'far fa-star',
-            title: 'Gênero preterido',
-            data: result.least_used || 'N/A',
+            subtitle: 'Gênero em ascensão'
           },
         ];
       },
@@ -114,16 +123,22 @@ export class HomeComponent {
   loadBacklog() {
     this.service.loadBacklog().subscribe(
       (result: any) => {
-        for (let i = 0; i < result.length; i++) {
-          this.backlog_list.push({
-            name_game: result[i].name_game,
-            genre: result[i].genre.name_genre,
-            console: result[i].console.name_console,
-          });
+        this.backlog_list = [];
+        if (Array.isArray(result)) {
+          for (let i = 0; i < result.length; i++) {
+            this.backlog_list.push({
+              id_game: result[i].id_game,
+              name_game: result[i].name_game,
+              genre: result[i].genre?.name_genre || 'Gênero n/a',
+              console: result[i].console?.name_console || 'Plataforma n/a',
+              url_image: result[i].url_image,
+              release_year: result[i].release_year,
+            });
+          }
         }
       },
       (ex) => {
-        console.log(ex);
+        console.error(ex);
       }
     );
   }

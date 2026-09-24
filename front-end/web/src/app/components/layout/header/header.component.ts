@@ -93,24 +93,35 @@ export class HeaderComponent implements OnInit {
   constructor(private toast: ToastrService, private router: Router, private auth: AuthService) {}
 
   ngOnInit(): void {
-    const savedTheme = localStorage.getItem('theme');
-    this.isDarkMode = savedTheme === 'dark';
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const savedTheme = localStorage.getItem('theme');
+      this.isDarkMode = savedTheme !== 'light';
+    } else {
+      this.isDarkMode = true;
+    }
     this.updateTheme();
     this.role = this.auth.getUserRole() ?? '';
   }
 
   toggleTheme(): void {
     this.isDarkMode = !this.isDarkMode;
-    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+    }
     this.updateTheme();
   }
 
   private updateTheme(): void {
-    const body = document.body;
-    if (this.isDarkMode) {
-      body.setAttribute('data-bs-theme', 'dark');
-    } else {
-      body.setAttribute('data-bs-theme', 'light');
+    if (typeof document !== 'undefined') {
+      const body = document.body;
+      const html = document.documentElement;
+      if (this.isDarkMode) {
+        body.setAttribute('data-bs-theme', 'dark');
+        html.setAttribute('data-bs-theme', 'dark');
+      } else {
+        body.setAttribute('data-bs-theme', 'light');
+        html.setAttribute('data-bs-theme', 'light');
+      }
     }
   }
 

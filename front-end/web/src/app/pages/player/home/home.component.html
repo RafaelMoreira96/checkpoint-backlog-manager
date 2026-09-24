@@ -1,106 +1,179 @@
-<div class="row">
-  <!-- Coluna da lista de jogos -->
-  <div class="col">
-    <!-- Últimos jogos zerados -->
-    <div class="card card-round shadow-sm mb-4">
-      <div class="card-header bg-primary text-white">
-        <div class="card-head-row card-tools-still-right">
-          <div class="card-title">Últimos jogos zerados</div>
-        </div>
-      </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table align-items-center mb-0">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Nome do jogo</th>
-                <th scope="col" class="text-end">Gênero</th>
-                <th scope="col" class="text-end">Console</th>
-                <th scope="col" class="text-end">Tempo de jogo</th>
-                <th scope="col" class="text-end">Data do zeramento</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="beating_list && beating_list.length > 0; else noGames">
-              <tr *ngFor="let item of beating_list">
-                <th scope="row">{{ item.name_game }}</th>
-                <td class="text-end">{{ item.genre }}</td>
-                <td class="text-end">{{ item.console }}</td>
-                <td class="text-end">{{ item.time_beating }} horas</td>
-                <td class="text-end">{{ item.date_beating }}</td>
-              </tr>
-            </tbody>
-            <ng-template #noGames>
-              <tbody>
-                <tr>
-                  <td colspan="5" class="text-center py-4">
-                    <i class="fas fa-gamepad fa-2x text-muted mb-3"></i>
-                    <p class="text-muted">Nenhum jogo zerado encontrado.</p>
-                  </td>
-                </tr>
-              </tbody>
-            </ng-template>
-          </table>
-        </div>
-      </div>
+<div class="container-fluid py-2">
+  <!-- Hero / Welcome Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1 d-flex align-items-center gap-2">
+        <i class="fas fa-gamepad text-primary"></i>
+        <span>Dashboard do Jogador</span>
+      </h1>
+      <p class="text-muted small mb-0">
+        Visão geral da sua jornada, ritmo de jogo e metas de conclusão
+      </p>
     </div>
+    <div class="d-flex gap-2">
+      <button class="btn-gamer-emerald" routerLink="/register-game">
+        <i class="fas fa-check-circle"></i> Registrar Zeramento
+      </button>
+      <button class="btn-gamer-primary" routerLink="/register-backlog">
+        <i class="fas fa-plus"></i> Novo Backlog
+      </button>
+    </div>
+  </div>
 
-    <!-- Últimos jogos cadastrados no backlog -->
-    <div class="card card-round shadow-sm">
-      <div class="card-header bg-info text-white">
-        <div class="card-head-row card-tools-still-right">
-          <div class="card-title">Últimos jogos cadastrados no backlog</div>
+  <!-- Metric Cards Grid -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-2" *ngFor="let item of cardsInfo">
+      <div class="card-gamer-metric h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="text-muted small fw-semibold text-uppercase letter-spacing">{{ item.title }}</span>
+          <div class="metric-icon-box {{ item.colorClass }}">
+            <i class="{{ item.icon }}"></i>
+          </div>
         </div>
-      </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table align-items-center mb-0">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Nome do jogo</th>
-                <th scope="col" class="text-end">Gênero</th>
-                <th scope="col" class="text-end">Console</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="backlog_list && backlog_list.length > 0; else noGamesBacklog">
-              <tr *ngFor="let item of backlog_list">
-                <th scope="row">{{ item.name_game }}</th>
-                <td class="text-end">{{ item.genre }}</td>
-                <td class="text-end">{{ item.console }}</td>
-              </tr>
-            </tbody>
-            <ng-template #noGamesBacklog>
-              <tbody>
-                <tr>
-                  <td colspan="3" class="text-center py-4">
-                    <i class="fas fa-list fa-2x text-muted mb-3"></i>
-                    <p class="text-muted">Nenhum jogo no backlog encontrado.</p>
-                  </td>
-                </tr>
-              </tbody>
-            </ng-template>
-          </table>
+        <div class="h4 fw-bold mb-1 text-light">{{ item.data }}</div>
+        <div class="text-muted" style="font-size: 0.75rem;" *ngIf="item.subtitle">
+          {{ item.subtitle }}
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Coluna dos cards -->
-  <div class="col-md-4">
-    <div *ngFor="let item of cardsInfo" class="col-md-12 mb-4">
-      <div class="card card-stats card-round shadow-sm">
-        <div class="card-body">
-          <div class="row align-items-center">
-            <div class="col-icon">
-              <div class="icon-big text-center icon-{{ item.colorIcon }} bubble-shadow-small">
-                <i class="{{ item.icon }}"></i>
+  <div class="row g-4">
+    <!-- Timeline dos Últimos Jogos Zerados -->
+    <div class="col-12 col-xl-7">
+      <div class="gamer-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-history text-info fs-5"></i>
+            <h5 class="fw-bold mb-0">Timeline de Conclusões Recentes</h5>
+          </div>
+          <a routerLink="/game-beaten-list" class="btn btn-sm btn-outline-secondary border-0 text-info fw-semibold">
+            Ver todos ({{ beating_list.length }}) <i class="fas fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="beating_list.length === 0" class="text-center py-5">
+          <i class="fas fa-trophy fa-2x text-muted mb-2 opacity-50"></i>
+          <p class="text-muted small">Nenhum jogo zerado registrado recentemente.</p>
+          <button class="btn-gamer-emerald btn-sm" routerLink="/register-game">
+            Registrar primeiro jogo
+          </button>
+        </div>
+
+        <!-- Timeline Items -->
+        <div class="timeline-container" *ngIf="beating_list.length > 0">
+          <div class="timeline-item" *ngFor="let item of beating_list; let isLast = last">
+            <div class="timeline-marker">
+              <i class="fas fa-check"></i>
+            </div>
+            <div class="timeline-content gamer-card p-3 mb-3">
+              <div class="d-flex gap-3 align-items-center">
+                <!-- Cover thumbnail -->
+                <div class="timeline-thumb-wrapper">
+                  <img
+                    *ngIf="item.url_image; else noThumb"
+                    [src]="item.url_image"
+                    [alt]="item.name_game"
+                    class="timeline-thumb"
+                    loading="lazy"
+                  />
+                  <ng-template #noThumb>
+                    <div class="timeline-thumb-placeholder">
+                      <i class="fas fa-gamepad"></i>
+                    </div>
+                  </ng-template>
+                </div>
+
+                <!-- Info -->
+                <div class="flex-grow-1 min-w-0">
+                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-1 mb-1">
+                    <h6 class="fw-bold mb-0 text-truncate text-light">{{ item.name_game }}</h6>
+                    <span class="badge bg-dark border border-success text-success small">
+                      <i class="far fa-clock me-1"></i> {{ item.time_beating ? item.time_beating + 'h' : '-' }}
+                    </span>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 align-items-center small text-muted">
+                    <span class="badge bg-dark border border-secondary text-secondary">
+                      {{ item.genre }}
+                    </span>
+                    <span class="badge bg-dark border border-info text-info">
+                      {{ item.console }}
+                    </span>
+                    <span class="ms-auto small" *ngIf="item.date_beating && item.date_beating !== '01/01/0001'">
+                      <i class="far fa-calendar-alt me-1"></i> {{ item.date_beating }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col col-stats ms-3 ms-sm-0">
-              <div class="numbers">
-                <p class="card-category">{{ item.title }}</p>
-                <h4 class="card-title">{{ item.data }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila de Espera (Backlog Recente) -->
+    <div class="col-12 col-xl-5">
+      <div class="gamer-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-hourglass-half text-warning fs-5"></i>
+            <h5 class="fw-bold mb-0">Fila do Backlog</h5>
+          </div>
+          <a routerLink="/backlog-list" class="btn btn-sm btn-outline-secondary border-0 text-warning fw-semibold">
+            Ver backlog ({{ backlog_list.length }}) <i class="fas fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="backlog_list.length === 0" class="text-center py-5">
+          <i class="fas fa-inbox fa-2x text-muted mb-2 opacity-50"></i>
+          <p class="text-muted small">Nenhum título na fila de espera do backlog.</p>
+          <button class="btn-gamer-primary btn-sm" routerLink="/register-backlog">
+            Adicionar ao backlog
+          </button>
+        </div>
+
+        <!-- Backlog List -->
+        <div class="d-flex flex-column gap-3" *ngIf="backlog_list.length > 0">
+          <div
+            class="backlog-item-card d-flex align-items-center gap-3 p-2 rounded-3"
+            *ngFor="let item of backlog_list"
+          >
+            <div class="backlog-thumb-wrapper">
+              <img
+                *ngIf="item.url_image; else noBacklogThumb"
+                [src]="item.url_image"
+                [alt]="item.name_game"
+                class="backlog-thumb"
+                loading="lazy"
+              />
+              <ng-template #noBacklogThumb>
+                <div class="backlog-thumb-placeholder">
+                  <i class="fas fa-gamepad"></i>
+                </div>
+              </ng-template>
+            </div>
+
+            <div class="flex-grow-1 min-w-0">
+              <div class="fw-bold text-light text-truncate mb-1">{{ item.name_game }}</div>
+              <div class="d-flex gap-2 align-items-center">
+                <span class="badge bg-dark border border-secondary text-secondary small">
+                  {{ item.genre }}
+                </span>
+                <span class="badge bg-dark border border-info text-info small">
+                  {{ item.console }}
+                </span>
               </div>
             </div>
+
+            <button
+              class="btn-gamer-action btn-gamer-action-check flex-shrink-0"
+              title="Marcar como Zerado!"
+              [routerLink]="['/register-game', item.id_game]"
+            >
+              <i class="fas fa-check"></i>
+            </button>
           </div>
         </div>
       </div>
