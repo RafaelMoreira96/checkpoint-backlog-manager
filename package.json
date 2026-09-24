@@ -1,0 +1,14 @@
+{
+  "name": "checkpoint-backlog-manager-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:core": "pnpm --filter @checkpoint/core build",
+    "dev:web": "pnpm --filter @checkpoint/web dev",
+    "build:web": "pnpm --filter @checkpoint/web build"
+  }
+}

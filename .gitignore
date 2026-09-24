@@ -7,4 +7,4 @@ dist/
 !.env.example
 *.log
 *:Zone.Identifier
-
+.expo/
