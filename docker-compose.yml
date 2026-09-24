@@ -1,0 +1,90 @@
+services:
+  # 1. Banco de Dados PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: checkpoint-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-checkpoint_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d checkpoint_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # 2. Backend GoFiber API
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+      network: host
+    container_name: checkpoint-backend
+    environment:
+      APP_MODE: development
+      PORT: 8080
+      JWT_SECRET: ${JWT_SECRET:-checkpoint_jwt_secret_key_2026_super_secure}
+      DB_HOST_DEV: postgres
+      DB_PORT_DEV: 5432
+      DB_USER_DEV: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD_DEV: ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME_DEV: ${POSTGRES_DB:-checkpoint_db}
+      DB_SSLMODE_DEV: disable
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID:-}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET:-}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # 3. Frontend Legado (Angular 18)
+  frontend-angular:
+    build:
+      context: ./front-end/web
+      dockerfile: Dockerfile
+      network: host
+    container_name: checkpoint-frontend-angular
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # 4. Frontend Novo (React 18 / Vite)
+  frontend-react:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      network: host
+    container_name: checkpoint-frontend-react
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # 5. Frontend Mobile (Expo React Native)
+  # O profile "mobile" garante que este serviço NÃO rode com `docker compose up` padrão
+  frontend-mobile:
+    build:
+      context: .
+      dockerfile: ./apps/mobile/Dockerfile
+      network: host
+    container_name: checkpoint-frontend-mobile
+    profiles:
+      - mobile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

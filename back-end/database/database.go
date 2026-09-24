@@ -34,12 +34,17 @@ func ConnectDevMode() *gorm.DB {
 		log.Fatal("Variáveis de ambiente para o banco de dados de desenvolvimento não estão configuradas corretamente")
 	}
 
+	sslmode := os.Getenv("DB_SSLMODE_DEV")
+	if sslmode == "" {
+		sslmode = "disable"
+	}
+
 	databaseURL := "host=" + hostname +
 		" user=" + username +
 		" password=" + password +
 		" dbname=" + databaseName +
 		" port=" + port +
-		" sslmode=require TimeZone=America/Sao_Paulo"
+		" sslmode=" + sslmode + " TimeZone=America/Sao_Paulo"
 
 	database, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
 	if err != nil {
