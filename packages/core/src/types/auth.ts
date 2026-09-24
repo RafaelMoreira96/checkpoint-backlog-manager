@@ -1,25 +1,26 @@
 export type UserRole = 'player' | 'admin';
 
 export interface User {
-  id: number;
-  name: string;
+  id_player: number;
+  name_player: string;
   email: string;
-  role: UserRole;
+  nickname: string;
+  is_active?: boolean;
 }
 
-export interface AuthTokens {
+export interface AuthResponse {
+  message: string;
   token: string;
-  refreshToken?: string;
-  user: User;
 }
 
 export interface LoginDto {
-  email: string;
-  password_hash: string;
+  nickname: string;
+  password: string;
 }
 
 export interface RegisterPlayerDto {
-  name: string;
+  name_player: string;
   email: string;
-  password_hash: string;
+  nickname: string;
+  password: string;
 }

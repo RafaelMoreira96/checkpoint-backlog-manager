@@ -1,7 +1,12 @@
 import { Game, CreateGameDto, UpdateGameDto } from '../types/game';
 import { Console, Genre } from '../types/catalog';
-import { DashboardStats, LandingPageStats } from '../types/stats';
-import { AuthTokens, LoginDto, RegisterPlayerDto } from '../types/auth';
+import {
+  DashboardStats,
+  LandingPageStats,
+  BeatenStatsResponse,
+  StatsItemDetail,
+} from '../types/stats';
+import { User, AuthResponse, LoginDto, RegisterPlayerDto } from '../types/auth';
 import { IGDBGameResult } from '../types/igdb';
 
 export interface StorageAdapter {
@@ -94,8 +99,8 @@ export class CheckpointApiClient {
   }
 
   // --- Auth Endpoints ---
-  async login(dto: LoginDto): Promise<AuthTokens> {
-    const data = await this.request<AuthTokens>('/auth/login', {
+  async login(dto: LoginDto): Promise<AuthResponse> {
+    const data = await this.request<AuthResponse>('/login', {
       method: 'POST',
       body: JSON.stringify(dto),
     });
@@ -105,70 +110,74 @@ export class CheckpointApiClient {
     return data;
   }
 
-  async registerPlayer(dto: RegisterPlayerDto): Promise<{ message: string }> {
-    return await this.request<{ message: string }>('/auth/register/player', {
+  async registerPlayer(dto: RegisterPlayerDto): Promise<User> {
+    return await this.request<User>('/player/register', {
       method: 'POST',
       body: JSON.stringify(dto),
     });
   }
 
+  async getProfile(): Promise<User> {
+    return await this.request<User>('/player/view');
+  }
+
   // --- Games Endpoints ---
   async getGames(): Promise<Game[]> {
-    return await this.request<Game[]>('/player/games');
+    return await this.request<Game[]>('/game/list_beaten');
   }
 
   async getGame(id: number): Promise<Game> {
-    return await this.request<Game>(`/player/games/${id}`);
+    return await this.request<Game>(`/game/${id}`);
   }
 
   async createGame(game: CreateGameDto): Promise<Game> {
-    return await this.request<Game>('/player/games', {
+    return await this.request<Game>('/game', {
       method: 'POST',
       body: JSON.stringify(game),
     });
   }
 
   async updateGame(id: number, game: UpdateGameDto): Promise<Game> {
-    return await this.request<Game>(`/player/games/${id}`, {
+    return await this.request<Game>(`/game/${id}`, {
       method: 'PUT',
       body: JSON.stringify(game),
     });
   }
 
   async deleteGame(id: number): Promise<void> {
-    await this.request<void>(`/player/games/${id}`, {
+    await this.request<void>(`/game/delete_beaten/${id}`, {
       method: 'DELETE',
     });
   }
 
   // --- Backlog Endpoints ---
   async getBacklog(): Promise<Game[]> {
-    return await this.request<Game[]>('/player/backlog');
+    return await this.request<Game[]>('/backlog/list');
   }
 
   async createBacklog(game: CreateGameDto): Promise<Game> {
-    return await this.request<Game>('/player/backlog', {
+    return await this.request<Game>('/backlog', {
       method: 'POST',
       body: JSON.stringify(game),
     });
   }
 
   async deleteBacklog(id: number): Promise<void> {
-    await this.request<void>(`/player/backlog/${id}`, {
+    await this.request<void>(`/game/delete_beaten/${id}`, {
       method: 'DELETE',
     });
   }
 
   // --- Catalog Endpoints ---
   async getConsoles(): Promise<Console[]> {
-    return await this.request<Console[]>('/player/consoles');
+    return await this.request<Console[]>('/console/list');
   }
 
   async getGenres(): Promise<Genre[]> {
-    return await this.request<Genre[]>('/player/genres');
+    return await this.request<Genre[]>('/genre/list');
   }
 
-  // --- Dashboard & Stats Endpoints ---
+  // --- Dashboard & Summary Stats Endpoints ---
   async getDashboardStats(): Promise<DashboardStats> {
     return await this.request<DashboardStats>('/player/prefered_genre');
   }
@@ -182,7 +191,24 @@ export class CheckpointApiClient {
   }
 
   async getLandingPageStats(): Promise<LandingPageStats> {
-    return await this.request<LandingPageStats>('/public/stats');
+    return await this.request<LandingPageStats>('/landing-page/stats');
+  }
+
+  // --- Gamer Detailed Statistics Endpoints ---
+  async getBeatenStats(): Promise<BeatenStatsResponse> {
+    return await this.request<BeatenStatsResponse>('/statistics/beaten-statistics');
+  }
+
+  async getStatsByGenre(genreId: number): Promise<StatsItemDetail> {
+    return await this.request<StatsItemDetail>(`/statistics/beaten-by-genre/${genreId}`);
+  }
+
+  async getStatsByConsole(consoleId: number): Promise<StatsItemDetail> {
+    return await this.request<StatsItemDetail>(`/statistics/beaten-by-console/${consoleId}`);
+  }
+
+  async getStatsByReleaseYear(year: number): Promise<StatsItemDetail> {
+    return await this.request<StatsItemDetail>(`/statistics/beaten-by-release-year/${year}`);
   }
 
   // --- IGDB Proxy Endpoint ---

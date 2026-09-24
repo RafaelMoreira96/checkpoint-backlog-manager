@@ -29,3 +29,28 @@ export function useLandingPageStats(client: CheckpointApiClient) {
     queryFn: () => client.getLandingPageStats(),
   });
 }
+
+export function useBeatenStats(client: CheckpointApiClient) {
+  return useQuery({
+    queryKey: queryKeys.stats.beaten,
+    queryFn: () => client.getBeatenStats(),
+  });
+}
+
+export function useStatsByItem(
+  type: 'genre' | 'console' | 'year' | null,
+  id: number | null,
+  client: CheckpointApiClient
+) {
+  return useQuery({
+    queryKey: queryKeys.stats.byItem(type || '', id || 0),
+    queryFn: () => {
+      if (!type || !id) throw new Error('Missing type or id');
+      if (type === 'genre') return client.getStatsByGenre(id);
+      if (type === 'console') return client.getStatsByConsole(id);
+      return client.getStatsByReleaseYear(id);
+    },
+    enabled: !!type && !!id,
+  });
+}
+

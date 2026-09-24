@@ -7,14 +7,18 @@ import {
   useCreateBacklog,
 } from '@checkpoint/core';
 import { api } from './lib/api';
+import { useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
 import { DashboardPage } from './pages/DashboardPage';
 import { BeatenGamesPage } from './pages/BeatenGamesPage';
 import { BacklogPage } from './pages/BacklogPage';
+import { StatsPage } from './pages/StatsPage';
 import { GameFormModal } from './components/games/GameFormModal';
+import { AuthModal } from './components/auth/AuthModal';
 
 export const App: React.FC = () => {
-  const [currentTab, setCurrentTab] = useState<'dashboard' | 'games' | 'backlog'>('dashboard');
+  const { isAuthenticated, openLogin } = useAuth();
+  const [currentTab, setCurrentTab] = useState<'dashboard' | 'games' | 'backlog' | 'stats'>('dashboard');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,24 +31,40 @@ export const App: React.FC = () => {
   const createBacklogMutation = useCreateBacklog(api);
 
   const handleOpenNewGame = () => {
+    if (!isAuthenticated) {
+      openLogin();
+      return;
+    }
     setEditingGame(null);
     setModalIsBacklog(false);
     setIsModalOpen(true);
   };
 
   const handleOpenNewBacklog = () => {
+    if (!isAuthenticated) {
+      openLogin();
+      return;
+    }
     setEditingGame(null);
     setModalIsBacklog(true);
     setIsModalOpen(true);
   };
 
   const handleEditGame = (game: Game) => {
+    if (!isAuthenticated) {
+      openLogin();
+      return;
+    }
     setEditingGame(game);
     setModalIsBacklog(currentTab === 'backlog');
     setIsModalOpen(true);
   };
 
   const handleCompleteBacklog = async (game: Game) => {
+    if (!isAuthenticated) {
+      openLogin();
+      return;
+    }
     // Open modal to register hours and completion date, then delete from backlog on submit
     setEditingGame({
       ...game,
@@ -109,6 +129,8 @@ export const App: React.FC = () => {
             onCompleteBacklog={handleCompleteBacklog}
           />
         )}
+
+        {currentTab === 'stats' && <StatsPage />}
       </main>
 
       <footer className="border-t border-white/5 bg-obsidian-950/60 py-6 text-center text-xs text-slate-500">
@@ -124,6 +146,8 @@ export const App: React.FC = () => {
           isBacklog={modalIsBacklog}
         />
       )}
+
+      <AuthModal />
     </div>
   );
 };

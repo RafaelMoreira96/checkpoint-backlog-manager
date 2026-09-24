@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 interface DashboardPageProps {
-  onNavigateTab: (tab: 'dashboard' | 'games' | 'backlog') => void;
+  onNavigateTab: (tab: 'dashboard' | 'games' | 'backlog' | 'stats') => void;
   onEditGame: (game: Game) => void;
   onCompleteBacklog: (game: Game) => void;
 }

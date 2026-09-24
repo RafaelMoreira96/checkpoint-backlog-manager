@@ -224,11 +224,13 @@ npm run start
 * **Localização:** `apps/web/`
 * **Stack:** React 18, Vite 5, TailwindCSS 3, Lucide React, TanStack Query v5.
 * **Destaques de Design e Funcionalidades:**
-  * **Design System Obsidian Gamer:** Paleta escura Deep Obsidian (`#0D1117`), superfícies translúcidas com blur e acentos Neon Violet (`#8B5CF6`) e Emerald (`#10B981`).
+  * **Design System Obsidian Gamer:** Paleta escura Deep Obsidian (`#0D1117`), superfícies translúcidas com blur e acentos Neon Violet (`#8B5CF6`), Emerald (`#10B981`) e Cyan (`#06B6D4`).
+  * **Autenticação Completa do Jogador:** Gerenciamento de sessão com `AuthContext`, modal gamer com alternância dinâmica entre *Login* e *Criar Conta*, e persistência de token JWT com validação automática de perfil. Proteção ativa para criação de jogos e backlog.
+  * **Estatísticas Gamísticas Aprofundadas:** Página dedicada de métricas com filtros por Gênero, Plataforma/Console e Ano de Lançamento, barras de progresso proporcionais, paginação e modal drill-down detalhado exibindo jogo destaque, média de horas e relação completa de títulos.
   * **Poster Grid 3:4:** Grade com posters proporcionais, badges dinâmicos de status (Zerado, Backlog, Abandonado) e tempo de conclusão.
   * **Alternância de Visualização:** Toggle dinâmico entre Grade de Pôsteres e Tabela Compacta.
   * **Busca Preditiva IGDB:** Integração de busca instantânea no modal de cadastro de jogos, preenchendo automaticamente capa, título, gênero e resumo.
-  * **Dashboard Gamer:** Métricas em tempo real (total de jogos zerados, tempo total jogado, média e mediana de horas, e gráficos de distribuição).
+  * **Dashboard Gamer:** Métricas em tempo real (total de jogos zerados, tempo total jogado, média e mediana de horas, e timeline de conclusões recentes).
 
 ### 3. Aplicativo Mobile: `@checkpoint/mobile`
 * **Localização:** `apps/mobile/`
