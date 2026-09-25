@@ -16,4 +16,7 @@ func RunMigrations(db *gorm.DB) {
 		models.ProjectUpdateLog{},
 		models.ErrorLog{},
 	)
+
+	// Garante que jogadores existentes tenham is_public = true por padrão
+	db.Exec("UPDATE players SET is_public = true WHERE is_public IS NULL")
 }

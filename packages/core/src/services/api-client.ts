@@ -6,7 +6,7 @@ import {
   BeatenStatsResponse,
   StatsItemDetail,
 } from '../types/stats';
-import { User, AuthResponse, LoginDto, RegisterPlayerDto, UpdatePlayerDto } from '../types/auth';
+import { User, AuthResponse, LoginDto, RegisterPlayerDto, UpdatePlayerDto, PublicProfileResponse } from '../types/auth';
 import { IGDBGameResult } from '../types/igdb';
 
 export interface StorageAdapter {
@@ -130,6 +130,10 @@ export class CheckpointApiClient {
       method: 'PUT',
       body: JSON.stringify(dto),
     });
+  }
+
+  async getPublicProfile(nickname: string): Promise<PublicProfileResponse> {
+    return await this.request<PublicProfileResponse>(`/player/public/${encodeURIComponent(nickname)}`);
   }
 
   // --- Games Endpoints ---

@@ -2,10 +2,13 @@ package controllers
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/RafaelMoreira96/game-beating-project/models"
+	"github.com/RafaelMoreira96/game-beating-project/security"
 	"github.com/RafaelMoreira96/game-beating-project/services"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type PlayerController struct {
@@ -65,21 +68,56 @@ func (c *PlayerController) UpdatePlayer(ctx *fiber.Ctx) error {
 		})
 	}
 
-	var updatedPlayer models.Player
-	if err := ctx.BodyParser(&updatedPlayer); err != nil {
+	var input models.UpdatePlayerInput
+	if err := ctx.BodyParser(&input); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "error parsing player: " + err.Error(),
+			"message": "error parsing player input: " + err.Error(),
 		})
 	}
 
-	if err := c.playerService.UpdatePlayer(playerID, &updatedPlayer); err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	player, err := c.playerService.UpdatePlayer(playerID, &input)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
 
-	updatedPlayer.Password = "" // Não retornar a senha
-	return ctx.Status(fiber.StatusOK).JSON(updatedPlayer)
+	return ctx.Status(fiber.StatusOK).JSON(player)
+}
+
+// GetPublicProfile retorna o perfil público de um jogador pelo nickname
+func (c *PlayerController) GetPublicProfile(ctx *fiber.Ctx) error {
+	nickname := ctx.Params("nickname")
+	if strings.TrimSpace(nickname) == "" {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "nickname é obrigatório",
+		})
+	}
+
+	var viewerID uint
+	authHeader := ctx.Get("Authorization")
+	if authHeader != "" {
+		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
+			return security.GetJWTSecret(), nil
+		})
+		if err == nil && token.Valid {
+			if claims, ok := token.Claims.(jwt.MapClaims); ok {
+				if uid, ok := claims["user_id"].(float64); ok {
+					viewerID = uint(uid)
+				}
+			}
+		}
+	}
+
+	profile, err := c.playerService.GetPublicProfile(nickname, viewerID)
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(profile)
 }
 
 // ViewPlayerProfileInfo retorna o perfil do jogador logado

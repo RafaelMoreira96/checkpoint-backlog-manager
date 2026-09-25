@@ -22,6 +22,7 @@ func PublicMethods(app *fiber.App) {
 	app.Post("/api/v1/player/register", playerController.AddPlayer)
 	app.Post("/api/v1/player/request_password_reset", playerController.RequestPasswordReset)
 	app.Post("/api/v1/player/reset-password", playerController.ResetPassword)
+	app.Get("/api/v1/player/public/:nickname", playerController.GetPublicProfile)
 
 	/* LANDING PAGE */
 	app.Get("/api/v1/landing-page/stats", controllers.StatsInfo)
@@ -29,6 +30,7 @@ func PublicMethods(app *fiber.App) {
 	/* External Catalog (IGDB Proxy) routes */
 	externalGamesController := controllers.NewExternalGamesController()
 	app.Get("/api/v1/external/games/search", externalGamesController.SearchGames)
+	app.Post("/api/v1/external/genres/sync", externalGamesController.SyncGenres)
 }
 
 func ProtectedMethods(app *fiber.App) {
@@ -39,6 +41,8 @@ func ProtectedMethods(app *fiber.App) {
 	adminOnly := security.RequireRole("admin")
 	playerOnly := security.RequireRole("player")
 	anyRole := security.RequireRole("player", "admin")
+
+	externalGamesController := controllers.NewExternalGamesController()
 
 	/* Manufacturer routes methods */
 	manufacturerController := controllers.NewManufacturerController()
@@ -65,6 +69,7 @@ func ProtectedMethods(app *fiber.App) {
 	/* Genre routes methods */
 	genreController := controllers.NewGenreController()
 	api.Post("/genre", adminOnly, genreController.AddGenre)
+	api.Post("/genre/sync-igdb", anyRole, externalGamesController.SyncGenres)
 	api.Get("/genre/list", anyRole, genreController.ListAllGenres)
 	api.Get("/genre/list/deactivated", adminOnly, genreController.ListDeactivateGenres)
 	api.Get("/genre/:id", anyRole, genreController.ViewGenre)
