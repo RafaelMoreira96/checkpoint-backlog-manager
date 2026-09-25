@@ -1,7 +1,6 @@
 package services
 
 import (
-	"encoding/csv"
 	"fmt"
 	"io"
 	"strconv"
@@ -156,10 +155,6 @@ func (s *GameService) GetGame(playerID uint, gameID uint) (*models.Game, error) 
 
 // ImportGamesFromCSV importa jogos a partir de um arquivo CSV de forma otimizada
 func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
-	reader := csv.NewReader(file)
-	reader.Comma = ';'
-	reader.LazyQuotes = true
-
 	// 1. Pré-carregar consoles ativos uma única vez para lookup e cálculo Levenshtein
 	var consoles []models.Console
 	if err := s.db.Select("id_console, name_console").Where("is_active = true").Find(&consoles).Error; err != nil {
@@ -186,103 +181,98 @@ func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 		}
 	}()
 
-	var gamesToInsert []models.Game
-	recordIndex := 0
+	cfg := date_utils.DefaultCSVBatchConfig()
+	cfg.Comma = ';'
+	cfg.BatchSize = 100
+	cfg.MinColumnCount = 7
 
-	for {
-		record, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			tx.Rollback()
-			return fmt.Errorf("error reading CSV file: %w", err)
-		}
-
-		if recordIndex == 0 && strings.ToLower(strings.TrimSpace(record[0])) == "nome do jogo" {
-			recordIndex++
-			continue
-		}
-
-		if len(record) < 7 || strings.TrimSpace(record[0]) == "" {
-			tx.Rollback()
-			return fmt.Errorf("invalid record at line %d", recordIndex+1)
-		}
-
-		gameName := strings.TrimSpace(record[0])
-		genreName := strings.TrimSpace(record[1])
-		developer := strings.TrimSpace(record[2])
-		consoleName := strings.TrimSpace(record[3])
-		dateStr := record[4]
-		var dateBeating date_utils.Date
-		if dateStr != "" {
-			var err error
-			dateBeating, err = date_utils.ParseDate(dateStr)
-			if err != nil {
-				tx.Rollback()
-				return fmt.Errorf("invalid date format at line %d: %w", recordIndex+1, err)
+	_, err := date_utils.ProcessCSVInBatches[models.Game](
+		file,
+		cfg,
+		func(lineNum int, record []string) (models.Game, error) {
+			if strings.ToLower(record[0]) == "nome do jogo" {
+				return models.Game{}, nil
 			}
-		}
 
-		rawTimeBeating := strings.TrimSpace(record[5])
-		processedTimeBeating := strings.Replace(rawTimeBeating, ",", ".", -1)
-		timeBeating, _ := strconv.ParseFloat(processedTimeBeating, 64)
+			gameName := strings.TrimSpace(record[0])
+			genreName := strings.TrimSpace(record[1])
+			developer := strings.TrimSpace(record[2])
+			consoleName := strings.TrimSpace(record[3])
+			dateStr := strings.TrimSpace(record[4])
 
-		releaseYearStr := strings.TrimSpace(record[6])
-		releaseYear, err := strconv.ParseUint(releaseYearStr, 10, 32)
-		if err != nil {
-			tx.Rollback()
-			return fmt.Errorf("error parsing release year at line %d: %w", recordIndex+1, err)
-		}
-
-		var consoleID *uint
-		if consoleName != "" {
-			closestConsoleID, _ := findClosestConsoleNamePreloaded(consoles, consoleName)
-			if closestConsoleID > 0 {
-				consoleID = &closestConsoleID
+			var dateBeating date_utils.Date
+			if dateStr != "" {
+				var parseErr error
+				dateBeating, parseErr = date_utils.ParseDate(dateStr)
+				if parseErr != nil {
+					return models.Game{}, fmt.Errorf("invalid date format at line %d: %w", lineNum, parseErr)
+				}
 			}
-		}
 
-		var genreID *uint
-		if genreName != "" {
-			if id, exists := genreMap[strings.ToLower(genreName)]; exists {
-				genreID = &id
+			rawTimeBeating := strings.TrimSpace(record[5])
+			processedTimeBeating := strings.Replace(rawTimeBeating, ",", ".", -1)
+			timeBeating, _ := strconv.ParseFloat(processedTimeBeating, 64)
+
+			releaseYearStr := strings.TrimSpace(record[6])
+			releaseYear, parseYearErr := strconv.ParseUint(releaseYearStr, 10, 32)
+			if parseYearErr != nil {
+				return models.Game{}, fmt.Errorf("error parsing release year at line %d: %w", lineNum, parseYearErr)
 			}
-		}
 
-		var urlImage string
-		if len(record) > 7 {
-			urlImage = strings.TrimSpace(record[7])
-		}
+			var consoleID *uint
+			if consoleName != "" {
+				closestConsoleID, _ := findClosestConsoleNamePreloaded(consoles, consoleName)
+				if closestConsoleID > 0 {
+					consoleID = &closestConsoleID
+				}
+			}
 
-		game := models.Game{
-			NameGame:    gameName,
-			UrlImage:    urlImage,
-			Developer:   developer,
-			GenreID:     genreID,
-			ConsoleID:   consoleID,
-			DateBeating: date_utils.Date(dateBeating),
-			TimeBeating: timeBeating,
-			ReleaseYear: int(releaseYear),
-			PlayerID:    playerID,
-			Status:      models.Beaten,
-		}
+			var genreID *uint
+			if genreName != "" {
+				if id, exists := genreMap[strings.ToLower(genreName)]; exists {
+					genreID = &id
+				}
+			}
 
-		if err := game.Validate(); err != nil {
-			tx.Rollback()
-			return fmt.Errorf("validation error at line %d: %w", recordIndex+1, err)
-		}
+			var urlImage string
+			if len(record) > 7 {
+				urlImage = strings.TrimSpace(record[7])
+			}
 
-		gamesToInsert = append(gamesToInsert, game)
-		recordIndex++
-	}
+			game := models.Game{
+				NameGame:    gameName,
+				UrlImage:    urlImage,
+				Developer:   developer,
+				GenreID:     genreID,
+				ConsoleID:   consoleID,
+				DateBeating: date_utils.Date(dateBeating),
+				TimeBeating: timeBeating,
+				ReleaseYear: int(releaseYear),
+				PlayerID:    playerID,
+				Status:      models.Beaten,
+			}
 
-	// Inserção em batch de 100 registros por query
-	if len(gamesToInsert) > 0 {
-		if err := tx.CreateInBatches(gamesToInsert, 100).Error; err != nil {
-			tx.Rollback()
-			return fmt.Errorf("error inserting records in batches: %w", err)
-		}
+			if err := game.Validate(); err != nil {
+				return models.Game{}, fmt.Errorf("validation error at line %d: %w", lineNum, err)
+			}
+
+			return game, nil
+		},
+		func(batchNumber int, batch []models.Game) error {
+			// Inserção em batch de 100 registros por query diretamente no banco
+			if len(batch) == 0 {
+				return nil
+			}
+			if err := tx.Create(&batch).Error; err != nil {
+				return fmt.Errorf("error inserting batch %d: %w", batchNumber, err)
+			}
+			return nil
+		},
+	)
+
+	if err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	if err := tx.Commit().Error; err != nil {
