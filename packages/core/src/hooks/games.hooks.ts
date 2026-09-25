@@ -54,3 +54,17 @@ export function useDeleteGame(client: CheckpointApiClient) {
     },
   });
 }
+
+export function useImportGamesCSV(client: CheckpointApiClient) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => client.importGamesCSV(file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.games.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats.dashboard });
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats.lastGames });
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats.beaten });
+    },
+  });
+}

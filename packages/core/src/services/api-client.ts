@@ -6,7 +6,7 @@ import {
   BeatenStatsResponse,
   StatsItemDetail,
 } from '../types/stats';
-import { User, AuthResponse, LoginDto, RegisterPlayerDto } from '../types/auth';
+import { User, AuthResponse, LoginDto, RegisterPlayerDto, UpdatePlayerDto } from '../types/auth';
 import { IGDBGameResult } from '../types/igdb';
 
 export interface StorageAdapter {
@@ -66,10 +66,13 @@ export class CheckpointApiClient {
     const token = await this.getToken();
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       Accept: 'application/json',
       ...((options.headers as Record<string, string>) || {}),
     };
+
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+    }
 
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -118,7 +121,15 @@ export class CheckpointApiClient {
   }
 
   async getProfile(): Promise<User> {
-    return await this.request<User>('/player/view');
+    const res = await this.request<any>('/player/view');
+    return res.player || res;
+  }
+
+  async updateProfile(dto: UpdatePlayerDto): Promise<User> {
+    return await this.request<User>('/player/update', {
+      method: 'PUT',
+      body: JSON.stringify(dto),
+    });
   }
 
   // --- Games Endpoints ---
@@ -147,6 +158,15 @@ export class CheckpointApiClient {
   async deleteGame(id: number): Promise<void> {
     await this.request<void>(`/game/delete_beaten/${id}`, {
       method: 'DELETE',
+    });
+  }
+
+  async importGamesCSV(file: File): Promise<{ message: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return await this.request<{ message: string }>('/game/import_csv', {
+      method: 'POST',
+      body: formData,
     });
   }
 
@@ -218,4 +238,11 @@ export class CheckpointApiClient {
       `/external/games/search?q=${encodeURIComponent(query)}`
     );
   }
+
+  async syncIGDBGenres(): Promise<{ message: string; count: number }> {
+    return await this.request<{ message: string; count: number }>('/external/genres/sync', {
+      method: 'POST',
+    });
+  }
 }
+

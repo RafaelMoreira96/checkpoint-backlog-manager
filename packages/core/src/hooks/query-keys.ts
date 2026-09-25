@@ -13,6 +13,7 @@ export const queryKeys = {
     genres: ['catalog', 'genres'] as const,
   },
   stats: {
+    all: ['stats'] as const,
     dashboard: ['stats', 'dashboard'] as const,
     lastGames: ['stats', 'last-games'] as const,
     lastBacklog: ['stats', 'last-backlog'] as const,

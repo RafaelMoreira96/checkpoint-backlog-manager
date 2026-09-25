@@ -13,15 +13,19 @@ import { DashboardPage } from './pages/DashboardPage';
 import { BeatenGamesPage } from './pages/BeatenGamesPage';
 import { BacklogPage } from './pages/BacklogPage';
 import { StatsPage } from './pages/StatsPage';
+import { LandingPage } from './pages/LandingPage';
 import { GameFormModal } from './components/games/GameFormModal';
+import { ImportCSVModal } from './components/games/ImportCSVModal';
 import { AuthModal } from './components/auth/AuthModal';
+import { Gamepad2 } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { isAuthenticated, openLogin } = useAuth();
+  const { isAuthenticated, isLoading, openLogin, openRegister } = useAuth();
   const [currentTab, setCurrentTab] = useState<'dashboard' | 'games' | 'backlog' | 'stats'>('dashboard');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [modalIsBacklog, setModalIsBacklog] = useState(false);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
 
@@ -48,6 +52,14 @@ export const App: React.FC = () => {
     setEditingGame(null);
     setModalIsBacklog(true);
     setIsModalOpen(true);
+  };
+
+  const handleOpenImportCSV = () => {
+    if (!isAuthenticated) {
+      openLogin();
+      return;
+    }
+    setIsImportModalOpen(true);
   };
 
   const handleEditGame = (game: Game) => {
@@ -97,16 +109,44 @@ export const App: React.FC = () => {
     }
   };
 
+  // 1. Loading splash screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#12151b] flex items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#6c52ee] to-[#38bdf8] p-[2px] shadow-lg shadow-[#6c52ee]/25 animate-pulse">
+            <div className="w-full h-full bg-[#12151b] rounded-[10px] flex items-center justify-center">
+              <Gamepad2 className="w-6 h-6 text-[#8670ff]" />
+            </div>
+          </div>
+          <p className="text-xs font-bold text-slate-400">Carregando CheckPOINT...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Unauthenticated: Landing Page
+  if (!isAuthenticated) {
+    return (
+      <>
+        <LandingPage onOpenLogin={openLogin} onOpenRegister={openRegister} />
+        <AuthModal />
+      </>
+    );
+  }
+
+  // 3. Authenticated: Full Backloggd-inspired Gamer App
   return (
-    <div className="min-h-screen bg-obsidian-900 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#12151b] text-slate-100 flex flex-col font-sans selection:bg-[#6c52ee] selection:text-white">
       <Navbar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         onOpenNewGame={handleOpenNewGame}
         onOpenNewBacklog={handleOpenNewBacklog}
+        onOpenImportCSV={handleOpenImportCSV}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7">
         {currentTab === 'dashboard' && (
           <DashboardPage
             onNavigateTab={setCurrentTab}
@@ -119,6 +159,7 @@ export const App: React.FC = () => {
           <BeatenGamesPage
             onOpenNewGame={handleOpenNewGame}
             onEditGame={handleEditGame}
+            onOpenImportCSV={handleOpenImportCSV}
           />
         )}
 
@@ -133,8 +174,16 @@ export const App: React.FC = () => {
         {currentTab === 'stats' && <StatsPage />}
       </main>
 
-      <footer className="border-t border-white/5 bg-obsidian-950/60 py-6 text-center text-xs text-slate-500">
-        <p>CheckPOINT &bull; Plataforma Gamer de Backlog e Jogos Zerados &bull; React Web 2026</p>
+      <footer className="border-t border-[#232938] bg-[#0d1015] py-7 text-center text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="flex items-center gap-1.5">
+            <span className="font-extrabold text-white">Check<span className="text-[#8670ff]">POINT</span></span>
+            <span>&bull; Diário Gamer & Gestão de Backlog &bull; Inspirado no Backloggd</span>
+          </p>
+          <p className="text-[11px] text-slate-600">
+            Powered by React, GoFiber & IGDB &bull; 2026
+          </p>
+        </div>
       </footer>
 
       {isModalOpen && (
@@ -146,6 +195,11 @@ export const App: React.FC = () => {
           isBacklog={modalIsBacklog}
         />
       )}
+
+      <ImportCSVModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
 
       <AuthModal />
     </div>
