@@ -5,7 +5,7 @@
 DOCKER_COMPOSE = docker compose
 
 .PHONY: help all run run-all run-mobile run-backend run-db run-angular run-react \
-        build stop down logs ps clean
+        build stop down logs ps clean export-igdb
 
 # Permite capturar argumentos para a sintaxe 'make run <alvo>'
 ifeq (run,$(firstword $(MAKECMDGOALS)))
@@ -23,6 +23,7 @@ help:
 	@echo "  make run db        (ou make run-db)       - Sobe apenas o PostgreSQL"
 	@echo "  make run angular   (ou make run-angular)  - Sobe o Frontend Angular (Legado)"
 	@echo "  make run react     (ou make run-react)    - Sobe o Frontend React (Novo)"
+	@echo "  make export-igdb                          - Exporta e enriquece planilha Jogos Zerados com IGDB"
 	@echo "  make build                                - Constrói todas as imagens Docker"
 	@echo "  make stop                                 - Para todos os containers em execução"
 	@echo "  make down                                 - Para e remove containers e redes"
@@ -89,6 +90,11 @@ run-react:
 	@echo "⚛️  Iniciando Frontend React..."
 	$(DOCKER_COMPOSE) up -d postgres backend frontend-react
 	@echo "✅ React pronto em http://localhost:3000"
+
+# Enriquecimento e exportação em lote via IGDB
+export-igdb:
+	@echo "📦 Executando enriquecimento e exportação em lote via IGDB..."
+	python3 scripts/export_igdb_batch.py
 
 # Build de todas as imagens Docker
 build:

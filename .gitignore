@@ -8,3 +8,4 @@ dist/
 *.log
 *:Zone.Identifier
 .expo/
+.igdb_cache.json

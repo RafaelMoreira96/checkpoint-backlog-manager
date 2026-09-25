@@ -250,8 +250,14 @@ func (s *GameService) ImportGamesFromCSV(playerID uint, file io.Reader) error {
 			}
 		}
 
+		var urlImage string
+		if len(record) > 7 {
+			urlImage = strings.TrimSpace(record[7])
+		}
+
 		game := models.Game{
 			NameGame:    gameName,
+			UrlImage:    urlImage,
 			Developer:   developer,
 			GenreID:     genreID,
 			ConsoleID:   consoleID,
