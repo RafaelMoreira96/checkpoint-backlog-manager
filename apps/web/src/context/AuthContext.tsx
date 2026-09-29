@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, LoginDto, RegisterPlayerDto } from '@checkpoint/core';
+import { User, LoginDto, RegisterPlayerDto, UpdatePlayerDto } from '@checkpoint/core';
 import { api } from '../lib/api';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -14,6 +14,7 @@ interface AuthContextType {
   closeAuthModal: () => void;
   login: (dto: LoginDto) => Promise<void>;
   register: (dto: RegisterPlayerDto) => Promise<void>;
+  updateProfile: (dto: UpdatePlayerDto) => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -76,6 +77,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await login({ nickname: dto.nickname, password: dto.password });
   };
 
+  const updateProfile = async (dto: UpdatePlayerDto): Promise<User> => {
+    await api.updateProfile(dto);
+    const profile = await api.getProfile();
+    setUser(profile);
+    return profile;
+  };
+
   const logout = async () => {
     await api.clearToken();
     setUser(null);
@@ -95,6 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         closeAuthModal,
         login,
         register,
+        updateProfile,
         logout,
       }}
     >

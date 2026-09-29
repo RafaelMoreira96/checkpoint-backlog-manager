@@ -2,13 +2,17 @@ import React, { useState, useMemo } from 'react';
 import {
   useGamesList,
   useDeleteGame,
+  useClearAllBeatenGames,
   useConsoles,
   useGenres,
   Game,
 } from '@checkpoint/core';
 import { api } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 import { GameGrid } from '../components/games/GameGrid';
 import { GameTable } from '../components/games/GameTable';
+import { ClearAllGamesModal } from '../components/games/ClearAllGamesModal';
+import { parseDateToBeatingTimestamp } from '../lib/dateUtils';
 import {
   Trophy,
   Search,
@@ -17,6 +21,7 @@ import {
   Plus,
   X,
   UploadCloud,
+  Trash2,
 } from 'lucide-react';
 
 interface BeatenGamesPageProps {
@@ -30,9 +35,12 @@ export const BeatenGamesPage: React.FC<BeatenGamesPageProps> = ({
   onEditGame,
   onOpenImportCSV,
 }) => {
+  const { user } = useAuth();
   const { data: rawGames, isLoading } = useGamesList(api);
   const games = useMemo(() => (Array.isArray(rawGames) ? rawGames : []), [rawGames]);
   const deleteMutation = useDeleteGame(api);
+  const clearAllMutation = useClearAllBeatenGames(api);
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
 
   const { data: consoles = [] } = useConsoles(api);
   const { data: genres = [] } = useGenres(api);
@@ -76,27 +84,55 @@ export const BeatenGamesPage: React.FC<BeatenGamesPageProps> = ({
     result.sort((a, b) => {
       switch (sortBy) {
         case 'date_desc': {
-          const dateA = a.date_beating && a.date_beating !== '01/01/0001' ? a.date_beating : '';
-          const dateB = b.date_beating && b.date_beating !== '01/01/0001' ? b.date_beating : '';
-          return dateB.localeCompare(dateA);
+          const timeA = parseDateToBeatingTimestamp(a.date_beating);
+          const timeB = parseDateToBeatingTimestamp(b.date_beating);
+
+          // If neither has a valid completion date, tiebreak by id_game descending
+          if (timeA === 0 && timeB === 0) return b.id_game - a.id_game;
+          // Items without date go to the end
+          if (timeA === 0) return 1;
+          if (timeB === 0) return -1;
+
+          if (timeB !== timeA) return timeB - timeA;
+          return b.id_game - a.id_game;
         }
         case 'date_asc': {
-          const dateA = a.date_beating && a.date_beating !== '01/01/0001' ? a.date_beating : '';
-          const dateB = b.date_beating && b.date_beating !== '01/01/0001' ? b.date_beating : '';
-          return dateA.localeCompare(dateB);
+          const timeA = parseDateToBeatingTimestamp(a.date_beating);
+          const timeB = parseDateToBeatingTimestamp(b.date_beating);
+
+          // If neither has a valid completion date, tiebreak by id_game ascending
+          if (timeA === 0 && timeB === 0) return a.id_game - b.id_game;
+          // Items without date go to the end
+          if (timeA === 0) return 1;
+          if (timeB === 0) return -1;
+
+          if (timeA !== timeB) return timeA - timeB;
+          return a.id_game - b.id_game;
         }
-        case 'time_desc':
-          return (Number(b.time_beating) || 0) - (Number(a.time_beating) || 0);
-        case 'time_asc':
-          return (Number(a.time_beating) || 0) - (Number(b.time_beating) || 0);
-        case 'name_asc':
-          return a.name_game.localeCompare(b.name_game);
-        case 'name_desc':
-          return b.name_game.localeCompare(a.name_game);
-        case 'year_desc':
-          return (Number(b.release_year) || 0) - (Number(a.release_year) || 0);
-        case 'year_asc':
-          return (Number(a.release_year) || 0) - (Number(b.release_year) || 0);
+        case 'time_desc': {
+          const diff = (Number(b.time_beating) || 0) - (Number(a.time_beating) || 0);
+          return diff !== 0 ? diff : b.id_game - a.id_game;
+        }
+        case 'time_asc': {
+          const diff = (Number(a.time_beating) || 0) - (Number(b.time_beating) || 0);
+          return diff !== 0 ? diff : a.id_game - b.id_game;
+        }
+        case 'name_asc': {
+          const diff = a.name_game.localeCompare(b.name_game);
+          return diff !== 0 ? diff : b.id_game - a.id_game;
+        }
+        case 'name_desc': {
+          const diff = b.name_game.localeCompare(a.name_game);
+          return diff !== 0 ? diff : b.id_game - a.id_game;
+        }
+        case 'year_desc': {
+          const diff = (Number(b.release_year) || 0) - (Number(a.release_year) || 0);
+          return diff !== 0 ? diff : b.id_game - a.id_game;
+        }
+        case 'year_asc': {
+          const diff = (Number(a.release_year) || 0) - (Number(b.release_year) || 0);
+          return diff !== 0 ? diff : a.id_game - b.id_game;
+        }
         default:
           return b.id_game - a.id_game;
       }
@@ -119,6 +155,10 @@ export const BeatenGamesPage: React.FC<BeatenGamesPageProps> = ({
     if (window.confirm('Tem certeza de que deseja remover este jogo da sua lista de zerados?')) {
       await deleteMutation.mutateAsync(id);
     }
+  };
+
+  const handleConfirmClearAll = async () => {
+    await clearAllMutation.mutateAsync();
   };
 
   return (
@@ -144,6 +184,17 @@ export const BeatenGamesPage: React.FC<BeatenGamesPageProps> = ({
 
         {/* Action Button */}
         <div className="flex items-center gap-2">
+          {games.length > 0 && (
+            <button
+              onClick={() => setIsClearModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600/30 border border-rose-500/25 hover:border-rose-500/50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              title="Excluir todos os registros de jogos zerados com dupla confirmação"
+            >
+              <Trash2 className="w-4 h-4 stroke-[2]" />
+              <span className="hidden sm:inline">Limpar Tudo</span>
+            </button>
+          )}
+
           {onOpenImportCSV && (
             <button
               onClick={onOpenImportCSV}
@@ -305,6 +356,15 @@ export const BeatenGamesPage: React.FC<BeatenGamesPageProps> = ({
           onDelete={handleDelete}
         />
       )}
+
+      {/* Double Confirmation Modal to Clear All Games */}
+      <ClearAllGamesModal
+        isOpen={isClearModalOpen}
+        onClose={() => setIsClearModalOpen(false)}
+        onConfirm={handleConfirmClearAll}
+        gamesCount={games.length}
+        nickname={user?.nickname || ''}
+      />
     </div>
   );
 };

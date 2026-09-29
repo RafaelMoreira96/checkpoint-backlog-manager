@@ -32,3 +32,36 @@ func (c *ExternalGamesController) SearchGames(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(results)
 }
+
+// SyncGenres sincroniza todos os gêneros do catálogo IGDB para o banco de dados
+func (c *ExternalGamesController) SyncGenres(ctx *fiber.Ctx) error {
+	count, err := c.igdbService.SyncGenresToDatabase()
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "Falha ao sincronizar gêneros do IGDB",
+			"details": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Gêneros do IGDB sincronizados com sucesso",
+		"count":   count,
+	})
+}
+
+// SyncPlatforms sincroniza todas as plataformas/consoles do catálogo IGDB para o banco de dados
+func (c *ExternalGamesController) SyncPlatforms(ctx *fiber.Ctx) error {
+	count, err := c.igdbService.SyncPlatformsToDatabase()
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "Falha ao sincronizar consoles do IGDB",
+			"details": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Plataformas/Consoles do IGDB sincronizados com sucesso",
+		"count":   count,
+	})
+}
+

@@ -3,9 +3,11 @@ package server
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/RafaelMoreira96/game-beating-project/database"
 	"github.com/RafaelMoreira96/game-beating-project/server/routes"
+	"github.com/RafaelMoreira96/game-beating-project/services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -34,6 +36,17 @@ func RunServer(mode uint) {
 	}
 
 	routes.SetupRoutes(app)
+
+	// Sincroniza gêneros do IGDB automaticamente no startup em background
+	go func() {
+		time.Sleep(1 * time.Second)
+		igdbService := services.GetIGDBService()
+		if count, err := igdbService.SyncGenresToDatabase(); err != nil {
+			log.Printf("[AutoSync IGDB] Aviso ao sincronizar gêneros: %v", err)
+		} else {
+			log.Printf("[AutoSync IGDB] %d gêneros do IGDB sincronizados com sucesso", count)
+		}
+	}()
 
 	port := os.Getenv("PORT")
 	if port == "" {

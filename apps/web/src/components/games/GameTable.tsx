@@ -1,6 +1,6 @@
 import React from 'react';
 import { Game } from '@checkpoint/core';
-import { Tv, Edit2, Trash2, CheckCircle2 } from 'lucide-react';
+import { Tv, Edit2, Trash2, CheckCircle2, Clock, Calendar } from 'lucide-react';
 
 interface GameTableProps {
   games: Game[];
@@ -18,100 +18,112 @@ export const GameTable: React.FC<GameTableProps> = ({
   onComplete,
 }) => {
   return (
-    <div className="overflow-x-auto rounded-2xl bg-obsidian-800 border border-white/10 shadow-xl my-4">
+    <div className="overflow-x-auto rounded-xl bg-[#161922] border border-[#232938] shadow-lg my-2">
       <table className="w-full text-left text-sm text-slate-300">
-        <thead className="bg-obsidian-950/70 text-xs uppercase font-display font-bold text-slate-400 border-b border-white/10 tracking-wider">
+        <thead className="bg-[#12151b] text-[11px] uppercase font-bold text-slate-400 border-b border-[#232938] tracking-wider">
           <tr>
-            <th className="py-3.5 px-4 w-12 text-center">#</th>
-            <th className="py-3.5 px-4 w-16">Capa</th>
-            <th className="py-3.5 px-4">Jogo</th>
-            <th className="py-3.5 px-4">Gênero</th>
-            <th className="py-3.5 px-4">Plataforma</th>
-            {!isBacklog && <th className="py-3.5 px-4">Horas</th>}
-            {!isBacklog && <th className="py-3.5 px-4">Data Zerado</th>}
-            <th className="py-3.5 px-4 text-center w-28">Ações</th>
+            <th className="py-3 px-3 w-10 text-center">#</th>
+            <th className="py-3 px-3 w-14">Capa</th>
+            <th className="py-3 px-4">Título</th>
+            <th className="py-3 px-4">Gênero</th>
+            <th className="py-3 px-4">Plataforma</th>
+            {!isBacklog && <th className="py-3 px-4">Tempo</th>}
+            {!isBacklog && <th className="py-3 px-4">Data Zerado</th>}
+            <th className="py-3 px-4 text-right w-24">Ações</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y divide-[#202534]">
           {games.map((game, idx) => (
             <tr
               key={game.id_game}
-              className="hover:bg-obsidian-700/50 transition-colors"
+              className="hover:bg-[#1c212d] transition-colors group"
             >
-              <td className="py-3 px-4 text-center font-medium text-slate-500">
+              <td className="py-2.5 px-3 text-center text-xs font-semibold text-slate-500">
                 {idx + 1}
               </td>
-              <td className="py-3 px-4">
+              <td className="py-2.5 px-3">
                 {game.url_image ? (
                   <img
                     src={game.url_image}
                     alt={game.name_game}
-                    className="w-10 h-14 object-cover rounded-lg border border-white/10 shadow"
+                    className="w-9 h-12 object-cover rounded border border-white/10 shadow-sm"
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-10 h-14 rounded-lg bg-obsidian-950 flex items-center justify-center border border-white/10 text-slate-500">
-                    <Tv className="w-5 h-5" />
+                  <div className="w-9 h-12 rounded bg-[#101319] flex items-center justify-center border border-white/10 text-slate-500">
+                    <Tv className="w-4 h-4" />
                   </div>
                 )}
               </td>
-              <td className="py-3 px-4 font-bold text-white">
-                <div>{game.name_game}</div>
-                {game.developer && (
-                  <div className="text-xs font-normal text-slate-400">
-                    {game.developer}
-                  </div>
-                )}
+              <td className="py-2.5 px-4 font-semibold text-white">
+                <div className="group-hover:text-[#8670ff] transition-colors">{game.name_game}</div>
+                <div className="flex items-center gap-2 text-[11px] font-normal text-slate-400 mt-0.5">
+                  {game.release_year && <span>{game.release_year}</span>}
+                  {game.developer && <span>• {game.developer}</span>}
+                </div>
               </td>
-              <td className="py-3 px-4">
-                <span className="px-2 py-0.5 rounded text-xs bg-white/5 text-slate-300 border border-white/10">
+              <td className="py-2.5 px-4">
+                <span className="px-2 py-0.5 rounded text-xs bg-[#202534] text-slate-300 border border-white/5">
                   {game.genre?.name_genre || '-'}
                 </span>
               </td>
-              <td className="py-3 px-4">
-                <span className="px-2 py-0.5 rounded text-xs bg-cyan-950/40 text-cyan-400 border border-cyan-800/40">
+              <td className="py-2.5 px-4">
+                <span className="px-2 py-0.5 rounded text-xs bg-[#0ea5e9]/10 text-[#38bdf8] border border-[#0ea5e9]/20">
                   {game.console?.name_console || '-'}
                 </span>
               </td>
               {!isBacklog && (
-                <td className="py-3 px-4 font-semibold text-amber-400">
-                  {game.time_beating !== undefined ? `${game.time_beating}h` : '-'}
+                <td className="py-2.5 px-4">
+                  {game.time_beating !== undefined ? (
+                    <span className="inline-flex items-center gap-1 font-semibold text-[#fbbf24] text-xs">
+                      <Clock className="w-3 h-3 text-[#fbbf24]" />
+                      {game.time_beating}h
+                    </span>
+                  ) : (
+                    '-'
+                  )}
                 </td>
               )}
               {!isBacklog && (
-                <td className="py-3 px-4 text-slate-400 text-xs">
-                  {!game.date_beating || game.date_beating === '01/01/0001'
-                    ? '-'
-                    : game.date_beating}
+                <td className="py-2.5 px-4 text-slate-400 text-xs">
+                  {!game.date_beating || game.date_beating === '01/01/0001' ? (
+                    '-'
+                  ) : (
+                    <span className="inline-flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-slate-500" />
+                      {game.date_beating}
+                    </span>
+                  )}
                 </td>
               )}
-              <td className="py-3 px-4">
-                <div className="flex items-center justify-center gap-1.5">
+              <td className="py-2.5 px-4 text-right">
+                <div className="flex items-center justify-end gap-1">
                   {isBacklog && onComplete && (
                     <button
                       onClick={() => onComplete(game)}
                       title="Marcar como Zerado!"
-                      className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all"
+                      className="px-2 py-1 rounded bg-[#10b981]/20 hover:bg-[#10b981] text-[#34d399] hover:text-white text-xs font-bold transition-all flex items-center gap-1"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>Zerei</span>
                     </button>
                   )}
                   {onEdit && (
                     <button
                       onClick={() => onEdit(game)}
                       title="Editar"
-                      className="w-7 h-7 rounded-lg bg-white/10 text-slate-300 border border-white/10 flex items-center justify-center hover:bg-cyan-500 hover:text-white transition-all"
+                      className="w-7 h-7 rounded bg-[#202534] hover:bg-[#6c52ee] text-slate-300 hover:text-white flex items-center justify-center transition-all"
                     >
-                      <Edit2 className="w-3.5 h-3.5" />
+                      <Edit2 className="w-3 h-3" />
                     </button>
                   )}
                   {onDelete && (
                     <button
                       onClick={() => onDelete(game.id_game)}
                       title="Excluir"
-                      className="w-7 h-7 rounded-lg bg-white/10 text-slate-300 border border-white/10 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all"
+                      className="w-7 h-7 rounded bg-[#202534] hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3 h-3" />
                     </button>
                   )}
                 </div>

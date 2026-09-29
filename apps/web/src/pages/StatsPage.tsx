@@ -21,7 +21,7 @@ export const StatsPage: React.FC = () => {
 
   const [activeCategory, setActiveCategory] = useState<'all' | 'genre' | 'console' | 'year'>('all');
 
-  // Pagination states (8 items per page, exactly as in the Angular version)
+  // Pagination states (8 items per page)
   const itemsPerPage = 8;
   const [genrePage, setGenrePage] = useState(1);
   const [consolePage, setConsolePage] = useState(1);
@@ -70,46 +70,50 @@ export const StatsPage: React.FC = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="py-16 text-center max-w-lg mx-auto space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-neon flex items-center justify-center mx-auto shadow-xl">
+      <div className="py-20 text-center max-w-lg mx-auto space-y-4 animate-in fade-in duration-300">
+        <div className="w-16 h-16 rounded-2xl bg-[#6c52ee]/15 border border-[#6c52ee]/30 text-[#8670ff] flex items-center justify-center mx-auto shadow-xl">
           <Lock className="w-8 h-8" />
         </div>
         <h2 className="text-2xl font-bold font-display text-white">Estatísticas Gamísticas</h2>
         <p className="text-sm text-slate-400">
-          Faça login para desbloquear suas estatísticas avançadas por gênero, plataforma e ano de lançamento, além de gráficos interativos da sua jornada gamer.
+          Faça login para desbloquear suas estatísticas avançadas por gênero, plataforma e ano de lançamento, no estilo Backloggd.
         </p>
         <button
           onClick={openLogin}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-neon to-purple-600 text-white font-bold text-sm shadow-lg shadow-violet-glow hover:opacity-90 transition-all inline-flex items-center gap-2"
+          className="px-6 py-3 rounded-lg bg-[#6c52ee] hover:bg-[#5b40e2] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#6c52ee]/30 transition-all inline-flex items-center gap-2"
         >
           <Sparkles className="w-4 h-4" />
-          Entrar na Conta
+          <span>Entrar na Conta</span>
         </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#232938]">
         <div>
-          <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight flex items-center gap-2.5">
-            <BarChart3 className="w-7 h-7 text-violet-neon" />
-            Informações Gamísticas
-          </h1>
-          <p className="text-sm text-slate-400">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg bg-[#6c52ee]/15 border border-[#6c52ee]/30 flex items-center justify-center text-[#8670ff]">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+            <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">
+              Estatísticas Gamísticas
+            </h1>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Métricas aprofundadas da sua biblioteca de conquistas por gênero, plataforma e lançamento
           </p>
         </div>
 
         {/* Category Filter Pills */}
-        <div className="flex items-center p-1 rounded-xl bg-obsidian-800 border border-white/10 text-xs font-semibold">
+        <div className="flex items-center p-1 rounded-xl bg-[#161922] border border-[#232938] text-xs font-semibold">
           <button
             onClick={() => setActiveCategory('all')}
             className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
               activeCategory === 'all'
-                ? 'bg-violet-neon text-white shadow-md'
+                ? 'bg-[#6c52ee] text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -120,7 +124,7 @@ export const StatsPage: React.FC = () => {
             onClick={() => setActiveCategory('genre')}
             className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
               activeCategory === 'genre'
-                ? 'bg-amber-500 text-white shadow-md'
+                ? 'bg-[#f59e0b] text-black font-bold shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -131,7 +135,7 @@ export const StatsPage: React.FC = () => {
             onClick={() => setActiveCategory('console')}
             className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
               activeCategory === 'console'
-                ? 'bg-cyan-500 text-white shadow-md'
+                ? 'bg-[#0ea5e9] text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -142,7 +146,7 @@ export const StatsPage: React.FC = () => {
             onClick={() => setActiveCategory('year')}
             className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
               activeCategory === 'year'
-                ? 'bg-emerald-500 text-white shadow-md'
+                ? 'bg-[#10b981] text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -153,9 +157,9 @@ export const StatsPage: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="py-20 text-center text-slate-400">
-          <div className="w-8 h-8 border-2 border-violet-neon border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm">Calculando dados gamísticos...</p>
+        <div className="py-24 text-center text-slate-400">
+          <div className="w-8 h-8 border-2 border-[#6c52ee] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm font-medium">Calculando dados gamísticos...</p>
         </div>
       ) : (
         <div className="space-y-10">
@@ -163,10 +167,10 @@ export const StatsPage: React.FC = () => {
           {(activeCategory === 'all' || activeCategory === 'genre') && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold font-display text-white flex items-center gap-2">
-                  <Tag className="w-5 h-5 text-amber-400" />
+                <h2 className="text-base sm:text-lg font-bold font-display text-white flex items-center gap-2">
+                  <Tag className="w-5 h-5 text-[#f59e0b]" />
                   Por Gênero
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#f59e0b]/20 text-[#fbbf24] border border-[#f59e0b]/30">
                     {genreStats.length} gêneros
                   </span>
                 </h2>
@@ -174,7 +178,7 @@ export const StatsPage: React.FC = () => {
               </div>
 
               {genreStats.length === 0 ? (
-                <div className="p-8 text-center rounded-2xl bg-obsidian-800 border border-white/5 text-slate-500 text-sm">
+                <div className="p-8 text-center rounded-xl bg-[#161922] border border-[#232938] text-slate-500 text-sm">
                   Nenhum jogo zerado registrado para exibir gêneros.
                 </div>
               ) : (
@@ -190,23 +194,23 @@ export const StatsPage: React.FC = () => {
                             title: genre.name_genre,
                           })
                         }
-                        className="p-5 rounded-2xl bg-obsidian-800 border border-white/10 hover:border-amber-400/50 hover:-translate-y-1 transition-all cursor-pointer shadow-lg group relative overflow-hidden"
+                        className="p-5 rounded-xl bg-[#161922] border border-[#232938] hover:border-[#f59e0b]/50 hover:-translate-y-1 transition-all cursor-pointer shadow-lg group relative overflow-hidden"
                       >
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-3xl font-display font-extrabold text-white">
                             {genre.genre_count}
                           </span>
-                          <span className="text-xs font-bold px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[#f59e0b]/20 text-[#fbbf24] border border-[#f59e0b]/30">
                             {Number(genre.percentage_genre || 0).toFixed(1)}%
                           </span>
                         </div>
-                        <h4 className="font-bold text-sm text-slate-200 group-hover:text-amber-400 transition-colors truncate">
+                        <h4 className="font-bold text-sm text-slate-200 group-hover:text-[#fbbf24] transition-colors truncate">
                           {genre.name_genre}
                         </h4>
                         {/* Progress Bar */}
-                        <div className="w-full h-1.5 bg-obsidian-950 rounded-full mt-3 overflow-hidden">
+                        <div className="w-full h-1.5 bg-[#12151b] rounded-full mt-3 overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-[#f59e0b] to-amber-600 rounded-full transition-all duration-500"
                             style={{ width: `${Math.min(genre.percentage_genre || 0, 100)}%` }}
                           />
                         </div>
@@ -219,7 +223,7 @@ export const StatsPage: React.FC = () => {
                       <button
                         disabled={genrePage === 1}
                         onClick={() => setGenrePage((p) => Math.max(p - 1, 1))}
-                        className="px-3 py-1.5 rounded-lg bg-obsidian-800 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg bg-[#161922] border border-[#232938] text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
                       >
                         <ChevronLeft className="w-3.5 h-3.5" /> Anterior
                       </button>
@@ -229,7 +233,7 @@ export const StatsPage: React.FC = () => {
                       <button
                         disabled={genrePage === totalGenrePages}
                         onClick={() => setGenrePage((p) => Math.min(p + 1, totalGenrePages))}
-                        className="px-3 py-1.5 rounded-lg bg-obsidian-800 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg bg-[#161922] border border-[#232938] text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
                       >
                         Próximo <ChevronRight className="w-3.5 h-3.5" />
                       </button>
@@ -244,10 +248,10 @@ export const StatsPage: React.FC = () => {
           {(activeCategory === 'all' || activeCategory === 'console') && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold font-display text-white flex items-center gap-2">
-                  <Tv className="w-5 h-5 text-cyan-400" />
+                <h2 className="text-base sm:text-lg font-bold font-display text-white flex items-center gap-2">
+                  <Tv className="w-5 h-5 text-[#38bdf8]" />
                   Por Plataforma / Console
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#0ea5e9]/20 text-[#38bdf8] border border-[#0ea5e9]/30">
                     {consoleStats.length} plataformas
                   </span>
                 </h2>
@@ -255,7 +259,7 @@ export const StatsPage: React.FC = () => {
               </div>
 
               {consoleStats.length === 0 ? (
-                <div className="p-8 text-center rounded-2xl bg-obsidian-800 border border-white/5 text-slate-500 text-sm">
+                <div className="p-8 text-center rounded-xl bg-[#161922] border border-[#232938] text-slate-500 text-sm">
                   Nenhuma plataforma com jogos concluídos.
                 </div>
               ) : (
@@ -271,23 +275,23 @@ export const StatsPage: React.FC = () => {
                             title: console.name_console,
                           })
                         }
-                        className="p-5 rounded-2xl bg-obsidian-800 border border-white/10 hover:border-cyan-400/50 hover:-translate-y-1 transition-all cursor-pointer shadow-lg group relative overflow-hidden"
+                        className="p-5 rounded-xl bg-[#161922] border border-[#232938] hover:border-[#38bdf8]/50 hover:-translate-y-1 transition-all cursor-pointer shadow-lg group relative overflow-hidden"
                       >
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-3xl font-display font-extrabold text-white">
                             {console.game_count}
                           </span>
-                          <span className="text-xs font-bold px-2 py-0.5 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[#0ea5e9]/20 text-[#38bdf8] border border-[#0ea5e9]/30">
                             {Number(console.percentage_console || 0).toFixed(1)}%
                           </span>
                         </div>
-                        <h4 className="font-bold text-sm text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
+                        <h4 className="font-bold text-sm text-slate-200 group-hover:text-[#38bdf8] transition-colors truncate">
                           {console.name_console}
                         </h4>
                         {/* Progress Bar */}
-                        <div className="w-full h-1.5 bg-obsidian-950 rounded-full mt-3 overflow-hidden">
+                        <div className="w-full h-1.5 bg-[#12151b] rounded-full mt-3 overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-[#0ea5e9] to-cyan-600 rounded-full transition-all duration-500"
                             style={{ width: `${Math.min(console.percentage_console || 0, 100)}%` }}
                           />
                         </div>
@@ -300,7 +304,7 @@ export const StatsPage: React.FC = () => {
                       <button
                         disabled={consolePage === 1}
                         onClick={() => setConsolePage((p) => Math.max(p - 1, 1))}
-                        className="px-3 py-1.5 rounded-lg bg-obsidian-800 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg bg-[#161922] border border-[#232938] text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
                       >
                         <ChevronLeft className="w-3.5 h-3.5" /> Anterior
                       </button>
@@ -310,7 +314,7 @@ export const StatsPage: React.FC = () => {
                       <button
                         disabled={consolePage === totalConsolePages}
                         onClick={() => setConsolePage((p) => Math.min(p + 1, totalConsolePages))}
-                        className="px-3 py-1.5 rounded-lg bg-obsidian-800 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg bg-[#161922] border border-[#232938] text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
                       >
                         Próximo <ChevronRight className="w-3.5 h-3.5" />
                       </button>
@@ -325,10 +329,10 @@ export const StatsPage: React.FC = () => {
           {(activeCategory === 'all' || activeCategory === 'year') && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold font-display text-white flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-emerald-400" />
+                <h2 className="text-base sm:text-lg font-bold font-display text-white flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-[#10b981]" />
                   Por Ano de Lançamento
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#10b981]/20 text-[#34d399] border border-[#10b981]/30">
                     {yearStats.length} safras
                   </span>
                 </h2>
@@ -336,7 +340,7 @@ export const StatsPage: React.FC = () => {
               </div>
 
               {yearStats.length === 0 ? (
-                <div className="p-8 text-center rounded-2xl bg-obsidian-800 border border-white/5 text-slate-500 text-sm">
+                <div className="p-8 text-center rounded-xl bg-[#161922] border border-[#232938] text-slate-500 text-sm">
                   Nenhum ano de lançamento registrado.
                 </div>
               ) : (
@@ -352,23 +356,23 @@ export const StatsPage: React.FC = () => {
                             title: `Ano ${year.year}`,
                           })
                         }
-                        className="p-5 rounded-2xl bg-obsidian-800 border border-white/10 hover:border-emerald-400/50 hover:-translate-y-1 transition-all cursor-pointer shadow-lg group relative overflow-hidden"
+                        className="p-5 rounded-xl bg-[#161922] border border-[#232938] hover:border-[#10b981]/50 hover:-translate-y-1 transition-all cursor-pointer shadow-lg group relative overflow-hidden"
                       >
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-3xl font-display font-extrabold text-white">
                             {year.year_count}
                           </span>
-                          <span className="text-xs font-bold px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[#10b981]/20 text-[#34d399] border border-[#10b981]/30">
                             {Number(year.percentage_year || 0).toFixed(1)}%
                           </span>
                         </div>
-                        <h4 className="font-bold text-sm text-slate-200 group-hover:text-emerald-400 transition-colors">
+                        <h4 className="font-bold text-sm text-slate-200 group-hover:text-[#10b981] transition-colors">
                           Lançamento {year.year}
                         </h4>
                         {/* Progress Bar */}
-                        <div className="w-full h-1.5 bg-obsidian-950 rounded-full mt-3 overflow-hidden">
+                        <div className="w-full h-1.5 bg-[#12151b] rounded-full mt-3 overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-[#10b981] to-emerald-600 rounded-full transition-all duration-500"
                             style={{ width: `${Math.min(year.percentage_year || 0, 100)}%` }}
                           />
                         </div>
@@ -381,7 +385,7 @@ export const StatsPage: React.FC = () => {
                       <button
                         disabled={yearPage === 1}
                         onClick={() => setYearPage((p) => Math.max(p - 1, 1))}
-                        className="px-3 py-1.5 rounded-lg bg-obsidian-800 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg bg-[#161922] border border-[#232938] text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
                       >
                         <ChevronLeft className="w-3.5 h-3.5" /> Anterior
                       </button>
@@ -391,7 +395,7 @@ export const StatsPage: React.FC = () => {
                       <button
                         disabled={yearPage === totalYearPages}
                         onClick={() => setYearPage((p) => Math.min(p + 1, totalYearPages))}
-                        className="px-3 py-1.5 rounded-lg bg-obsidian-800 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg bg-[#161922] border border-[#232938] text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
                       >
                         Próximo <ChevronRight className="w-3.5 h-3.5" />
                       </button>

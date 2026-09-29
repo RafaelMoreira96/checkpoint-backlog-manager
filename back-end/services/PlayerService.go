@@ -265,7 +265,7 @@ func (s *PlayerService) GetPublicProfile(nickname string, viewerPlayerID uint) (
 
 	// Perfil público ou dono visualizando: carrega contagens e jogos zerados recentes
 	var games []models.Game
-	s.db.Preload("Genre").Preload("Console").Where("player_id = ?", player.IdPlayer).Find(&games)
+	s.db.Preload("Genre").Preload("Console").Where("player_id = ?", player.IdPlayer).Order("date_beating DESC, id_game DESC").Find(&games)
 
 	finishedGames := 0
 	backlogGames := 0

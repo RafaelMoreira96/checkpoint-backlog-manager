@@ -165,6 +165,12 @@ export class CheckpointApiClient {
     });
   }
 
+  async clearAllBeatenGames(): Promise<{ message: string; deleted_count: number }> {
+    return await this.request<{ message: string; deleted_count: number }>('/game/clear_all_beaten', {
+      method: 'DELETE',
+    });
+  }
+
   async importGamesCSV(file: File): Promise<{ message: string }> {
     const formData = new FormData();
     formData.append('file', file);

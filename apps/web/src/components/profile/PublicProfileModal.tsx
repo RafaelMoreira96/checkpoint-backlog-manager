@@ -13,18 +13,23 @@ import {
   Loader2,
   Gamepad2,
   AlertCircle,
+  ExternalLink,
 } from 'lucide-react';
+
+import { buildProfileUrl } from '../../lib/profileUrl';
 
 interface PublicProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   nickname: string;
+  onNavigateToProfile?: (nickname: string) => void;
 }
 
 export const PublicProfileModal: React.FC<PublicProfileModalProps> = ({
   isOpen,
   onClose,
   nickname,
+  onNavigateToProfile,
 }) => {
   const [data, setData] = useState<PublicProfileResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,10 +58,22 @@ export const PublicProfileModal: React.FC<PublicProfileModalProps> = ({
   if (!isOpen) return null;
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/?player=${encodeURIComponent(nickname)}`;
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const url = buildProfileUrl(nickname);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleOpenFullPage = () => {
+    onClose();
+    if (onNavigateToProfile) {
+      onNavigateToProfile(nickname);
+    } else {
+      window.history.pushState({}, '', `/u/${encodeURIComponent(nickname)}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
   };
 
   const player = data?.player;
@@ -76,6 +93,14 @@ export const PublicProfileModal: React.FC<PublicProfileModalProps> = ({
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleOpenFullPage}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#232938] hover:bg-[#2e3748] text-slate-300 hover:text-white border border-[#333c4f] transition-all"
+              title="Abrir como página inteira"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-[#8670ff]" />
+              <span className="hidden sm:inline">Página Completa</span>
+            </button>
             <button
               onClick={handleCopyLink}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#232938] hover:bg-[#2e3748] text-slate-200 hover:text-white border border-[#333c4f] transition-all"

@@ -9,3 +9,4 @@ dist/
 *:Zone.Identifier
 .expo/
 .igdb_cache.json
+csv/

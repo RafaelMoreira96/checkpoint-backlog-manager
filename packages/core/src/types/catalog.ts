@@ -1,6 +1,8 @@
 export interface Genre {
   id_genre: number;
   name_genre: string;
+  igdb_genre_id?: number;
+  igdb_slug?: string;
   status?: boolean;
 }
 

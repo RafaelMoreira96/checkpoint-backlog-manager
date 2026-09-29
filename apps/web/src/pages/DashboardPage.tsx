@@ -36,12 +36,14 @@ interface DashboardPageProps {
   onNavigateTab: (tab: 'dashboard' | 'games' | 'backlog' | 'stats') => void;
   onEditGame: (game: Game) => void;
   onCompleteBacklog: (game: Game) => void;
+  onOpenPublicProfile?: (nickname: string) => void;
 }
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({
   onNavigateTab,
   onEditGame,
   onCompleteBacklog,
+  onOpenPublicProfile,
 }) => {
   const { user } = useAuth();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -509,6 +511,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           isOpen={isPublicProfileModalOpen}
           onClose={() => setIsPublicProfileModalOpen(false)}
           nickname={user?.nickname || ''}
+          onNavigateToProfile={onOpenPublicProfile}
         />
       )}
     </div>

@@ -31,6 +31,7 @@ func PublicMethods(app *fiber.App) {
 	externalGamesController := controllers.NewExternalGamesController()
 	app.Get("/api/v1/external/games/search", externalGamesController.SearchGames)
 	app.Post("/api/v1/external/genres/sync", externalGamesController.SyncGenres)
+	app.Post("/api/v1/external/platforms/sync", externalGamesController.SyncPlatforms)
 }
 
 func ProtectedMethods(app *fiber.App) {
@@ -58,6 +59,7 @@ func ProtectedMethods(app *fiber.App) {
 	/* Console routes methods */
 	consoleController := controllers.NewConsoleController()
 	api.Post("/console", adminOnly, consoleController.AddConsole)
+	api.Post("/console/sync-igdb", anyRole, externalGamesController.SyncPlatforms)
 	api.Get("/console/list", anyRole, consoleController.GetConsoles)
 	api.Get("/console/deactivated_list", adminOnly, consoleController.GetInactiveConsoles)
 	api.Get("/console/:id", anyRole, consoleController.ViewConsole)
@@ -101,6 +103,7 @@ func ProtectedMethods(app *fiber.App) {
 	api.Get("/game/list_beaten", playerOnly, gameController.GetBeatenList)
 	api.Get("/game/:id_game", playerOnly, gameController.GetGame)
 	api.Delete("/game/delete_beaten/:id_game", playerOnly, gameController.DeleteGame)
+	api.Delete("/game/clear_all_beaten", playerOnly, gameController.DeleteAllBeatenGames)
 	api.Put("/game/:id_game", playerOnly, gameController.UpdateGame)
 	api.Post("/game/import_csv", playerOnly, gameController.ImportGamesFromCSV)
 

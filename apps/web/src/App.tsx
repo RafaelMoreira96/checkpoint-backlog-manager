@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Game,
   CreateGameDto,
@@ -14,20 +14,48 @@ import { BeatenGamesPage } from './pages/BeatenGamesPage';
 import { BacklogPage } from './pages/BacklogPage';
 import { StatsPage } from './pages/StatsPage';
 import { LandingPage } from './pages/LandingPage';
+import { PublicProfilePage } from './pages/PublicProfilePage';
 import { GameFormModal } from './components/games/GameFormModal';
 import { ImportCSVModal } from './components/games/ImportCSVModal';
+import { EditProfileModal } from './components/profile/EditProfileModal';
 import { AuthModal } from './components/auth/AuthModal';
-import { Gamepad2 } from 'lucide-react';
+import { getProfileNicknameFromUrl } from './lib/profileUrl';
+import { Gamepad2, LogIn, UserPlus } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { isAuthenticated, isLoading, openLogin, openRegister } = useAuth();
+  const { user, isAuthenticated, isLoading, openLogin, openRegister } = useAuth();
   const [currentTab, setCurrentTab] = useState<'dashboard' | 'games' | 'backlog' | 'stats'>('dashboard');
+
+  // URL-based Public Profile state
+  const [publicProfileNickname, setPublicProfileNickname] = useState<string | null>(() =>
+    getProfileNicknameFromUrl()
+  );
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [modalIsBacklog, setModalIsBacklog] = useState(false);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
+
+  // Sync URL changes (e.g. back/forward navigation)
+  useEffect(() => {
+    const handlePopState = () => {
+      setPublicProfileNickname(getProfileNicknameFromUrl());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleOpenPublicProfile = (nickname: string) => {
+    window.history.pushState({}, '', `/u/${encodeURIComponent(nickname)}`);
+    setPublicProfileNickname(nickname);
+  };
+
+  const handleClosePublicProfile = () => {
+    window.history.pushState({}, '', '/');
+    setPublicProfileNickname(null);
+  };
 
   // Mutations
   const createGameMutation = useCreateGame(api);
@@ -125,7 +153,81 @@ export const App: React.FC = () => {
     );
   }
 
-  // 2. Unauthenticated: Landing Page
+  // 2. Public Profile View (Guest / Unauthenticated)
+  if (publicProfileNickname && !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#12151b] text-slate-100 flex flex-col font-sans selection:bg-[#6c52ee] selection:text-white">
+        {/* Simple top brand header for guests */}
+        <header className="sticky top-0 z-40 bg-[#12151b]/95 backdrop-blur-md border-b border-[#222836]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <div
+              onClick={handleClosePublicProfile}
+              className="flex items-center gap-2.5 cursor-pointer group shrink-0"
+              title="Ir para a página inicial"
+            >
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#6c52ee] to-[#4834b8] p-[1.5px] shadow-lg shadow-[#6c52ee]/25 group-hover:scale-105 transition-all">
+                <div className="w-full h-full bg-[#12151b] rounded-[7px] flex items-center justify-center">
+                  <Gamepad2 className="w-5 h-5 text-[#8670ff]" />
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-display font-extrabold text-lg sm:text-xl tracking-tight text-white">
+                  Check<span className="text-[#7d66f6]">POINT</span>
+                </span>
+                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#6c52ee]/20 text-[#a594fd] border border-[#6c52ee]/30 hidden sm:inline-block">
+                  Perfil Público
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={openLogin}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#202534] hover:bg-[#282f42] text-slate-200 hover:text-white border border-white/10 transition-all flex items-center gap-1.5"
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#8670ff]" />
+                <span>Entrar</span>
+              </button>
+              <button
+                onClick={openRegister}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#6c52ee] hover:bg-[#5b40e2] text-white shadow-md shadow-[#6c52ee]/25 transition-all flex items-center gap-1.5"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Criar Conta</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7">
+          <PublicProfilePage
+            nickname={publicProfileNickname}
+            onBackToHome={handleClosePublicProfile}
+            onOpenLogin={openLogin}
+            onOpenRegister={openRegister}
+            isAuthenticated={false}
+            onOpenPublicProfile={handleOpenPublicProfile}
+          />
+        </main>
+
+        <footer className="border-t border-[#232938] bg-[#0d1015] py-7 text-center text-xs text-slate-500">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="flex items-center gap-1.5">
+              <span className="font-extrabold text-white">Check<span className="text-[#8670ff]">POINT</span></span>
+              <span>&bull; Diário Gamer & Gestão de Backlog &bull; Inspirado no Backloggd</span>
+            </p>
+            <p className="text-[11px] text-slate-600">
+              Powered by React, GoFiber & IGDB &bull; 2026
+            </p>
+          </div>
+        </footer>
+
+        <AuthModal />
+      </div>
+    );
+  }
+
+  // 3. Unauthenticated without profile link: Landing Page
   if (!isAuthenticated) {
     return (
       <>
@@ -135,43 +237,64 @@ export const App: React.FC = () => {
     );
   }
 
-  // 3. Authenticated: Full Backloggd-inspired Gamer App
+  // 4. Authenticated: Full Backloggd-inspired Gamer App (can show PublicProfilePage or normal tabs)
   return (
     <div className="min-h-screen bg-[#12151b] text-slate-100 flex flex-col font-sans selection:bg-[#6c52ee] selection:text-white">
       <Navbar
         currentTab={currentTab}
-        onSelectTab={setCurrentTab}
+        onSelectTab={(tab) => {
+          if (publicProfileNickname) {
+            handleClosePublicProfile();
+          }
+          setCurrentTab(tab);
+        }}
         onOpenNewGame={handleOpenNewGame}
         onOpenNewBacklog={handleOpenNewBacklog}
         onOpenImportCSV={handleOpenImportCSV}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7">
-        {currentTab === 'dashboard' && (
-          <DashboardPage
-            onNavigateTab={setCurrentTab}
-            onEditGame={handleEditGame}
-            onCompleteBacklog={handleCompleteBacklog}
+        {publicProfileNickname ? (
+          <PublicProfilePage
+            nickname={publicProfileNickname}
+            onBackToHome={handleClosePublicProfile}
+            onOpenLogin={openLogin}
+            onOpenRegister={openRegister}
+            isAuthenticated={true}
+            currentUserNickname={user?.nickname}
+            onOpenEditProfile={() => setIsEditProfileOpen(true)}
+            onOpenPublicProfile={handleOpenPublicProfile}
           />
-        )}
+        ) : (
+          <>
+            {currentTab === 'dashboard' && (
+              <DashboardPage
+                onNavigateTab={setCurrentTab}
+                onEditGame={handleEditGame}
+                onCompleteBacklog={handleCompleteBacklog}
+                onOpenPublicProfile={handleOpenPublicProfile}
+              />
+            )}
 
-        {currentTab === 'games' && (
-          <BeatenGamesPage
-            onOpenNewGame={handleOpenNewGame}
-            onEditGame={handleEditGame}
-            onOpenImportCSV={handleOpenImportCSV}
-          />
-        )}
+            {currentTab === 'games' && (
+              <BeatenGamesPage
+                onOpenNewGame={handleOpenNewGame}
+                onEditGame={handleEditGame}
+                onOpenImportCSV={handleOpenImportCSV}
+              />
+            )}
 
-        {currentTab === 'backlog' && (
-          <BacklogPage
-            onOpenNewBacklog={handleOpenNewBacklog}
-            onEditBacklog={handleEditGame}
-            onCompleteBacklog={handleCompleteBacklog}
-          />
-        )}
+            {currentTab === 'backlog' && (
+              <BacklogPage
+                onOpenNewBacklog={handleOpenNewBacklog}
+                onEditBacklog={handleEditGame}
+                onCompleteBacklog={handleCompleteBacklog}
+              />
+            )}
 
-        {currentTab === 'stats' && <StatsPage />}
+            {currentTab === 'stats' && <StatsPage />}
+          </>
+        )}
       </main>
 
       <footer className="border-t border-[#232938] bg-[#0d1015] py-7 text-center text-xs text-slate-500">
@@ -200,6 +323,13 @@ export const App: React.FC = () => {
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
       />
+
+      {isEditProfileOpen && (
+        <EditProfileModal
+          isOpen={isEditProfileOpen}
+          onClose={() => setIsEditProfileOpen(false)}
+        />
+      )}
 
       <AuthModal />
     </div>

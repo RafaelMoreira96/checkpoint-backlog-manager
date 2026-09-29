@@ -42,24 +42,27 @@ type HighlightGame struct {
 }
 
 type ResumedGenreGame struct {
-	NameGame    string  `json:"NameGame" gorm:"column:name_game"`
-	TimeBeating float64 `json:"TimeBeating" gorm:"column:time_beating"`
-	Console     string  `json:"Console" gorm:"column:console"`
-	ReleaseYear int     `json:"ReleaseYear" gorm:"column:release_year"`
+	NameGame    string     `json:"NameGame" gorm:"column:name_game"`
+	TimeBeating float64    `json:"TimeBeating" gorm:"column:time_beating"`
+	DateBeating utils.Date `json:"DateBeating" gorm:"column:date_beating"`
+	Console     string     `json:"Console" gorm:"column:console"`
+	ReleaseYear int        `json:"ReleaseYear" gorm:"column:release_year"`
 }
 
 type ResumedConsoleGame struct {
-	NameGame    string  `json:"NameGame" gorm:"column:name_game"`
-	TimeBeating float64 `json:"TimeBeating" gorm:"column:time_beating"`
-	Genre       string  `json:"Genre" gorm:"column:genre"`
-	ReleaseYear int     `json:"ReleaseYear" gorm:"column:release_year"`
+	NameGame    string     `json:"NameGame" gorm:"column:name_game"`
+	TimeBeating float64    `json:"TimeBeating" gorm:"column:time_beating"`
+	DateBeating utils.Date `json:"DateBeating" gorm:"column:date_beating"`
+	Genre       string     `json:"Genre" gorm:"column:genre"`
+	ReleaseYear int        `json:"ReleaseYear" gorm:"column:release_year"`
 }
 
 type ResumedReleaseYearGame struct {
-	NameGame    string  `json:"NameGame" gorm:"column:name_game"`
-	TimeBeating float64 `json:"TimeBeating" gorm:"column:time_beating"`
-	Console     string  `json:"Console" gorm:"column:console"`
-	Genre       string  `json:"Genre" gorm:"column:genre"`
+	NameGame    string     `json:"NameGame" gorm:"column:name_game"`
+	TimeBeating float64    `json:"TimeBeating" gorm:"column:time_beating"`
+	DateBeating utils.Date `json:"DateBeating" gorm:"column:date_beating"`
+	Console     string     `json:"Console" gorm:"column:console"`
+	Genre       string     `json:"Genre" gorm:"column:genre"`
 }
 
 type StatsService struct {
@@ -247,7 +250,7 @@ func (s *StatsService) GetBeatedStatsByGenre(playerID uint, genreID int) (map[st
 
 	var resumedListGames []ResumedGenreGame
 	if err := s.db.Table("games").
-		Select("games.name_game, games.time_beating, consoles.name_console AS console, games.release_year").
+		Select("games.name_game, games.time_beating, games.date_beating, consoles.name_console AS console, games.release_year").
 		Joins("LEFT JOIN consoles ON consoles.id_console = games.console_id").
 		Where("games.player_id = ? AND games.status = ? AND games.genre_id = ?", playerID, models.Beaten, genreID).
 		Order("games.time_beating DESC").
@@ -320,7 +323,7 @@ func (s *StatsService) GetBeatedStatsByConsole(playerID uint, consoleID int) (ma
 
 	var resumedListGames []ResumedConsoleGame
 	if err := s.db.Table("games").
-		Select("games.name_game, games.time_beating, genres.name_genre AS genre, games.release_year").
+		Select("games.name_game, games.time_beating, games.date_beating, genres.name_genre AS genre, games.release_year").
 		Joins("LEFT JOIN genres ON genres.id_genre = games.genre_id").
 		Where("games.player_id = ? AND games.status = ? AND games.console_id = ?", playerID, models.Beaten, consoleID).
 		Order("games.time_beating DESC").
@@ -393,7 +396,7 @@ func (s *StatsService) GetBeatedStatsByReleaseYear(playerID uint, releaseYear in
 
 	var resumedListGames []ResumedReleaseYearGame
 	if err := s.db.Table("games").
-		Select("games.name_game, games.time_beating, consoles.name_console AS console, genres.name_genre AS genre").
+		Select("games.name_game, games.time_beating, games.date_beating, consoles.name_console AS console, genres.name_genre AS genre").
 		Joins("LEFT JOIN consoles ON consoles.id_console = games.console_id").
 		Joins("LEFT JOIN genres ON genres.id_genre = games.genre_id").
 		Where("games.player_id = ? AND games.status = ? AND games.release_year = ?", playerID, models.Beaten, releaseYear).

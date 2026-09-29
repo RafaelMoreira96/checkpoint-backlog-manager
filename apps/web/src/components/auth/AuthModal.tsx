@@ -58,18 +58,16 @@ export const AuthModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-md rounded-2xl bg-obsidian-850 border border-white/10 shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a0c10]/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="w-full max-w-md rounded-2xl bg-[#161922] border border-[#262d3d] shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-obsidian-900/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#232938] bg-[#12151b]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-violet-neon to-cyan-neon p-0.5 shadow-md shadow-violet-glow">
-              <div className="w-full h-full bg-obsidian-950 rounded-[6px] flex items-center justify-center">
-                <Gamepad2 className="w-4 h-4 text-violet-neon" />
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-[#6c52ee]/20 flex items-center justify-center text-[#8670ff] shadow-sm">
+              <Gamepad2 className="w-4 h-4 text-[#8670ff]" />
             </div>
             <span className="font-display font-bold text-white text-base">
-              Check<span className="text-violet-neon">POINT</span>
+              Check<span className="text-[#8670ff]">POINT</span>
             </span>
           </div>
 
@@ -82,21 +80,21 @@ export const AuthModal: React.FC = () => {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex border-b border-white/10 bg-obsidian-900/30">
+        <div className="flex border-b border-[#232938] bg-[#12151b]">
           <button
             type="button"
             onClick={() => {
               setErrorMessage(null);
               openLogin();
             }}
-            className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-2 border-b-2 transition-all ${
+            className={`flex-1 py-3 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 border-b-2 transition-all ${
               authModalMode === 'login'
-                ? 'border-violet-neon text-white bg-violet-500/10'
+                ? 'border-[#6c52ee] text-white bg-[#6c52ee]/10 font-bold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <LogIn className="w-4 h-4" />
-            Entrar
+            <span>Fazer Login</span>
           </button>
 
           <button
@@ -105,21 +103,21 @@ export const AuthModal: React.FC = () => {
               setErrorMessage(null);
               openRegister();
             }}
-            className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-2 border-b-2 transition-all ${
+            className={`flex-1 py-3 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 border-b-2 transition-all ${
               authModalMode === 'register'
-                ? 'border-emerald-400 text-white bg-emerald-500/10'
+                ? 'border-[#10b981] text-white bg-[#10b981]/10 font-bold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <UserPlus className="w-4 h-4" />
-            Criar Conta
+            <span>Criar Conta</span>
           </button>
         </div>
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
               <span>{errorMessage}</span>
             </div>
@@ -128,7 +126,7 @@ export const AuthModal: React.FC = () => {
           {authModalMode === 'register' && (
             <>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Nome Completo *
                 </label>
                 <input
@@ -137,12 +135,12 @@ export const AuthModal: React.FC = () => {
                   value={namePlayer}
                   onChange={(e) => setNamePlayer(e.target.value)}
                   placeholder="Seu nome"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-900 border border-white/10 text-sm text-white focus:outline-none focus:border-emerald-400 transition-colors"
+                  className="w-full px-3.5 py-2 rounded-lg bg-[#12151b] border border-[#262d3d] text-sm text-white focus:outline-none focus:border-[#6c52ee] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   E-mail *
                 </label>
                 <input
@@ -151,14 +149,14 @@ export const AuthModal: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="exemplo@gamer.com"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-900 border border-white/10 text-sm text-white focus:outline-none focus:border-emerald-400 transition-colors"
+                  className="w-full px-3.5 py-2 rounded-lg bg-[#12151b] border border-[#262d3d] text-sm text-white focus:outline-none focus:border-[#6c52ee] transition-colors"
                 />
               </div>
             </>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
               Nickname *
             </label>
             <input
@@ -167,12 +165,12 @@ export const AuthModal: React.FC = () => {
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="ex: player_one"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-900 border border-white/10 text-sm text-white focus:outline-none focus:border-violet-neon transition-colors"
+              className="w-full px-3.5 py-2 rounded-lg bg-[#12151b] border border-[#262d3d] text-sm text-white focus:outline-none focus:border-[#6c52ee] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
               Senha *
             </label>
             <input
@@ -181,17 +179,17 @@ export const AuthModal: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-900 border border-white/10 text-sm text-white focus:outline-none focus:border-violet-neon transition-colors"
+              className="w-full px-3.5 py-2 rounded-lg bg-[#12151b] border border-[#262d3d] text-sm text-white focus:outline-none focus:border-[#6c52ee] transition-colors"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-2.5 mt-2 rounded-xl text-sm font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
+            className={`w-full py-2.5 mt-2 rounded-lg text-xs sm:text-sm font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
               authModalMode === 'login'
-                ? 'bg-gradient-to-r from-violet-neon to-purple-600 shadow-violet-glow hover:opacity-90'
-                : 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-glow hover:opacity-90'
+                ? 'bg-[#6c52ee] hover:bg-[#5b40e2] shadow-[#6c52ee]/30'
+                : 'bg-[#10b981] hover:bg-[#059669] shadow-[#10b981]/30'
             } disabled:opacity-50`}
           >
             {isLoading ? (
@@ -207,14 +205,14 @@ export const AuthModal: React.FC = () => {
             ) : (
               <>
                 <UserPlus className="w-4 h-4" />
-                <span>Cadastrar e Jogar</span>
+                <span>Cadastrar e Começar</span>
               </>
             )}
           </button>
         </form>
 
         {/* Footer Note */}
-        <div className="px-6 py-3 border-t border-white/10 bg-obsidian-900/50 text-center text-xs text-slate-500">
+        <div className="px-6 py-3 border-t border-[#232938] bg-[#12151b] text-center text-xs text-slate-500">
           {authModalMode === 'login' ? (
             <p>
               Não tem uma conta gamer?{' '}
@@ -224,7 +222,7 @@ export const AuthModal: React.FC = () => {
                   setErrorMessage(null);
                   openRegister();
                 }}
-                className="text-violet-neon hover:underline font-semibold"
+                className="text-[#8670ff] hover:underline font-semibold"
               >
                 Cadastre-se gratuitamente
               </button>
@@ -238,7 +236,7 @@ export const AuthModal: React.FC = () => {
                   setErrorMessage(null);
                   openLogin();
                 }}
-                className="text-emerald-400 hover:underline font-semibold"
+                className="text-[#10b981] hover:underline font-semibold"
               >
                 Faça login
               </button>

@@ -108,6 +108,28 @@ func (c *GameController) DeleteGame(ctx *fiber.Ctx) error {
 	})
 }
 
+// DeleteAllBeatenGames remove todos os jogos zerados do jogador autenticado
+func (c *GameController) DeleteAllBeatenGames(ctx *fiber.Ctx) error {
+	playerID, err := security.GetPlayerTokenInfos(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "unauthorized player",
+		})
+	}
+
+	count, err := c.gameService.DeleteAllBeatenGames(playerID)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":       "all beaten games deleted successfully",
+		"deleted_count": count,
+	})
+}
+
 // UpdateGame atualiza um jogo
 func (c *GameController) UpdateGame(ctx *fiber.Ctx) error {
 	playerID, err := security.GetPlayerTokenInfos(ctx)

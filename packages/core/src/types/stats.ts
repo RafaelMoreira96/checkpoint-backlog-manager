@@ -49,6 +49,7 @@ export interface HighlightGame {
 export interface ResumedGameItem {
   NameGame: string;
   TimeBeating: number;
+  DateBeating?: string;
   Console?: string;
   Genre?: string;
   ReleaseYear?: number;
